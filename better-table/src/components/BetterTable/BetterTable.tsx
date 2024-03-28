@@ -1,5 +1,6 @@
 import React, { useState, useMemo, ReactNode } from "react";
 import Modal from "./Modal";
+import "./BetterTable.css";
 
 export interface Column {
   name: string;
@@ -35,7 +36,7 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
   const [sortingKey, setSortingKey] = useState<string | null>(null);
   const [sortingOrder, setSortingOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  const itemsPerPage = 10;
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
 
@@ -48,10 +49,32 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
     setModalOpen(false);
     setModalContent(null);
   };
+
+  const sortedData = useMemo(() => {
+    if (!sortingKey) return filteredData;
+
+    return [...filteredData].sort((a, b) => {
+      const valueA = getValueFromPath(a, sortingKey);
+      const valueB = getValueFromPath(b, sortingKey);
+
+      if (valueA === null || valueA === undefined)
+        return sortingOrder === "asc" ? 1 : -1;
+      if (valueB === null || valueB === undefined)
+        return sortingOrder === "asc" ? -1 : 1;
+
+      if (valueA < valueB) return sortingOrder === "asc" ? -1 : 1;
+      if (valueA > valueB) return sortingOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortingKey, sortingOrder]);
+
   const handleSorting = (key: string) => {
-    setSortingOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+    setSortingOrder((prevOrder) =>
+      prevOrder === "asc" || sortingKey !== key ? "desc" : "asc",
+    );
     setSortingKey(key);
   };
+
   const handleFiltering = (column: Column, filterValue: string) => {
     if (filterValue === "Sin especificar" || filterValue === "") {
       setFilteredData(data);
@@ -101,16 +124,6 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
     );
   };
 
-  const sortedData = useMemo(() => {
-    if (!sortingKey) return filteredData;
-
-    return [...filteredData].sort((a, b) => {
-      if (a[sortingKey] < b[sortingKey]) return sortingOrder === "asc" ? -1 : 1;
-      if (a[sortingKey] > b[sortingKey]) return sortingOrder === "asc" ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortingKey, sortingOrder]);
-
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return sortedData.slice(startIndex, startIndex + itemsPerPage);
@@ -133,16 +146,29 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
 
   return (
     <div>
-      <table>
+      <table className="table">
         <thead>
           <tr>
             {columns.map((column) => (
               <th key={column.key}>
-                {column.name}
-                <button onClick={() => handleSorting(column.key)}>Sort</button>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                <span>{column.name}</span>
+                {column.dataType !== "Cell" && (
+                  <button onClick={() => handleSorting(column.key)}>
+                    {sortingKey === column.key
+                      ? sortingOrder === "asc"
+                        ? "↑"
+                        : "↓"
+                      : "-"}
+                  </button>
+                )}
+                </div>
                 {renderFilterInput(column)}
+                </div>
               </th>
             ))}
+            {actions && <th>Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -153,13 +179,15 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
                   {renderCell(row, column)}
                 </td>
               ))}
-              {actions.map((action, actionIndex) => (
-                <td key={`action-${index}-${actionIndex}`}>
-                  <button onClick={() => openModal(action, row)}>
-                    {action.icon}
-                  </button>
-                </td>
-              ))}
+              <td key={index}>
+                {actions.map((action, actionIndex) => (
+                  <div key={`action-${index}-${actionIndex}`}>
+                    <button onClick={() => openModal(action, row)}>
+                      {action.icon}
+                    </button>
+                  </div>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>

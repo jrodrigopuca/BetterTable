@@ -26,7 +26,7 @@ function App() {
       attributes: { personal: { rol: "admin" } },
     },
     { name: "Juan B", age: 35, isActive: false, image: "a" },
-    { name: "Juan C", age: 34, isActive: false, image: "a" },
+    { name: "Juan C", age: 34, image: "a" },
     { name: "Juan D", isActive: false },
     { name: "Juan E", age: 28, isActive: true, image: "a" },
     { name: "Juan F", age: 35, isActive: false, image: "a" },
@@ -52,6 +52,15 @@ function App() {
       title: "Agregar",
       icon: "+",
       component: ({ data }) => <b>Hola {data.name}</b>,
+    },
+    {
+      title: "Ver",
+      icon: "o",
+      component: ({ data }) => (
+        <p>
+          Nombre{data.name}, Edad: {data.age}
+        </p>
+      ),
     },
   ];
 
