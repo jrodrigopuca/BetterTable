@@ -119,7 +119,7 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
       <input
         type="text"
         onChange={(e) => handleFiltering(column, e.target.value)}
-        placeholder={`Filter ${column.name}`}
+        placeholder={`Filtro ${column.name}`}
       />
     );
   };
@@ -136,7 +136,7 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
     }
     switch (column.dataType) {
       case "boolean":
-        return value ? "v" : "x";
+        return value ? "✅" : "❌";
       case "Cell":
         return column.cell ? column.cell(value) : null;
       default:
@@ -160,7 +160,7 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
                       ? sortingOrder === "asc"
                         ? "↑"
                         : "↓"
-                      : "-"}
+                      : "⇅"}
                   </button>
                 )}
                 </div>
@@ -197,19 +197,19 @@ const BetterTable: React.FC<TableProps> = ({ data, columns, actions }) => {
         {modalContent}
       </Modal>
 
-      <div>
+      <div className="table-footer">
         <button
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
-          Previous
+          ←
         </button>
-        <span>Page {currentPage}</span>
+        <span>Página {currentPage}</span>
         <button
           disabled={currentPage * itemsPerPage >= filteredData.length}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
-          Next
+          →
         </button>
       </div>
     </div>
