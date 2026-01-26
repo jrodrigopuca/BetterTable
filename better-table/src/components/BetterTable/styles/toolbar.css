@@ -1,0 +1,171 @@
+/* BetterTable v2 - Toolbar Styles */
+
+.bt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-spacing-md);
+  padding: var(--bt-spacing-md);
+  background-color: var(--bt-color-background);
+  border-bottom: var(--bt-border-width) solid var(--bt-color-border);
+  flex-wrap: wrap;
+}
+
+.bt-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-md);
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: visible;
+}
+
+.bt-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+  flex-shrink: 0;
+}
+
+/* Search */
+.bt-search {
+  position: relative;
+  width: 250px;
+  flex-shrink: 1;
+  min-width: 120px;
+}
+
+.bt-search-input {
+  width: 100%;
+  padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+  padding-left: 36px;
+  font-size: var(--bt-font-size-md);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-md);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  transition: all var(--bt-transition-fast);
+  box-sizing: border-box;
+}
+
+.bt-search-input:focus {
+  outline: none;
+  border-color: var(--bt-color-primary);
+  box-shadow: 0 0 0 3px var(--bt-color-primary-light);
+}
+
+.bt-search-input::placeholder {
+  color: var(--bt-color-text-disabled);
+}
+
+.bt-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--bt-color-text-secondary);
+  pointer-events: none;
+}
+
+.bt-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: var(--bt-color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--bt-border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bt-search-clear:hover {
+  color: var(--bt-color-text);
+  background-color: var(--bt-color-background-hover);
+}
+
+/* Selection info */
+.bt-selection-info {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+  padding: var(--bt-spacing-xs) var(--bt-spacing-sm);
+  background-color: var(--bt-color-primary-light);
+  border-radius: var(--bt-border-radius-sm);
+  font-size: var(--bt-font-size-sm);
+  color: var(--bt-color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.bt-selection-clear {
+  padding: 2px 6px;
+  border: none;
+  background: transparent;
+  color: var(--bt-color-primary);
+  cursor: pointer;
+  font-size: var(--bt-font-size-sm);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.bt-selection-clear:hover {
+  color: var(--bt-color-primary-hover);
+}
+
+/* Global actions */
+.bt-global-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+}
+
+.bt-global-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bt-spacing-xs);
+  padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+  font-size: var(--bt-font-size-sm);
+  font-weight: var(--bt-font-weight-medium);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-md);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  cursor: pointer;
+  transition: all var(--bt-transition-fast);
+}
+
+.bt-global-btn:hover:not(:disabled) {
+  background-color: var(--bt-color-background-hover);
+  border-color: var(--bt-color-border-hover);
+}
+
+.bt-global-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bt-global-btn.bt-variant-primary {
+  background-color: var(--bt-color-primary);
+  border-color: var(--bt-color-primary);
+  color: white;
+}
+
+.bt-global-btn.bt-variant-primary:hover:not(:disabled) {
+  background-color: var(--bt-color-primary-hover);
+}
+
+.bt-global-btn.bt-variant-danger {
+  background-color: var(--bt-color-danger);
+  border-color: var(--bt-color-danger);
+  color: white;
+}
+
+.bt-global-btn.bt-variant-danger:hover:not(:disabled) {
+  background-color: var(--bt-color-danger-hover);
+}

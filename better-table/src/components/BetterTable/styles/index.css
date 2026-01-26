@@ -1,0 +1,6 @@
+/* BetterTable v2 - All Styles */
+@import './variables.css';
+@import './table.css';
+@import './toolbar.css';
+@import './pagination.css';
+@import './modal.css';

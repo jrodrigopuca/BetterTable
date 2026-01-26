@@ -1,0 +1,122 @@
+/* BetterTable v2 - Pagination Styles */
+
+.bt-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bt-spacing-md);
+  padding: var(--bt-spacing-md);
+  background-color: var(--bt-color-background);
+  border-top: var(--bt-border-width) solid var(--bt-color-border);
+  flex-wrap: wrap;
+}
+
+.bt-pagination-info {
+  font-size: var(--bt-font-size-sm);
+  color: var(--bt-color-text-secondary);
+}
+
+.bt-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+}
+
+.bt-pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--bt-spacing-sm);
+  font-size: var(--bt-font-size-sm);
+  font-weight: var(--bt-font-weight-medium);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  cursor: pointer;
+  transition: all var(--bt-transition-fast);
+}
+
+.bt-pagination-btn:hover:not(:disabled) {
+  background-color: var(--bt-color-background-hover);
+  border-color: var(--bt-color-border-hover);
+}
+
+.bt-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bt-pagination-btn.bt-active {
+  background-color: var(--bt-color-primary);
+  border-color: var(--bt-color-primary);
+  color: white;
+}
+
+.bt-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-xs);
+}
+
+.bt-pagination-ellipsis {
+  padding: 0 var(--bt-spacing-xs);
+  color: var(--bt-color-text-secondary);
+}
+
+/* Page size selector */
+.bt-page-size {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+}
+
+.bt-page-size-label {
+  font-size: var(--bt-font-size-sm);
+  color: var(--bt-color-text-secondary);
+}
+
+.bt-page-size-select {
+  padding: var(--bt-spacing-xs) var(--bt-spacing-sm);
+  font-size: var(--bt-font-size-sm);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  cursor: pointer;
+}
+
+.bt-page-size-select:focus {
+  outline: none;
+  border-color: var(--bt-color-primary);
+}
+
+/* Quick jumper */
+.bt-quick-jumper {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+}
+
+.bt-quick-jumper-label {
+  font-size: var(--bt-font-size-sm);
+  color: var(--bt-color-text-secondary);
+}
+
+.bt-quick-jumper-input {
+  width: 50px;
+  padding: var(--bt-spacing-xs) var(--bt-spacing-sm);
+  font-size: var(--bt-font-size-sm);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  text-align: center;
+}
+
+.bt-quick-jumper-input:focus {
+  outline: none;
+  border-color: var(--bt-color-primary);
+}

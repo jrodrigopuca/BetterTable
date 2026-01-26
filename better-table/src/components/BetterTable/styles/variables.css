@@ -1,0 +1,83 @@
+/* BetterTable v2 - CSS Variables */
+
+:root {
+  /* Colores primarios */
+  --bt-color-primary: #3b82f6;
+  --bt-color-primary-hover: #2563eb;
+  --bt-color-primary-light: #eff6ff;
+
+  /* Colores de estado */
+  --bt-color-success: #22c55e;
+  --bt-color-danger: #ef4444;
+  --bt-color-danger-hover: #dc2626;
+  --bt-color-warning: #f59e0b;
+  --bt-color-info: #06b6d4;
+
+  /* Colores neutrales */
+  --bt-color-text: #1f2937;
+  --bt-color-text-secondary: #6b7280;
+  --bt-color-text-disabled: #9ca3af;
+  --bt-color-border: #e5e7eb;
+  --bt-color-border-hover: #d1d5db;
+  --bt-color-background: #ffffff;
+  --bt-color-background-hover: #f9fafb;
+  --bt-color-background-striped: #f3f4f6;
+  --bt-color-background-selected: #eff6ff;
+  --bt-color-background-header: #f9fafb;
+
+  /* Espaciado */
+  --bt-spacing-xs: 0.25rem;
+  --bt-spacing-sm: 0.5rem;
+  --bt-spacing-md: 0.75rem;
+  --bt-spacing-lg: 1rem;
+  --bt-spacing-xl: 1.5rem;
+
+  /* Tipografía */
+  --bt-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --bt-font-size-sm: 0.875rem;
+  --bt-font-size-md: 1rem;
+  --bt-font-size-lg: 1.125rem;
+  --bt-font-weight-normal: 400;
+  --bt-font-weight-medium: 500;
+  --bt-font-weight-semibold: 600;
+
+  /* Bordes */
+  --bt-border-radius-sm: 0.25rem;
+  --bt-border-radius-md: 0.375rem;
+  --bt-border-radius-lg: 0.5rem;
+  --bt-border-width: 1px;
+
+  /* Sombras */
+  --bt-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --bt-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --bt-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Transiciones */
+  --bt-transition-fast: 150ms ease;
+  --bt-transition-normal: 200ms ease;
+
+  /* Tamaños de tabla */
+  --bt-cell-padding-sm: 0.5rem 0.75rem;
+  --bt-cell-padding-md: 0.75rem 1rem;
+  --bt-cell-padding-lg: 1rem 1.25rem;
+
+  /* Z-index */
+  --bt-z-header: 10;
+  --bt-z-modal-backdrop: 100;
+  --bt-z-modal: 101;
+}
+
+/* Dark mode */
+[data-theme="dark"],
+.bt-dark {
+  --bt-color-text: #f9fafb;
+  --bt-color-text-secondary: #9ca3af;
+  --bt-color-text-disabled: #6b7280;
+  --bt-color-border: #374151;
+  --bt-color-border-hover: #4b5563;
+  --bt-color-background: #1f2937;
+  --bt-color-background-hover: #374151;
+  --bt-color-background-striped: #111827;
+  --bt-color-background-selected: #1e3a5f;
+  --bt-color-background-header: #111827;
+}
