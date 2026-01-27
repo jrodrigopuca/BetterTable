@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A modern, flexible, and fully typed React data table component",
   "author": "Juan Puca",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/better-table.cjs.js",
   "module": "./dist/better-table.es.js",

@@ -1,7 +1,7 @@
 # better-table
 
 [![npm version](https://img.shields.io/npm/v/better-table.svg)](https://www.npmjs.com/package/better-table)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18%2B-61dafb.svg)](https://reactjs.org/)
 
@@ -370,7 +370,7 @@ better-table/
 
 ## 📄 License
 
-MIT © [Juan Rodrigo Puca](https://github.com/jrodrigopuca)
+Apache License 2.0 © [Juan Rodrigo Puca](https://github.com/jrodrigopuca)
 
 ## 🤝 Contributing
 
