@@ -18,15 +18,15 @@
 
 ## 📊 Estado de Implementación
 
-| Archivo        | Estado                            |
-| -------------- | --------------------------------- |
-| variables.css  | ✅ Breakpoints agregados          |
-| table.css      | ✅ Scroll horizontal + cards      |
-| toolbar.css    | ✅ Layout responsive completo     |
-| pagination.css | ✅ Touch-friendly en móvil        |
-| modal.css      | ✅ Full-width en móvil            |
-| TableCard.tsx  | ✅ Componente nuevo creado        |
-| TableCards.tsx | ✅ Componente nuevo creado        |
+| Archivo        | Estado                        |
+| -------------- | ----------------------------- |
+| variables.css  | ✅ Breakpoints agregados      |
+| table.css      | ✅ Scroll horizontal + cards  |
+| toolbar.css    | ✅ Layout responsive completo |
+| pagination.css | ✅ Touch-friendly en móvil    |
+| modal.css      | ✅ Full-width en móvil        |
+| TableCard.tsx  | ✅ Componente nuevo creado    |
+| TableCards.tsx | ✅ Componente nuevo creado    |
 
 ---
 

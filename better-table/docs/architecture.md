@@ -148,11 +148,11 @@ Customización mediante CSS variables:
 
 El diseño responsive se implementa exclusivamente con CSS media queries, sin agregar complejidad al componente React:
 
-| Breakpoint | Comportamiento                               |
-| ---------- | -------------------------------------------- |
-| >1024px    | Tabla completa tradicional                   |
-| 640-1024px | Tabla con scroll horizontal                  |
-| <640px     | Cards layout (tabla oculta)                  |
+| Breakpoint | Comportamiento              |
+| ---------- | --------------------------- |
+| >1024px    | Tabla completa tradicional  |
+| 640-1024px | Tabla con scroll horizontal |
+| <640px     | Cards layout (tabla oculta) |
 
 ### Componentes de Cards
 
