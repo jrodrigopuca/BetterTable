@@ -28,6 +28,10 @@ Guía completa para desarrolladores: setup, convenciones, testing y cómo contri
 
 Documentación de la estrategia responsive: breakpoints, card layout para móvil y CSS media queries.
 
+### [7. Roadmap de Mejoras](./ROADMAP.md)
+
+Ideas y planes para futuras mejoras: edición inline, formatters, badges, drag & drop, y más.
+
 ## 🚀 Inicio Rápido
 
 Para comprender el proyecto:
