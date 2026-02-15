@@ -147,6 +147,63 @@ Datos → Procesamiento → Paginación → Renderizado
 
 ---
 
+### TableCards (Responsive)
+
+**Ubicación:** `src/components/BetterTable/components/TableCards.tsx`
+
+Contenedor de cards para vista responsive en móvil (<640px).
+
+#### Responsabilidades
+
+- Renderizar lista de cards cuando la tabla está en modo móvil
+- Mapear datos procesados a componentes TableCard
+- Mantener consistencia con tabla (selección, acciones)
+
+#### Estructura
+
+```tsx
+<div className="bt-cards">
+  {processedData.map(row => (
+    <TableCard key={row.id} row={row} ... />
+  ))}
+</div>
+```
+
+**Nota**: Las cards se renderizan fuera del elemento `<table>` para mantener HTML válido. CSS media queries controlan la visibilidad.
+
+---
+
+### TableCard (Responsive)
+
+**Ubicación:** `src/components/BetterTable/components/TableCard.tsx`
+
+Card individual para vista responsive en móvil.
+
+#### Responsabilidades
+
+- Mostrar datos de una fila en formato card
+- Primera columna como título/header
+- Columnas restantes como pares label-value
+- Checkbox de selección (si es selectable)
+- Acciones de fila
+- Eventos click/doubleClick
+
+#### Estructura
+
+```
+┌─────────────────────────────┐
+│ ☐ Título (primera columna)  │ ← Header
+├─────────────────────────────┤
+│ Email:      john@test.com   │
+│ Edad:       28              │ ← Card rows
+│ Activo:     ✅              │
+├─────────────────────────────┤
+│ [Editar] [Eliminar]         │ ← Acciones
+└─────────────────────────────┘
+```
+
+---
+
 ### TableRow
 
 **Ubicación:** `src/components/BetterTable/components/TableRow.tsx`

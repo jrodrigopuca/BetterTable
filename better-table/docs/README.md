@@ -24,6 +24,10 @@ Lista de problemas conocidos, limitaciones y soluciones temporales.
 
 Guía completa para desarrolladores: setup, convenciones, testing y cómo contribuir.
 
+### [6. Responsive (Plan e Implementación)](./RESPONSIVE_PLAN.md)
+
+Documentación de la estrategia responsive: breakpoints, card layout para móvil y CSS media queries.
+
 ## 🚀 Inicio Rápido
 
 Para comprender el proyecto:

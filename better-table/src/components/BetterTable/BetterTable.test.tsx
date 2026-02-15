@@ -1,8 +1,28 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BetterTable } from "./index";
 import type { Column, RowAction, GlobalAction } from "./types";
+
+// ============================================================================
+// Test Helpers
+// ============================================================================
+
+/**
+ * Helper para obtener el elemento de la tabla tradicional (no cards)
+ * Útil porque ahora ambos (tabla y cards) renderizan los datos
+ */
+const getTable = (container: HTMLElement) => {
+	return container.querySelector('.bt-table') as HTMLElement;
+};
+
+/**
+ * Helper para buscar dentro de la tabla tradicional
+ */
+const withinTable = (container: HTMLElement) => {
+	const table = getTable(container);
+	return within(table);
+};
 
 // ============================================================================
 // Test Data Types
@@ -99,17 +119,16 @@ const userColumns: Column<User>[] = [
 
 describe("BetterTable - Tabla básica con pocos elementos", () => {
 	it("renderiza correctamente una tabla con pocos datos", () => {
-		render(<BetterTable<User> data={fewUsers} columns={userColumns} rowKey="id" />);
+		const { container } = render(<BetterTable<User> data={fewUsers} columns={userColumns} rowKey="id" />);
 
-		// Verifica que se muestren los headers
-		expect(screen.getByText("Nombre")).toBeInTheDocument();
-		expect(screen.getByText("Email")).toBeInTheDocument();
-		expect(screen.getByText("Edad")).toBeInTheDocument();
-
-		// Verifica que se muestren los datos
-		expect(screen.getByText("Juan García")).toBeInTheDocument();
-		expect(screen.getByText("María López")).toBeInTheDocument();
-		expect(screen.getByText("juan@example.com")).toBeInTheDocument();
+		// Verifica que se muestren los headers y datos en la tabla
+		const table = withinTable(container);
+		expect(table.getByText("Nombre")).toBeInTheDocument();
+		expect(table.getByText("Email")).toBeInTheDocument();
+		expect(table.getByText("Edad")).toBeInTheDocument();
+		expect(table.getByText("Juan García")).toBeInTheDocument();
+		expect(table.getByText("María López")).toBeInTheDocument();
+		expect(table.getByText("juan@example.com")).toBeInTheDocument();
 	});
 
 	it("no muestra paginación cuando hay pocos elementos", () => {
@@ -380,7 +399,7 @@ describe("BetterTable - Filtrado de datos", () => {
 	it("filtra por texto en columna string", async () => {
 		const user = userEvent.setup();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -394,9 +413,10 @@ describe("BetterTable - Filtrado de datos", () => {
 
 		await user.type(nameFilter, "Juan");
 
-		// Solo debería mostrar "Juan García"
-		expect(screen.getByText("Juan García")).toBeInTheDocument();
-		expect(screen.queryByText("María López")).not.toBeInTheDocument();
+		// Solo debería mostrar "Juan García" en la tabla
+		const table = withinTable(container);
+		expect(table.getByText("Juan García")).toBeInTheDocument();
+		expect(table.queryByText("María López")).not.toBeInTheDocument();
 	});
 
 	it("filtra por número en columna numérica", async () => {
@@ -430,7 +450,7 @@ describe("BetterTable - Filtrado de datos", () => {
 	it("filtra por booleano con select", async () => {
 		const user = userEvent.setup();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -444,9 +464,10 @@ describe("BetterTable - Filtrado de datos", () => {
 		if (selects.length > 0) {
 			await user.selectOptions(selects[0], "true");
 
-			// Solo usuarios activos
-			expect(screen.getByText("Juan García")).toBeInTheDocument();
-			expect(screen.queryByText("Carlos Ruiz")).not.toBeInTheDocument();
+			// Solo usuarios activos (buscar en tabla)
+			const table = withinTable(container);
+			expect(table.getByText("Juan García")).toBeInTheDocument();
+			expect(table.queryByText("Carlos Ruiz")).not.toBeInTheDocument();
 		}
 	});
 
@@ -544,7 +565,7 @@ describe("BetterTable - Búsqueda global", () => {
 	it("limpia búsqueda con el botón de limpiar", async () => {
 		const user = userEvent.setup();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -560,9 +581,10 @@ describe("BetterTable - Búsqueda global", () => {
 		const clearButton = screen.getByRole("button", { name: /clear search/i });
 		await user.click(clearButton);
 
-		// Todos los usuarios deberían ser visibles
-		expect(screen.getByText("Juan García")).toBeInTheDocument();
-		expect(screen.getByText("María López")).toBeInTheDocument();
+		// Todos los usuarios deberían ser visibles en la tabla
+		const table = withinTable(container);
+		expect(table.getByText("Juan García")).toBeInTheDocument();
+		expect(table.getByText("María López")).toBeInTheDocument();
 	});
 });
 
@@ -597,7 +619,7 @@ describe("BetterTable - Ordenamiento", () => {
 	it("alterna entre ascendente, descendente y sin orden", async () => {
 		const user = userEvent.setup();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -605,7 +627,8 @@ describe("BetterTable - Ordenamiento", () => {
 			/>
 		);
 
-		const nameHeader = screen.getByText("Nombre");
+		const table = withinTable(container);
+		const nameHeader = table.getByText("Nombre");
 
 		// Primer click: ascendente
 		await user.click(nameHeader);
@@ -620,7 +643,7 @@ describe("BetterTable - Ordenamiento", () => {
 	it("ordena números correctamente", async () => {
 		const user = userEvent.setup();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -628,12 +651,13 @@ describe("BetterTable - Ordenamiento", () => {
 			/>
 		);
 
-		const ageHeader = screen.getByText("Edad");
+		const table = withinTable(container);
+		const ageHeader = table.getByText("Edad");
 		await user.click(ageHeader);
 
 		// Verificar orden numérico (28 < 29 < 31 < 35 < 42)
-		const rows = screen.getAllByRole("row");
-		// Primera fila debería ser el usuario más joven
+		const rows = table.getAllByRole("row");
+		// rows[0] es el header, rows[1] es la primera fila de datos
 		expect(rows[1]).toHaveTextContent("28");
 	});
 });
@@ -661,7 +685,7 @@ describe("BetterTable - Paginación", () => {
 	it("navega entre páginas", async () => {
 		const user = userEvent.setup();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={manyUsers}
 				columns={userColumns}
@@ -674,9 +698,10 @@ describe("BetterTable - Paginación", () => {
 		const nextButton = screen.getByRole("button", { name: /siguiente|next|›/i });
 		await user.click(nextButton);
 
-		// Debería mostrar "User 11" en lugar de "User 1"
-		expect(screen.getByText("User 11")).toBeInTheDocument();
-		expect(screen.queryByText("User 1")).not.toBeInTheDocument();
+		// Debería mostrar "User 11" en lugar de "User 1" (buscar en tabla)
+		const table = withinTable(container);
+		expect(table.getByText("User 11")).toBeInTheDocument();
+		expect(table.queryByText("User 1")).not.toBeInTheDocument();
 	});
 
 	it("cambia tamaño de página", async () => {
@@ -832,7 +857,7 @@ describe("BetterTable - Acceso a datos anidados", () => {
 			{ id: 1, name: "Test User", email: "test@test.com" },
 		];
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={usersWithMissingData}
 				columns={nestedColumns}
@@ -841,7 +866,8 @@ describe("BetterTable - Acceso a datos anidados", () => {
 		);
 
 		// No debería crashear, debería mostrar "—" o vacío
-		expect(screen.getByText("Test User")).toBeInTheDocument();
+		const table = withinTable(container);
+		expect(table.getByText("Test User")).toBeInTheDocument();
 	});
 });
 
@@ -875,7 +901,7 @@ describe("BetterTable - Celdas personalizadas", () => {
 	];
 
 	it("renderiza componentes personalizados en celdas", () => {
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={customColumns}
@@ -883,7 +909,9 @@ describe("BetterTable - Celdas personalizadas", () => {
 			/>
 		);
 
-		const statusBadges = screen.getAllByTestId("status-badge");
+		// Buscar dentro de la tabla
+		const table = getTable(container);
+		const statusBadges = within(table).getAllByTestId("status-badge");
 		expect(statusBadges.length).toBe(mockUsers.length);
 	});
 
@@ -1004,7 +1032,7 @@ describe("BetterTable - Callbacks de interacción", () => {
 		const user = userEvent.setup();
 		const mockRowClick = vi.fn();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -1013,8 +1041,9 @@ describe("BetterTable - Callbacks de interacción", () => {
 			/>
 		);
 
-		// Click en una celda de la primera fila de datos
-		const firstRowCell = screen.getByText("Juan García");
+		// Click en una celda de la primera fila de datos (dentro de la tabla)
+		const table = withinTable(container);
+		const firstRowCell = table.getByText("Juan García");
 		await user.click(firstRowCell);
 
 		expect(mockRowClick).toHaveBeenCalledWith(mockUsers[0], 0);
@@ -1024,7 +1053,7 @@ describe("BetterTable - Callbacks de interacción", () => {
 		const user = userEvent.setup();
 		const mockDoubleClick = vi.fn();
 
-		render(
+		const { container } = render(
 			<BetterTable<User>
 				data={mockUsers}
 				columns={userColumns}
@@ -1033,9 +1062,308 @@ describe("BetterTable - Callbacks de interacción", () => {
 			/>
 		);
 
-		const firstRowCell = screen.getByText("Juan García");
+		const table = withinTable(container);
+		const firstRowCell = table.getByText("Juan García");
 		await user.dblClick(firstRowCell);
 
 		expect(mockDoubleClick).toHaveBeenCalledWith(mockUsers[0], 0);
+	});
+});
+
+// ============================================================================
+// CASO 13: Responsive - Card Layout (Móvil)
+// ============================================================================
+
+describe("BetterTable - Responsive Card Layout", () => {
+	it("renderiza tanto tabla como cards en el DOM", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+			/>
+		);
+
+		// Tabla tradicional debe existir
+		expect(container.querySelector(".bt-table")).toBeInTheDocument();
+		
+		// Cards también deben existir (ocultas por CSS en desktop)
+		expect(container.querySelector(".bt-cards")).toBeInTheDocument();
+	});
+
+	it("renderiza una card por cada fila de datos", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={mockUsers}
+				columns={userColumns}
+				rowKey="id"
+			/>
+		);
+
+		const cards = container.querySelectorAll(".bt-card");
+		expect(cards.length).toBe(mockUsers.length);
+	});
+
+	it("muestra el título correcto en cada card (primera columna)", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+			/>
+		);
+
+		const cardTitles = container.querySelectorAll(".bt-card-title");
+		expect(cardTitles[0]).toHaveTextContent("Juan García");
+		expect(cardTitles[1]).toHaveTextContent("María López");
+	});
+
+	it("muestra las demás columnas como filas label-value en cards", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+			/>
+		);
+
+		// Verificar que los labels (headers de columnas) aparecen
+		const cardLabels = container.querySelectorAll(".bt-card-label");
+		const labelTexts = Array.from(cardLabels).map(l => l.textContent);
+		
+		// Debe incluir Email, Edad, Activo, Rol (no Nombre porque es el título)
+		expect(labelTexts).toContain("Email");
+		expect(labelTexts).toContain("Edad");
+	});
+
+	it("muestra checkbox en cards cuando es selectable", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				selectable={true}
+			/>
+		);
+
+		// Checkboxes en cards
+		const cardCheckboxes = container.querySelectorAll(".bt-card .bt-checkbox");
+		expect(cardCheckboxes.length).toBe(fewUsers.length);
+	});
+
+	it("no muestra checkbox en cards cuando no es selectable", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				selectable={false}
+			/>
+		);
+
+		const cardCheckboxes = container.querySelectorAll(".bt-card .bt-checkbox");
+		expect(cardCheckboxes.length).toBe(0);
+	});
+
+	it("permite seleccionar una card", async () => {
+		const user = userEvent.setup();
+		const mockSelectionChange = vi.fn();
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				selectable={true}
+				onSelectionChange={mockSelectionChange}
+			/>
+		);
+
+		// Click en el checkbox de la primera card
+		const cardCheckboxes = container.querySelectorAll(".bt-card .bt-checkbox");
+		await user.click(cardCheckboxes[0]);
+
+		expect(mockSelectionChange).toHaveBeenCalled();
+	});
+
+	it("aplica clase bt-selected a cards seleccionadas", async () => {
+		const user = userEvent.setup();
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				selectable={true}
+			/>
+		);
+
+		const cardCheckboxes = container.querySelectorAll(".bt-card .bt-checkbox");
+		await user.click(cardCheckboxes[0]);
+
+		const cards = container.querySelectorAll(".bt-card");
+		expect(cards[0]).toHaveClass("bt-selected");
+		expect(cards[1]).not.toHaveClass("bt-selected");
+	});
+
+	it("muestra acciones de fila en cards", () => {
+		const rowActions: RowAction<User>[] = [
+			{ id: "edit", label: "Editar", icon: "✏️", mode: "callback", onClick: vi.fn() },
+			{ id: "delete", label: "Eliminar", icon: "🗑️", mode: "callback", onClick: vi.fn(), variant: "danger" },
+		];
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				rowActions={rowActions}
+			/>
+		);
+
+		const cardActions = container.querySelectorAll(".bt-card-actions");
+		expect(cardActions.length).toBe(fewUsers.length);
+
+		// Cada card debe tener 2 botones de acción
+		const firstCardActions = cardActions[0].querySelectorAll(".bt-action-btn");
+		expect(firstCardActions.length).toBe(2);
+	});
+
+	it("ejecuta acción de fila al hacer click en botón de card", async () => {
+		const user = userEvent.setup();
+		const mockEdit = vi.fn();
+
+		const rowActions: RowAction<User>[] = [
+			{ id: "edit", label: "Editar", icon: "✏️", mode: "callback", onClick: mockEdit },
+		];
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				rowActions={rowActions}
+			/>
+		);
+
+		// Click en el botón de editar de la primera card
+		const editButtons = container.querySelectorAll(".bt-card-actions .bt-action-btn");
+		await user.click(editButtons[0]);
+
+		expect(mockEdit).toHaveBeenCalledWith(fewUsers[0], 0);
+	});
+
+	it("no muestra cards cuando no hay datos", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={[]}
+				columns={userColumns}
+				rowKey="id"
+			/>
+		);
+
+		const cards = container.querySelectorAll(".bt-card");
+		expect(cards.length).toBe(0);
+	});
+
+	it("maneja columnas ocultas correctamente en cards", () => {
+		const columnsWithHidden: Column<User>[] = [
+			{ id: "name", accessor: "name", header: "Nombre" },
+			{ id: "email", accessor: "email", header: "Email", hidden: true },
+			{ id: "age", accessor: "age", header: "Edad" },
+		];
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={columnsWithHidden}
+				rowKey="id"
+			/>
+		);
+
+		// No debe mostrar Email en las cards
+		const cardLabels = container.querySelectorAll(".bt-card-label");
+		const labelTexts = Array.from(cardLabels).map(l => l.textContent);
+		
+		expect(labelTexts).not.toContain("Email");
+		expect(labelTexts).toContain("Edad");
+	});
+
+	it("renderiza valores booleanos correctamente en cards", () => {
+		const columnsWithBoolean: Column<User>[] = [
+			{ id: "name", accessor: "name", header: "Nombre" },
+			{ id: "isActive", accessor: "isActive", header: "Activo", type: "boolean" },
+		];
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={columnsWithBoolean}
+				rowKey="id"
+			/>
+		);
+
+		// Debe mostrar ✅ para true
+		const cardValues = container.querySelectorAll(".bt-card-value");
+		const hasCheckmark = Array.from(cardValues).some(v => v.textContent?.includes("✅"));
+		expect(hasCheckmark).toBe(true);
+	});
+
+	it("renderiza valores null como guión en cards", () => {
+		const usersWithNull: User[] = [
+			{ id: 1, name: "Test", email: "test@test.com", age: undefined },
+		];
+
+		const columnsWithAge: Column<User>[] = [
+			{ id: "name", accessor: "name", header: "Nombre" },
+			{ id: "age", accessor: "age", header: "Edad" },
+		];
+
+		const { container } = render(
+			<BetterTable<User>
+				data={usersWithNull}
+				columns={columnsWithAge}
+				rowKey="id"
+			/>
+		);
+
+		// Debe mostrar guión para undefined
+		const emptyValues = container.querySelectorAll(".bt-card-value-empty");
+		expect(emptyValues.length).toBeGreaterThan(0);
+	});
+
+	it("aplica clase bt-hoverable a cards cuando hoverable=true", () => {
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				hoverable={true}
+			/>
+		);
+
+		const cards = container.querySelectorAll(".bt-card");
+		cards.forEach(card => {
+			expect(card).toHaveClass("bt-hoverable");
+		});
+	});
+
+	it("permite click en card cuando onRowClick está definido", async () => {
+		const user = userEvent.setup();
+		const mockRowClick = vi.fn();
+
+		const { container } = render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				onRowClick={mockRowClick}
+			/>
+		);
+
+		const cards = container.querySelectorAll(".bt-card");
+		await user.click(cards[0]);
+
+		expect(mockRowClick).toHaveBeenCalledWith(fewUsers[0], 0);
 	});
 });

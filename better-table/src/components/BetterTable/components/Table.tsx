@@ -20,6 +20,7 @@ import {
   TableLoadingOverlay,
   TableModal,
 } from '../components';
+import { TableCards } from './TableCards';
 import '../styles/index.css';
 import clsx from 'clsx';
 
@@ -374,6 +375,7 @@ function BetterTableInner<T extends TableData>(
           className='bt-table-wrapper'
           style={{ maxHeight }}
         >
+          {/* Tabla tradicional (visible en desktop/tablet via CSS) */}
           <table
             className={clsx('bt-table', classNames.table)}
             style={styles.table}
@@ -385,6 +387,9 @@ function BetterTableInner<T extends TableData>(
             <TableHeader />
             {hasData ? <TableBody /> : <TableEmpty />}
           </table>
+
+          {/* Cards (visible solo en móvil via CSS) */}
+          {hasData && <TableCards />}
 
           <TableLoadingOverlay show={loading && hasData} />
         </div>

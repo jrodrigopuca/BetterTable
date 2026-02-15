@@ -120,3 +120,48 @@
   outline: none;
   border-color: var(--bt-color-primary);
 }
+
+/* ========================================
+   RESPONSIVE PAGINATION
+   ======================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .bt-quick-jumper {
+    display: none;
+  }
+}
+
+/* Móvil */
+@media (max-width: 640px) {
+  .bt-pagination {
+    flex-direction: column;
+    gap: var(--bt-spacing-sm);
+  }
+
+  .bt-pagination-info {
+    order: 1;
+    text-align: center;
+  }
+
+  .bt-pagination-controls {
+    order: 2;
+    justify-content: center;
+  }
+
+  .bt-page-size {
+    order: 3;
+    justify-content: center;
+  }
+
+  /* Ocultar números de página, solo prev/next */
+  .bt-pagination-pages {
+    display: none;
+  }
+
+  .bt-pagination-btn {
+    min-width: 44px;
+    height: 44px; /* Touch-friendly */
+  }
+  border-color: var(--bt-color-primary);
+}

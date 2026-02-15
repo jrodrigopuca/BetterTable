@@ -10,7 +10,8 @@ A modern, flexible, and fully typed data table component for React.
 ## ✨ Features
 
 - 🎯 **TypeScript First** - Full generic typing for data and columns
-- 🔍 **Smart Selection** - Auto-inferred when needed based on actions
+- � **Responsive** - Table on desktop, cards on mobile (CSS-only)
+- �🔍 **Smart Selection** - Auto-inferred when needed based on actions
 - 🔎 **Multiple Filtering** - Per-column and global search
 - ↕️ **Sorting** - Ascending, descending, or unsorted
 - 📄 **Pagination** - Client-side or server-side

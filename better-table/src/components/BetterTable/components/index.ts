@@ -3,6 +3,8 @@ export { TableHeaderCell } from "./TableHeaderCell";
 export { TableBody } from "./TableBody";
 export { TableRow } from "./TableRow";
 export { TableCell } from "./TableCell";
+export { TableCard } from "./TableCard";
+export { TableCards } from "./TableCards";
 export { TableActions } from "./TableActions";
 export { TablePagination } from "./TablePagination";
 export { TableToolbar } from "./TableToolbar";

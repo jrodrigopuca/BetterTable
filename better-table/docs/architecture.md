@@ -99,6 +99,7 @@ graph TD
     K --> M[TableBody]
     K --> N[TablePagination]
     K --> O[TableToolbar]
+    K --> P[TableCards - Mobile]
 ```
 
 ### Pipeline de Procesamiento
@@ -141,7 +142,38 @@ Customización mediante CSS variables:
 --bt-font-size-large
 ```
 
-## 🔌 Puntos de Extensión
+## � Arquitectura Responsive
+
+### Estrategia CSS-Only
+
+El diseño responsive se implementa exclusivamente con CSS media queries, sin agregar complejidad al componente React:
+
+| Breakpoint | Comportamiento                               |
+| ---------- | -------------------------------------------- |
+| >1024px    | Tabla completa tradicional                   |
+| 640-1024px | Tabla con scroll horizontal                  |
+| <640px     | Cards layout (tabla oculta)                  |
+
+### Componentes de Cards
+
+Para la vista móvil, se renderizan componentes adicionales:
+
+```
+┌─ Table.tsx ─────────────────────────────────┐
+│                                             │
+│  <table>...</table>  ← Visible en Desktop   │
+│                                             │
+│  <TableCards>        ← Visible en Móvil     │
+│    <TableCard />                            │
+│    <TableCard />                            │
+│  </TableCards>                              │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+**Nota**: Ambos elementos coexisten en el DOM. CSS controla la visibilidad según el viewport.
+
+## �🔌 Puntos de Extensión
 
 ### 1. Custom Cell Renderers
 

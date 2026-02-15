@@ -104,3 +104,33 @@
     transform: scale(1);
   }
 }
+
+/* ========================================
+   RESPONSIVE MODAL
+   ======================================== */
+
+@media (max-width: 640px) {
+  .bt-modal {
+    width: 95vw !important;
+    max-height: 90vh;
+  }
+
+  .bt-modal-header,
+  .bt-modal-body,
+  .bt-modal-footer {
+    padding: var(--bt-spacing-md);
+  }
+
+  .bt-modal-footer {
+    flex-direction: column;
+  }
+
+  .bt-modal-footer button {
+    width: 100%;
+  }
+
+  .bt-modal-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

@@ -314,3 +314,137 @@
 .bt-container-loading {
   position: relative;
 }
+
+/* ========================================
+   RESPONSIVE - TABLET (Scroll Horizontal)
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .bt-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .bt-th,
+  .bt-td {
+    padding: var(--bt-cell-padding-sm);
+    font-size: var(--bt-font-size-sm);
+  }
+
+  .bt-checkbox-cell {
+    width: 36px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - MÓVIL (Card Layout)
+   ======================================== */
+
+/* Cards container - oculto por defecto */
+.bt-cards {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  /* Ocultar tabla tradicional */
+  .bt-table {
+    display: none;
+  }
+
+  /* Mostrar cards */
+  .bt-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bt-spacing-md);
+    padding: var(--bt-spacing-md);
+  }
+
+  /* Contenedor sin borde para cards */
+  .bt-table-wrapper {
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+  }
+
+  /* Card individual */
+  .bt-card {
+    padding: var(--bt-spacing-md);
+    border: var(--bt-border-width) solid var(--bt-color-border);
+    border-radius: var(--bt-border-radius-md);
+    background: var(--bt-color-background);
+    transition: all var(--bt-transition-fast);
+  }
+
+  .bt-card.bt-selected {
+    background-color: var(--bt-color-background-selected);
+    border-color: var(--bt-color-primary);
+  }
+
+  .bt-card.bt-hoverable:active {
+    background-color: var(--bt-color-background-hover);
+  }
+
+  /* Header de card (checkbox + primera columna) */
+  .bt-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--bt-spacing-sm);
+    padding-bottom: var(--bt-spacing-sm);
+    margin-bottom: var(--bt-spacing-xs);
+    border-bottom: 2px solid var(--bt-color-border);
+  }
+
+  .bt-card-title {
+    font-weight: var(--bt-font-weight-semibold);
+    font-size: var(--bt-font-size-md);
+    flex: 1;
+    word-break: break-word;
+  }
+
+  /* Fila de card (label: value) */
+  .bt-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--bt-spacing-xs) 0;
+    border-bottom: var(--bt-border-width) solid var(--bt-color-border);
+    gap: var(--bt-spacing-md);
+  }
+
+  .bt-card-row:last-child {
+    border-bottom: none;
+  }
+
+  .bt-card-label {
+    font-weight: var(--bt-font-weight-medium);
+    color: var(--bt-color-text-secondary);
+    font-size: var(--bt-font-size-sm);
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .bt-card-value {
+    text-align: right;
+    word-break: break-word;
+    flex: 1;
+  }
+
+  .bt-card-value-empty {
+    color: var(--bt-color-text-disabled);
+  }
+
+  /* Acciones de card */
+  .bt-card-actions {
+    display: flex;
+    gap: var(--bt-spacing-sm);
+    margin-top: var(--bt-spacing-md);
+    padding-top: var(--bt-spacing-sm);
+    border-top: var(--bt-border-width) solid var(--bt-color-border);
+  }
+
+  .bt-card-actions .bt-action-btn {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px; /* Touch-friendly */
+  }
+}
