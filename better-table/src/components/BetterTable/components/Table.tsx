@@ -360,6 +360,9 @@ function BetterTableInner<T extends TableData>(
         className={clsx(
           'bt-container',
           `bt-size-${size}`,
+          striped && 'bt-striped',
+          bordered && 'bt-bordered',
+          hoverable && 'bt-hoverable',
           loading && 'bt-container-loading',
           classNames.container
         )}
@@ -368,7 +371,7 @@ function BetterTableInner<T extends TableData>(
         <TableToolbar />
 
         <div
-          className={clsx('bt-table-wrapper', bordered && 'bt-bordered')}
+          className='bt-table-wrapper'
           style={{ maxHeight }}
         >
           <table

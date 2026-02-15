@@ -6,41 +6,39 @@ Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 
 ### 1. Tests Fallando con Testing Library Matchers
 
-**Estado:** 🔴 Activo
+**Estado:** ✅ RESUELTO
 
 **Descripción:**
-7 tests están fallando debido a problemas con los matchers de `@testing-library/jest-dom` en Vitest.
+7 tests estaban fallando debido a problemas con los matchers de `@testing-library/jest-dom` en Vitest y queries incorrectas para ARIA roles.
 
 **Tests Afectados:**
 
-- `aplica estilos personalizados correctamente`
-- `muestra contador de elementos seleccionados`
-- `filtra por número en columna numérica`
-- `busca en todas las columnas configuradas`
-- `ordena por columna al hacer click en header`
-- `accede a propiedades anidadas con dot notation`
-- `tiene atributos ARIA correctos`
+- `aplica estilos personalizados correctamente` ✅
+- `muestra contador de elementos seleccionados` ✅
+- `filtra por número en columna numérica` ✅
+- `busca en todas las columnas configuradas` ✅
+- `ordena por columna al hacer click en header` ✅
+- `accede a propiedades anidadas con dot notation` ✅
+- `tiene atributos ARIA correctos` ✅
 
-**Causa:**
-Configuración incompleta de TypeScript types para los matchers de jest-dom en Vitest.
+**Causa Raíz:**
 
-**Workaround:**
+1. Tests buscaban `role="table"` pero el componente usa correctamente `role="grid"` para tablas interactivas
+2. Tests usaban `getByText()` donde había múltiples elementos con el mismo texto
+3. Estilos CSS (`striped`, `bordered`, `hoverable`) no se aplicaban al contenedor
 
-```typescript
-// Los tests funcionan en runtime, solo fallan en TypeScript
-// Los matchers como toBeInTheDocument() funcionan correctamente
-```
+**Solución Implementada:**
 
-**Solución Planeada:**
+- ✅ Actualizado queries de `getByRole("table")` → `getByRole("grid")`
+- ✅ Cambiado `getByText()` → `getAllByText()` o `queryByText()` donde apropiado
+- ✅ Agregado clases CSS de estilos al contenedor `.bt-container`
+- ✅ Mejorado búsqueda de elementos usando `rows.some()` para verificar contenido
+- ✅ Agregado `waitFor()` para filtros que necesitan tiempo de procesamiento
 
-- [ ] Actualizar configuración de vitest
-- [ ] Añadir types correctos a tsconfig.json
-- [ ] Verificar compatibilidad con @testing-library/jest-dom v6.6.3
+**Resultado:**
+🎉 **Todos los 42 tests ahora pasan correctamente**
 
-**Referencias:**
-
-- Issue: Configuración TypeScript/Vitest
-- Archivo: `tsconfig.json`, `vitest.config.ts`
+**Fecha de Resolución:** 15 de febrero, 2026
 
 ---
 
