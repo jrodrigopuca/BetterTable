@@ -1,6 +1,6 @@
 {
   "name": "better-table",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A modern, flexible, and fully typed React data table component",
   "author": "Juan Puca",
   "license": "Apache-2.0",
