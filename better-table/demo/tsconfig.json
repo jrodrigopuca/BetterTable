@@ -17,8 +17,8 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 		"paths": {
-			"@juanb/better-table": ["../src/index.ts"],
-			"@juanb/better-table/styles.css": ["../src/components/BetterTable/styles/index.css"]
+			"better-table": ["../src/index.ts"],
+			"better-table/styles.css": ["../src/components/BetterTable/styles/index.css"]
 		}
 	},
 	"include": ["src"]
