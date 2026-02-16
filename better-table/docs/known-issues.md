@@ -2,7 +2,28 @@
 
 Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 
-## 🐛 Bugs Conocidos
+## � Resumen de Issues
+
+| Issue                              | Severidad | Workaround                   | Estado             | Versión |
+| ---------------------------------- | --------- | ---------------------------- | ------------------ | ------- |
+| Tests con Testing Library Matchers | 🟢 Low    | -                            | ✅ Resuelto        | v1.0.0  |
+| Rendimiento con >10,000 filas      | 🟡 Medium | Usar paginación reducida     | Limitación         | v1.2.0  |
+| Filtrado de columnas tipo Date     | 🟡 Medium | Filtrado manual en padre     | Feature incompleta | v1.3.0  |
+| Exportación de datos               | 🟡 Medium | Implementar con globalAction | No implementada    | v1.4.0  |
+| Server-Side Operations             | 🟡 Medium | Manejo manual en padre       | Limitación         | v2.0.0  |
+| Column Resizing                    | 🟢 Low    | CSS width fijo               | No implementada    | v2.0.0  |
+| Virtual Scrolling                  | 🟡 Medium | Paginación                   | No implementada    | v2.0.0  |
+| Keyboard Navigation                | 🟢 Low    | Mouse/touch                  | Parcial            | v1.3.0  |
+
+**Niveles de Severidad:**
+
+- 🔴 **High:** Causa crashes, pérdida de datos o problemas de seguridad
+- 🟡 **Medium:** Degrada la experiencia pero tiene workaround
+- 🟢 **Low:** Inconveniente menor, problemas cosméticos
+
+---
+
+## �🐛 Bugs Conocidos
 
 ### 1. Tests Fallando con Testing Library Matchers
 

@@ -10,49 +10,56 @@ Documentación detallada de todos los componentes, hooks y utilidades.
 
 El componente raíz que orquesta toda la funcionalidad de la tabla.
 
-#### Props
+**Tipo:** Composite Component (combina múltiples subcomponentes)
 
-```typescript
-interface BetterTableProps<T extends TableData> {
-	// Datos
-	data: T[];
-	columns: Column<T>[];
-	rowKey?: keyof T | ((row: T, index: number) => string);
+#### Props Principales
 
-	// Comportamiento
-	sortable?: boolean;
-	filterable?: boolean;
-	searchable?: boolean;
-	selectable?: boolean;
-	selectionMode?: "single" | "multiple";
+| Prop            | Tipo                                | Default | Requerido | Descripción                      |
+| --------------- | ----------------------------------- | ------- | --------- | -------------------------------- |
+| `data`          | `T[]`                               | -       | Sí        | Array de datos a mostrar         |
+| `columns`       | `Column<T>[]`                       | -       | Sí        | Configuración de columnas        |
+| `rowKey`        | `keyof T \| (row, index) => string` | `'id'`  | No        | Key único para identificar filas |
+| `rowActions`    | `RowAction<T>[]`                    | `[]`    | No        | Acciones disponibles por fila    |
+| `globalActions` | `GlobalAction<T>[]`                 | `[]`    | No        | Acciones globales en toolbar     |
 
-	// Paginación
-	pagination?: boolean | PaginationConfig;
+#### Props de Configuración
 
-	// Acciones
-	rowActions?: RowAction<T>[];
-	globalActions?: GlobalAction<T>[];
+| Prop            | Tipo                        | Default      | Requerido | Descripción                  |
+| --------------- | --------------------------- | ------------ | --------- | ---------------------------- |
+| `pagination`    | `PaginationConfig \| false` | `false`      | No        | Configuración de paginación  |
+| `searchable`    | `boolean`                   | `false`      | No        | Mostrar barra de búsqueda    |
+| `selectable`    | `boolean`                   | `false`      | No        | Habilitar selección de filas |
+| `selectionMode` | `'single' \| 'multiple'`    | `'multiple'` | No        | Modo de selección            |
 
-	// Callbacks
-	onSort?: (state: SortState) => void;
-	onFilter?: (filters: FilterState) => void;
-	onSearch?: (value: string) => void;
-	onSelectionChange?: (selectedRows: T[]) => void;
-	onRowClick?: (row: T, index: number) => void;
-	onRowDoubleClick?: (row: T, index: number) => void;
+#### Props de Personalización
 
-	// UI
-	loading?: boolean;
-	loadingComponent?: ReactNode;
-	emptyComponent?: ReactNode;
-	locale?: Partial<TableLocale>;
-	classNames?: Partial<TableClassNames>;
-	size?: "small" | "medium" | "large";
-	bordered?: boolean;
-	striped?: boolean;
-	hoverable?: boolean;
-}
-```
+| Prop               | Tipo                             | Default         | Requerido | Descripción                         |
+| ------------------ | -------------------------------- | --------------- | --------- | ----------------------------------- |
+| `loading`          | `boolean`                        | `false`         | No        | Estado de carga                     |
+| `loadingComponent` | `ReactNode`                      | Spinner         | No        | Componente de loading personalizado |
+| `emptyComponent`   | `ReactNode`                      | Default message | No        | Componente de estado vacío          |
+| `locale`           | `TableLocale`                    | Spanish         | No        | Textos personalizados (i18n)        |
+| `classNames`       | `TableClassNames`                | -               | No        | Clases CSS personalizadas           |
+| `bordered`         | `boolean`                        | `false`         | No        | Mostrar bordes                      |
+| `striped`          | `boolean`                        | `false`         | No        | Filas con rayas alternas            |
+| `hoverable`        | `boolean`                        | `true`          | No        | Hover en filas                      |
+| `size`             | `'small' \| 'medium' \| 'large'` | `'medium'`      | No        | Tamaño de la tabla                  |
+| `stickyHeader`     | `boolean`                        | `false`         | No        | Header fijo al hacer scroll         |
+| `maxHeight`        | `string \| number`               | -               | No        | Altura máxima (activa scroll)       |
+
+#### Callbacks
+
+| Evento              | Payload                            | Descripción            |
+| ------------------- | ---------------------------------- | ---------------------- |
+| `onSort`            | `SortState`                        | Cambio de ordenamiento |
+| `onFilter`          | `FilterState`                      | Cambio de filtros      |
+| `onSearch`          | `string`                           | Cambio de búsqueda     |
+| `onSelectionChange` | `T[]`                              | Cambio de selección    |
+| `onRowClick`        | `(row: T, index: number)`          | Click en fila          |
+| `onRowDoubleClick`  | `(row: T, index: number)`          | Doble click en fila    |
+| `onPageChange`      | `(page: number, pageSize: number)` | Cambio de página       |
+
+Ver [types.ts](../src/components/BetterTable/types.ts) para definición completa de tipos.
 
 #### Ejemplo de Uso
 
@@ -72,6 +79,104 @@ interface BetterTableProps<T extends TableData> {
     }
   ]}
 />
+```
+
+---
+
+### Column (Configuración de Columna)
+
+Define la configuración de cada columna de la tabla.
+
+#### Props
+
+| Prop         | Tipo                                                      | Default    | Requerido | Descripción                                     |
+| ------------ | --------------------------------------------------------- | ---------- | --------- | ----------------------------------------------- |
+| `id`         | `string`                                                  | -          | Sí        | Identificador único de la columna               |
+| `accessor`   | `keyof T \| string`                                       | -          | Sí        | Key para acceder al dato (soporta dot notation) |
+| `header`     | `string`                                                  | -          | Sí        | Texto visible en el header                      |
+| `type`       | `'string' \| 'number' \| 'boolean' \| 'date' \| 'custom'` | `'string'` | No        | Tipo de dato para filtrado                      |
+| `cell`       | `(value, row, rowIndex) => ReactNode`                     | -          | No        | Render personalizado de celda                   |
+| `headerCell` | `(column) => ReactNode`                                   | -          | No        | Render personalizado de header                  |
+| `sortable`   | `boolean`                                                 | `true`     | No        | ¿Columna ordenable?                             |
+| `filterable` | `boolean`                                                 | `true`     | No        | ¿Columna filtrable?                             |
+| `width`      | `string \| number`                                        | `'auto'`   | No        | Ancho de columna                                |
+| `align`      | `'left' \| 'center' \| 'right'`                           | `'left'`   | No        | Alineación del contenido                        |
+| `hidden`     | `boolean`                                                 | `false`    | No        | Columna oculta                                  |
+
+#### Ejemplo
+
+```typescript
+const columns: Column<User>[] = [
+	{ id: "name", accessor: "name", header: "Nombre", sortable: true },
+	{ id: "email", accessor: "profile.email", header: "Email" }, // dot notation
+	{
+		id: "status",
+		accessor: "active",
+		header: "Estado",
+		type: "boolean",
+		cell: (value) => (value ? "✅ Activo" : "❌ Inactivo"),
+	},
+];
+```
+
+---
+
+### RowAction (Acción de Fila)
+
+Define acciones disponibles para cada fila.
+
+#### Props
+
+| Prop           | Tipo                                            | Default       | Requerido          | Descripción                         |
+| -------------- | ----------------------------------------------- | ------------- | ------------------ | ----------------------------------- |
+| `id`           | `string`                                        | -             | Sí                 | Identificador único                 |
+| `label`        | `string`                                        | -             | Sí                 | Etiqueta de la acción               |
+| `icon`         | `ReactNode`                                     | -             | No                 | Icono (string, emoji, o componente) |
+| `mode`         | `'callback' \| 'modal' \| 'link'`               | -             | Sí                 | Modo de ejecución                   |
+| `onClick`      | `(row, rowIndex) => void`                       | -             | Si mode='callback' | Callback de acción                  |
+| `modalContent` | `React.ComponentType`                           | -             | Si mode='modal'    | Componente para modal               |
+| `href`         | `string \| (row) => string`                     | -             | Si mode='link'     | URL de destino                      |
+| `visible`      | `(row) => boolean`                              | `() => true`  | No                 | Visibilidad condicional             |
+| `disabled`     | `(row) => boolean`                              | `() => false` | No                 | Deshabilitar condicionalmente       |
+| `variant`      | `'default' \| 'primary' \| 'danger' \| 'ghost'` | `'default'`   | No                 | Variante visual                     |
+
+#### Ejemplo con Modos
+
+```typescript
+const rowActions: RowAction<User>[] = [
+	// Modo callback
+	{
+		id: "edit",
+		label: "Editar",
+		icon: "✏️",
+		mode: "callback",
+		onClick: (row) => console.log("Edit", row),
+	},
+	// Modo modal
+	{
+		id: "details",
+		label: "Ver detalles",
+		mode: "modal",
+		modalContent: UserDetailsModal,
+	},
+	// Modo link
+	{
+		id: "profile",
+		label: "Ver perfil",
+		mode: "link",
+		href: (row) => `/users/${row.id}`,
+	},
+	// Con visibilidad condicional
+	{
+		id: "delete",
+		label: "Eliminar",
+		mode: "callback",
+		variant: "danger",
+		onClick: (row) => handleDelete(row),
+		visible: (row) => row.canDelete,
+		disabled: (row) => row.isProtected,
+	},
+];
 ```
 
 ---

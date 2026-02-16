@@ -98,6 +98,56 @@ graph TD
     K --> L[TableHeader]
     K --> M[TableBody]
     K --> N[TablePagination]
+```
+
+## 🏛️ Jerarquía de Componentes
+
+```mermaid
+graph TD
+    A[BetterTable] --> B[TableProvider]
+    B --> C[TableToolbar]
+    B --> D[Table]
+    B --> E[TableCards]
+    B --> F[TablePagination]
+
+    C --> C1[Search Input]
+    C --> C2[Global Actions]
+    C --> C3[Selection Counter]
+
+    D --> D1[TableHeader]
+    D --> D2[TableBody]
+
+    D1 --> D1a[TableHeaderCell]
+    D2 --> D2a[TableRow]
+    D2a --> D2b[TableCell]
+    D2a --> D2c[TableActions]
+
+    E --> E1[TableCard]
+    E1 --> E1a[Card Actions]
+
+    D2c --> G[TableModal]
+```
+
+## 🔄 Estados del Sistema
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle: Inicialización
+
+    Idle --> Filtering: Usuario filtra
+    Filtering --> Idle: Filtros aplicados
+
+    Idle --> Searching: Usuario busca
+    Searching --> Idle: Búsqueda aplicada
+
+    Idle --> Sorting: Click en header
+    Sorting --> Idle: Datos ordenados
+
+    Idle --> Loading: Prop loading=true
+    Loading --> Idle: loading=false
+
+    Idle --> Empty: Sin datos
+    Empty --> Idle: Datos disponibles
     K --> O[TableToolbar]
     K --> P[TableCards - Mobile]
 ```
