@@ -4,7 +4,7 @@
 export { BetterTable, default } from "./components";
 
 // Types - Re-export from types.ts
-export { defaultLocale } from "./types";
+export { defaultLocale, locales } from "./types";
 export type {
 	BetterTableProps,
 	Column,
@@ -16,6 +16,7 @@ export type {
 	TableClassNames,
 	TableLocale,
 	TableData,
+	LocaleKey,
 } from "./types";
 
 // Hooks (for advanced usage)

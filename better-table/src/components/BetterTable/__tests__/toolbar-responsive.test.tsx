@@ -66,11 +66,11 @@ describe("BetterTable - Toolbar Responsive (mobile)", () => {
 		);
 
 		// Should show search toggle button, not the input
-		const toggleBtn = screen.getByRole("button", { name: /buscar/i });
+		const toggleBtn = screen.getByRole("button", { name: /search/i });
 		expect(toggleBtn).toBeInTheDocument();
 
 		// Search input should NOT be visible initially
-		expect(screen.queryByPlaceholderText(/buscar/i)).not.toBeInTheDocument();
+		expect(screen.queryByPlaceholderText(/search/i)).not.toBeInTheDocument();
 	});
 
 	it("expande búsqueda al hacer click en el icono", async () => {
@@ -85,11 +85,11 @@ describe("BetterTable - Toolbar Responsive (mobile)", () => {
 			/>
 		);
 
-		const toggleBtn = screen.getByRole("button", { name: /buscar/i });
+		const toggleBtn = screen.getByRole("button", { name: /search/i });
 		await user.click(toggleBtn);
 
 		// Now the search input should be visible
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		expect(searchInput).toBeInTheDocument();
 	});
 
@@ -106,16 +106,16 @@ describe("BetterTable - Toolbar Responsive (mobile)", () => {
 		);
 
 		// Expand search
-		const toggleBtn = screen.getByRole("button", { name: /buscar/i });
+		const toggleBtn = screen.getByRole("button", { name: /search/i });
 		await user.click(toggleBtn);
 
 		// Should show close button
-		const closeBtn = screen.getByRole("button", { name: /close search/i });
+		const closeBtn = screen.getByRole("button", { name: /clear search/i });
 		await user.click(closeBtn);
 
 		// Search input gone, toggle button back
-		expect(screen.queryByPlaceholderText(/buscar/i)).not.toBeInTheDocument();
-		expect(screen.getByRole("button", { name: /buscar/i })).toBeInTheDocument();
+		expect(screen.queryByPlaceholderText(/search/i)).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
 	});
 
 	it("muestra acciones globales como icon-only en móvil", () => {

@@ -29,7 +29,7 @@ describe("BetterTable - Search Debounce", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Juan");
 
 		// Input value updates immediately
@@ -55,7 +55,7 @@ describe("BetterTable - Search Debounce", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Juan");
 
 		// Advance past the debounce
@@ -85,7 +85,7 @@ describe("BetterTable - Search Debounce", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 
 		// Type "J" then wait 200ms (less than debounce)
 		await user.type(searchInput, "J");
@@ -132,7 +132,7 @@ describe("BetterTable - Search Debounce", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Juan");
 
 		// Let debounce fire so data is filtered
@@ -168,7 +168,7 @@ describe("BetterTable - Search Debounce", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Juan");
 
 		// With debounce=0, filtering is immediate

@@ -173,7 +173,7 @@ describe("BetterTable - Selección múltiple para acciones", () => {
 		await user.click(checkboxes[2]);
 		await user.click(checkboxes[3]);
 
-		expect(screen.getByText(/3 seleccionado/i)).toBeInTheDocument();
+		expect(screen.getByText(/3 selected/i)).toBeInTheDocument();
 	});
 
 	it("permite deseleccionar todo con el botón de limpiar", async () => {
@@ -192,7 +192,7 @@ describe("BetterTable - Selección múltiple para acciones", () => {
 		const checkboxes = screen.getAllByRole("checkbox");
 		await user.click(checkboxes[0]); // Select all
 
-		const clearButton = screen.getByText(/deseleccionar/i);
+		const clearButton = screen.getByText(/deselect/i);
 		await user.click(clearButton);
 
 		expect(mockSelectionChange).toHaveBeenLastCalledWith([]);

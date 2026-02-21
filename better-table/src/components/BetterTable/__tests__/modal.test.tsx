@@ -76,7 +76,7 @@ describe("BetterTable - Modal onClose", () => {
 
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 
-		const closeX = screen.getByLabelText("Close modal");
+		const closeX = screen.getByLabelText(/close/i);
 		await user.click(closeX);
 
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();

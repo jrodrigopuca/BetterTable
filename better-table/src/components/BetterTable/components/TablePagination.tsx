@@ -115,7 +115,7 @@ export function TablePagination() {
           className="bt-pagination-btn"
           onClick={prevPage}
           disabled={!hasPrevPage}
-          aria-label="Previous page"
+          aria-label={locale.previousPage}
           type="button"
         >
           ←
@@ -149,7 +149,7 @@ export function TablePagination() {
           className="bt-pagination-btn"
           onClick={nextPage}
           disabled={!hasNextPage}
-          aria-label="Next page"
+          aria-label={locale.nextPage}
           type="button"
         >
           →
@@ -165,7 +165,7 @@ export function TablePagination() {
             max={totalPages}
             defaultValue={page}
             onKeyDown={handleQuickJump}
-            aria-label="Jump to page"
+            aria-label={locale.jumpToPage}
           />
         </div>
       </div>

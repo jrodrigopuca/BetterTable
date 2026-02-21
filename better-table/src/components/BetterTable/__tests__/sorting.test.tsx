@@ -17,7 +17,7 @@ describe("BetterTable - Ordenamiento", () => {
 			/>
 		);
 
-		const sortButtons = screen.getAllByLabelText(/ordenar/i);
+		const sortButtons = screen.getAllByLabelText(/sort/i);
 		const nameSortButton = sortButtons[0];
 		await user.click(nameSortButton);
 

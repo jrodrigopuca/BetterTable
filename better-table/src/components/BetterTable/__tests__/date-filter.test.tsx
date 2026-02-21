@@ -35,7 +35,7 @@ const columns: Column<Event>[] = [
  * Helper: opens the filter panel by clicking the "Filtrar por" toggle button.
  */
 async function openFilterPanel(user: ReturnType<typeof userEvent.setup>) {
-	const toggleBtn = screen.getByRole("button", { name: /filtrar por/i });
+	const toggleBtn = screen.getByRole("button", { name: /filter by/i });
 	await user.click(toggleBtn);
 }
 
@@ -53,8 +53,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 
 		await openFilterPanel(user);
 
-		const fromInput = screen.getByLabelText(/desde fecha/i);
-		const toInput = screen.getByLabelText(/hasta fecha/i);
+		const fromInput = screen.getByLabelText(/from fecha/i);
+		const toInput = screen.getByLabelText(/to fecha/i);
 
 		expect(fromInput).toBeInTheDocument();
 		expect(toInput).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 
 		await openFilterPanel(user);
 
-		const fromInput = screen.getByLabelText(/desde fecha/i);
+		const fromInput = screen.getByLabelText(/from fecha/i);
 		await user.clear(fromInput);
 		await user.type(fromInput, "2025-06-01");
 
@@ -105,7 +105,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 
 		await openFilterPanel(user);
 
-		const toInput = screen.getByLabelText(/hasta fecha/i);
+		const toInput = screen.getByLabelText(/to fecha/i);
 		await user.clear(toInput);
 		await user.type(toInput, "2025-03-31");
 
@@ -132,8 +132,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 
 		await openFilterPanel(user);
 
-		const fromInput = screen.getByLabelText(/desde fecha/i);
-		const toInput = screen.getByLabelText(/hasta fecha/i);
+		const fromInput = screen.getByLabelText(/from fecha/i);
+		const toInput = screen.getByLabelText(/to fecha/i);
 
 		await user.clear(fromInput);
 		await user.type(fromInput, "2025-03-01");
@@ -164,7 +164,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 
 		await openFilterPanel(user);
 
-		const fromInput = screen.getByLabelText(/desde fecha/i);
+		const fromInput = screen.getByLabelText(/from fecha/i);
 
 		// Apply filter
 		await user.clear(fromInput);

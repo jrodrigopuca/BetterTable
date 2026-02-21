@@ -163,31 +163,109 @@ export interface TableLocale {
 	dateTo?: string;
 	selectAll?: string;
 	deselectAll?: string;
+	moreActions?: string;
+	clearSearch?: string;
+	closeModal?: string;
+	previousPage?: string;
+	nextPage?: string;
+	jumpToPage?: string;
+	details?: string;
 }
 
 /**
- * Locale por defecto
+ * Locale por defecto (Inglés)
  */
-export const defaultLocale: TableLocale = {
-	search: "Buscar",
-	searchPlaceholder: "Buscar...",
-	noData: "No hay datos",
-	loading: "Cargando...",
-	page: "Página",
-	of: "de",
-	items: "elementos",
-	selected: "seleccionados",
-	rowsPerPage: "Filas por página",
-	actions: "Acciones",
-	sortAsc: "Ordenar ascendente",
-	sortDesc: "Ordenar descendente",
-	filterBy: "Filtrar por",
-	clearFilters: "Limpiar filtros",
-	dateFrom: "Desde",
-	dateTo: "Hasta",
-	selectAll: "Seleccionar todo",
-	deselectAll: "Deseleccionar todo",
+export const defaultLocale: Required<TableLocale> = {
+	search: "Search",
+	searchPlaceholder: "Search...",
+	noData: "No data",
+	loading: "Loading...",
+	page: "Page",
+	of: "of",
+	items: "items",
+	selected: "selected",
+	rowsPerPage: "Rows per page",
+	actions: "Actions",
+	sortAsc: "Sort ascending",
+	sortDesc: "Sort descending",
+	filterBy: "Filter by",
+	clearFilters: "Clear filters",
+	dateFrom: "From",
+	dateTo: "To",
+	selectAll: "Select all",
+	deselectAll: "Deselect all",
+	moreActions: "More actions",
+	clearSearch: "Clear search",
+	closeModal: "Close",
+	previousPage: "Previous page",
+	nextPage: "Next page",
+	jumpToPage: "Go to page",
+	details: "Details",
 };
+
+/**
+ * Locales predefinidos
+ */
+export const locales = {
+	en: defaultLocale,
+	es: {
+		search: "Buscar",
+		searchPlaceholder: "Buscar...",
+		noData: "No hay datos",
+		loading: "Cargando...",
+		page: "Página",
+		of: "de",
+		items: "elementos",
+		selected: "seleccionados",
+		rowsPerPage: "Filas por página",
+		actions: "Acciones",
+		sortAsc: "Ordenar ascendente",
+		sortDesc: "Ordenar descendente",
+		filterBy: "Filtrar por",
+		clearFilters: "Limpiar filtros",
+		dateFrom: "Desde",
+		dateTo: "Hasta",
+		selectAll: "Seleccionar todo",
+		deselectAll: "Deseleccionar todo",
+		moreActions: "Más acciones",
+		clearSearch: "Limpiar búsqueda",
+		closeModal: "Cerrar",
+		previousPage: "Página anterior",
+		nextPage: "Página siguiente",
+		jumpToPage: "Ir a página",
+		details: "Detalles",
+	} satisfies Required<TableLocale>,
+	pt: {
+		search: "Pesquisar",
+		searchPlaceholder: "Pesquisar...",
+		noData: "Sem dados",
+		loading: "Carregando...",
+		page: "Página",
+		of: "de",
+		items: "itens",
+		selected: "selecionados",
+		rowsPerPage: "Linhas por página",
+		actions: "Ações",
+		sortAsc: "Ordenar ascendente",
+		sortDesc: "Ordenar descendente",
+		filterBy: "Filtrar por",
+		clearFilters: "Limpar filtros",
+		dateFrom: "De",
+		dateTo: "Até",
+		selectAll: "Selecionar tudo",
+		deselectAll: "Desselecionar tudo",
+		moreActions: "Mais ações",
+		clearSearch: "Limpar pesquisa",
+		closeModal: "Fechar",
+		previousPage: "Página anterior",
+		nextPage: "Próxima página",
+		jumpToPage: "Ir para página",
+		details: "Detalhes",
+	} satisfies Required<TableLocale>,
+} as const;
+
+/** Claves de locales predefinidos */
+export type LocaleKey = keyof typeof locales;
 
 /**
  * Props principales del componente BetterTable
@@ -269,8 +347,8 @@ export interface BetterTableProps<T extends TableData = TableData> {
 		row?: CSSProperties;
 		cell?: CSSProperties;
 	};
-	/** Textos personalizados */
-	locale?: TableLocale;
+	/** Textos personalizados (preset: 'en' | 'es' | 'pt', o parcial para override) */
+	locale?: LocaleKey | TableLocale;
 
 	// === Características ===
 	/** Header fijo al hacer scroll */

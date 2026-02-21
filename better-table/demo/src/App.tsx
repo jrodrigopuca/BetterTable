@@ -289,6 +289,7 @@ function App() {
 				data={products}
 				columns={columns}
 				rowKey="id"
+				locale="es"
 				rowActions={rowActions}
 				globalActions={globalActions}
 				pagination={{

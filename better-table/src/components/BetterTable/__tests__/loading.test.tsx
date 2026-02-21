@@ -15,7 +15,7 @@ describe("BetterTable - Estados de carga", () => {
 			/>
 		);
 
-		expect(screen.getByText(/cargando|loading/i)).toBeInTheDocument();
+		expect(screen.getByText(/loading/i)).toBeInTheDocument();
 	});
 
 	it("usa componente de carga personalizado", () => {

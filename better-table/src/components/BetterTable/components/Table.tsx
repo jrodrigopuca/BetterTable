@@ -3,6 +3,7 @@ import {
   BetterTableProps,
   TableData,
   defaultLocale,
+  locales,
   PaginationConfig,
 } from '../types';
 import { TableProvider, TableContextValue } from '../context';
@@ -109,7 +110,11 @@ function BetterTableInner<T extends TableData>(
 
   // Merge locale with defaults
   const locale = useMemo(
-    () => ({ ...defaultLocale, ...userLocale }),
+    () => {
+      const base = typeof userLocale === 'string' ? locales[userLocale] : defaultLocale;
+      const overrides = typeof userLocale === 'object' ? userLocale : {};
+      return { ...base, ...overrides };
+    },
     [userLocale]
   );
 

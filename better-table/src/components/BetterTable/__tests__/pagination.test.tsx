@@ -32,7 +32,7 @@ describe("BetterTable - Paginación", () => {
 			/>
 		);
 
-		const nextButton = screen.getByRole("button", { name: /siguiente|next|›/i });
+		const nextButton = screen.getByRole("button", { name: /next|›/i });
 		await user.click(nextButton);
 
 		const table = withinTable(container);
@@ -52,7 +52,7 @@ describe("BetterTable - Paginación", () => {
 			/>
 		);
 
-		const sizeSelect = screen.getByRole("combobox", { name: /por página|page size/i });
+		const sizeSelect = screen.getByRole("combobox", { name: /rows per page/i });
 		if (sizeSelect) {
 			await user.selectOptions(sizeSelect, "20");
 
@@ -71,6 +71,6 @@ describe("BetterTable - Paginación", () => {
 			/>
 		);
 
-		expect(screen.getByText(/1.*10.*50|página.*1/i)).toBeInTheDocument();
+		expect(screen.getByText(/1.*10.*50|page.*1/i)).toBeInTheDocument();
 	});
 });

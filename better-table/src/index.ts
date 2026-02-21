@@ -9,7 +9,7 @@
 export { BetterTable } from "./components/BetterTable";
 
 // Types
-export { defaultLocale } from "./components/BetterTable/types";
+export { defaultLocale, locales } from "./components/BetterTable/types";
 export type {
 	BetterTableProps,
 	Column,
@@ -22,6 +22,7 @@ export type {
 	TableClassNames,
 	TableLocale,
 	TableData,
+	LocaleKey,
 } from "./components/BetterTable/types";
 
 // Hooks (for advanced usage)

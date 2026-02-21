@@ -9,7 +9,7 @@ import type { User } from "./helpers/test-data";
  * Helper: opens the filter panel by clicking the "Filtrar por" toggle button.
  */
 async function openFilterPanel(user: ReturnType<typeof userEvent.setup>) {
-	const toggleBtn = screen.getByRole("button", { name: /filtrar por/i });
+	const toggleBtn = screen.getByRole("button", { name: /filter by/i });
 	await user.click(toggleBtn);
 }
 
@@ -27,7 +27,7 @@ describe("BetterTable - Filtrado de datos", () => {
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
+		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
 		const nameFilter = filterInputs[0];
 
 		await user.type(nameFilter, "Juan");
@@ -50,7 +50,7 @@ describe("BetterTable - Filtrado de datos", () => {
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
+		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
 		const ageFilter = filterInputs[1];
 
 		await user.clear(ageFilter);
@@ -100,7 +100,7 @@ describe("BetterTable - Filtrado de datos", () => {
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
+		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
 		await user.type(filterInputs[0], "a");
 
 		const rows = screen.getAllByRole("row");
@@ -121,7 +121,7 @@ describe("BetterTable - Filtrado de datos", () => {
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
+		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
 		await user.type(filterInputs[0], "zzzzzzz");
 
 		expect(screen.getByText("Sin resultados")).toBeInTheDocument();

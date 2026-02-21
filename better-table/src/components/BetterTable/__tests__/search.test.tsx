@@ -20,7 +20,7 @@ describe("BetterTable - Búsqueda global", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Juan");
 
 		const rows = screen.getAllByRole("row");
@@ -43,7 +43,7 @@ describe("BetterTable - Búsqueda global", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Maria");
 
 		const rows = screen.getAllByRole("row");
@@ -65,7 +65,7 @@ describe("BetterTable - Búsqueda global", () => {
 			/>
 		);
 
-		const searchInput = screen.getByPlaceholderText(/buscar/i);
+		const searchInput = screen.getByPlaceholderText(/search/i);
 		await user.type(searchInput, "Juan");
 
 		const clearButton = screen.getByRole("button", { name: /clear search/i });

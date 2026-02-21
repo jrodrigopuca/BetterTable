@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useTableContext } from '../context';
 
 export function TableModal() {
-  const { isModalOpen, modalContent, closeModal } = useTableContext();
+  const { isModalOpen, modalContent, closeModal, locale } = useTableContext();
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -47,11 +47,11 @@ export function TableModal() {
     >
       <div className="bt-modal bt-modal-md">
         <div className="bt-modal-header">
-          <h2 className="bt-modal-title">Detalles</h2>
+          <h2 className="bt-modal-title">{locale.details}</h2>
           <button
             className="bt-modal-close"
             onClick={closeModal}
-            aria-label="Close modal"
+            aria-label={locale.closeModal}
             type="button"
           >
             ✕

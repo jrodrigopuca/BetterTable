@@ -99,7 +99,7 @@ function TableToolbarInner<T extends TableData>() {
               <button
                 className="bt-search-clear"
                 onClick={isMobile ? toggleSearch : clearSearch}
-                aria-label={isMobile && !searchValue ? 'Close search' : 'Clear search'}
+                aria-label={locale.clearSearch}
                 type="button"
               >
                 ✕
