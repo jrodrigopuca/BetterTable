@@ -1,13 +1,39 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import { BetterTable } from "../index";
 import type { Column, RowAction } from "../types";
 import { mockUsers, fewUsers, userColumns } from "./helpers/test-data";
 import type { User } from "./helpers/test-data";
 
+/**
+ * Mock matchMedia to simulate mobile viewport so cards render
+ * instead of the table (useMediaQuery drives conditional rendering).
+ */
+const matchMediaMock = vi.fn().mockImplementation((query: string) => ({
+	matches: query === "(max-width: 640px)",
+	media: query,
+	onchange: null,
+	addListener: vi.fn(),
+	removeListener: vi.fn(),
+	addEventListener: vi.fn(),
+	removeEventListener: vi.fn(),
+	dispatchEvent: vi.fn(),
+}));
+
+beforeAll(() => {
+	Object.defineProperty(window, "matchMedia", {
+		writable: true,
+		value: matchMediaMock,
+	});
+});
+
+afterAll(() => {
+	vi.restoreAllMocks();
+});
+
 describe("BetterTable - Responsive Card Layout", () => {
-	it("renderiza tanto tabla como cards en el DOM", () => {
+	it("renderiza solo cards en modo móvil (no tabla)", () => {
 		const { container } = render(
 			<BetterTable<User>
 				data={fewUsers}
@@ -16,8 +42,8 @@ describe("BetterTable - Responsive Card Layout", () => {
 			/>
 		);
 
-		expect(container.querySelector(".bt-table")).toBeInTheDocument();
 		expect(container.querySelector(".bt-cards")).toBeInTheDocument();
+		expect(container.querySelector(".bt-table")).not.toBeInTheDocument();
 	});
 
 	it("renderiza una card por cada fila de datos", () => {

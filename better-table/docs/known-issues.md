@@ -157,37 +157,24 @@ La tabla puede experimentar lag al renderizar más de 10,000 filas sin virtualiz
 
 ### 4. Renderizado Dual de DOM (Table + Cards)
 
-**Estado:** 🟡 Limitación Conocida
+**Estado:** ✅ Resuelto
 
 **Descripción:**
-El diseño responsive renderiza simultáneamente `<table>` (desktop) y `<TableCards>` (móvil) en el DOM. CSS oculta uno según el viewport, pero ambos existen en memoria.
+El diseño responsive renderizaba simultáneamente `<table>` (desktop) y `<TableCards>` (móvil) en el DOM. CSS ocultaba uno según el viewport, pero ambos existían en memoria.
 
-**Archivo:** `Table.tsx` líneas 378-394
+**Solución Implementada:**
 
-```tsx
-{/* Ambos se renderizan siempre */}
-<table className={clsx('bt-table', classNames.table)} ...>
-  <TableHeader />
-  {hasData ? <TableBody /> : <TableEmpty />}
-</table>
-{hasData && <TableCards />}
-```
+- Se creó el hook `useMediaQuery` (`hooks/useMediaQuery.ts`) que escucha `matchMedia` de forma SSR-safe
+- `Table.tsx` ahora renderiza condicionalmente solo el layout activo (`isMobile ? <TableCards /> : <table>`)
+- Se eliminaron las reglas CSS de `display: none` que togglaban entre tabla/cards
+- Se agregó animación `@keyframes bt-fade-in` (150ms) para transiciones suaves entre layouts
+- Mock global de `matchMedia` en `setupTests.ts` para compatibilidad con jsdom
 
-**Impacto:**
+**Resultado:**
 
-- Cada fila se renderiza **dos veces** (como `<tr>` y como `<div>` card)
-- Renderers custom (`cell()`) se ejecutan dos veces por fila
-- Duplica nodos DOM y consumo de memoria
-
-**Workaround:**
-Usar paginación con `pageSize` reducido para limitar el impacto.
-
-**Solución Planeada:**
-
-- [ ] Renderizado condicional basado en `matchMedia` en JS
-- [ ] O usar un hook `useMediaQuery` para renderizar solo el layout activo
-
-**Estimación:** v1.2.0
+- Cada fila se renderiza **una sola vez** (solo el layout visible)
+- Renderers custom (`cell()`) se ejecutan una sola vez por fila
+- DOM más liviano, menor consumo de memoria
 
 ---
 

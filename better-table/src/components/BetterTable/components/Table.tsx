@@ -11,6 +11,7 @@ import { useTableFilter } from '../hooks/useTableFilter';
 import { useTablePagination } from '../hooks/useTablePagination';
 import { useTableSelection } from '../hooks/useTableSelection';
 import { useTableSearch } from '../hooks/useTableSearch';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import {
   TableHeader,
   TableBody,
@@ -354,6 +355,7 @@ function BetterTableInner<T extends TableData>(
   );
 
   const hasData = paginatedData.length > 0;
+  const isMobile = useMediaQuery('(max-width: 640px)');
 
   return (
     <TableProvider value={contextValue}>
@@ -375,21 +377,23 @@ function BetterTableInner<T extends TableData>(
           className='bt-table-wrapper'
           style={{ maxHeight }}
         >
-          {/* Tabla tradicional (visible en desktop/tablet via CSS) */}
-          <table
-            className={clsx('bt-table', classNames.table)}
-            style={styles.table}
-            role="grid"
-            aria-label={ariaLabel}
-            aria-describedby={ariaDescribedBy}
-            aria-busy={loading}
-          >
-            <TableHeader />
-            {hasData ? <TableBody /> : <TableEmpty />}
-          </table>
-
-          {/* Cards (visible solo en móvil via CSS) */}
-          {hasData && <TableCards />}
+          {isMobile ? (
+            /* Cards (móvil) */
+            hasData && <TableCards />
+          ) : (
+            /* Tabla tradicional (desktop/tablet) */
+            <table
+              className={clsx('bt-table', classNames.table)}
+              style={styles.table}
+              role="grid"
+              aria-label={ariaLabel}
+              aria-describedby={ariaDescribedBy}
+              aria-busy={loading}
+            >
+              <TableHeader />
+              {hasData ? <TableBody /> : <TableEmpty />}
+            </table>
+          )}
 
           <TableLoadingOverlay show={loading && hasData} />
         </div>
