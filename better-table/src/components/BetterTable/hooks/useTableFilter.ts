@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { FilterState, TableData, Column } from "../types";
+import { FilterState, TableData, Column, DateFilterRange } from "../types";
 import { filterData } from "../utils/filterData";
 
 interface UseTableFilterOptions<T extends TableData> {
@@ -15,7 +15,7 @@ interface UseTableFilterReturn<T extends TableData> {
 	filters: FilterState;
 	setFilter: (
 		columnId: string,
-		value: string | number | boolean | null,
+		value: string | number | boolean | DateFilterRange | null,
 	) => void;
 	clearFilters: () => void;
 	clearFilter: (columnId: string) => void;
@@ -36,10 +36,18 @@ export function useTableFilter<T extends TableData>({
 	const filters = controlledFilters ?? internalFilters;
 
 	const setFilter = useCallback(
-		(columnId: string, value: string | number | boolean | null) => {
+		(columnId: string, value: string | number | boolean | DateFilterRange | null) => {
 			const newFilters = { ...filters };
 
-			if (value === null || value === undefined || value === "") {
+			// For date ranges, remove if both from and to are empty
+			if (value !== null && typeof value === 'object' && 'from' in value) {
+				const range = value as DateFilterRange;
+				if (!range.from && !range.to) {
+					delete newFilters[columnId];
+				} else {
+					newFilters[columnId] = value;
+				}
+			} else if (value === null || value === undefined || value === "") {
 				delete newFilters[columnId];
 			} else {
 				newFilters[columnId] = value;

@@ -12,6 +12,7 @@ interface Product {
 	stock: number;
 	category: string;
 	isAvailable: boolean;
+	addedDate: string;
 	details?: {
 		brand?: string;
 		sku?: string;
@@ -19,18 +20,18 @@ interface Product {
 }
 
 const initialProducts: Product[] = [
-	{ id: 1, name: "MacBook Pro 14\"", price: 1999, stock: 15, category: "Laptops", isAvailable: true, details: { brand: "Apple", sku: "MBP14-2024" } },
-	{ id: 2, name: "iPhone 15 Pro", price: 1199, stock: 42, category: "Phones", isAvailable: true, details: { brand: "Apple", sku: "IP15P-256" } },
-	{ id: 3, name: "Galaxy S24 Ultra", price: 1299, stock: 28, category: "Phones", isAvailable: true, details: { brand: "Samsung", sku: "GS24U-512" } },
-	{ id: 4, name: "Dell XPS 15", price: 1599, stock: 8, category: "Laptops", isAvailable: true, details: { brand: "Dell", sku: "XPS15-2024" } },
-	{ id: 5, name: "AirPods Pro 2", price: 249, stock: 120, category: "Audio", isAvailable: true, details: { brand: "Apple", sku: "APP2-USB" } },
-	{ id: 6, name: "Sony WH-1000XM5", price: 349, stock: 35, category: "Audio", isAvailable: true, details: { brand: "Sony", sku: "WH1000XM5" } },
-	{ id: 7, name: "iPad Pro 12.9\"", price: 1099, stock: 0, category: "Tablets", isAvailable: false, details: { brand: "Apple", sku: "IPADP129" } },
-	{ id: 8, name: "Galaxy Tab S9", price: 849, stock: 22, category: "Tablets", isAvailable: true, details: { brand: "Samsung", sku: "GTS9-256" } },
-	{ id: 9, name: "Surface Pro 9", price: 1299, stock: 5, category: "Tablets", isAvailable: true, details: { brand: "Microsoft", sku: "SP9-256" } },
-	{ id: 10, name: "Pixel 8 Pro", price: 999, stock: 18, category: "Phones", isAvailable: true, details: { brand: "Google", sku: "PX8P-256" } },
-	{ id: 11, name: "ThinkPad X1 Carbon", price: 1849, stock: 12, category: "Laptops", isAvailable: true, details: { brand: "Lenovo", sku: "X1C-G11" } },
-	{ id: 12, name: "Magic Keyboard", price: 299, stock: 0, category: "Accessories", isAvailable: false, details: { brand: "Apple", sku: "MK-TOUCH" } },
+	{ id: 1, name: "MacBook Pro 14\"", price: 1999, stock: 15, category: "Laptops", isAvailable: true, addedDate: "2025-01-15", details: { brand: "Apple", sku: "MBP14-2024" } },
+	{ id: 2, name: "iPhone 15 Pro", price: 1199, stock: 42, category: "Phones", isAvailable: true, addedDate: "2025-03-22", details: { brand: "Apple", sku: "IP15P-256" } },
+	{ id: 3, name: "Galaxy S24 Ultra", price: 1299, stock: 28, category: "Phones", isAvailable: true, addedDate: "2025-02-10", details: { brand: "Samsung", sku: "GS24U-512" } },
+	{ id: 4, name: "Dell XPS 15", price: 1599, stock: 8, category: "Laptops", isAvailable: true, addedDate: "2025-06-01", details: { brand: "Dell", sku: "XPS15-2024" } },
+	{ id: 5, name: "AirPods Pro 2", price: 249, stock: 120, category: "Audio", isAvailable: true, addedDate: "2024-11-05", details: { brand: "Apple", sku: "APP2-USB" } },
+	{ id: 6, name: "Sony WH-1000XM5", price: 349, stock: 35, category: "Audio", isAvailable: true, addedDate: "2024-09-18", details: { brand: "Sony", sku: "WH1000XM5" } },
+	{ id: 7, name: "iPad Pro 12.9\"", price: 1099, stock: 0, category: "Tablets", isAvailable: false, addedDate: "2025-04-30", details: { brand: "Apple", sku: "IPADP129" } },
+	{ id: 8, name: "Galaxy Tab S9", price: 849, stock: 22, category: "Tablets", isAvailable: true, addedDate: "2025-05-14", details: { brand: "Samsung", sku: "GTS9-256" } },
+	{ id: 9, name: "Surface Pro 9", price: 1299, stock: 5, category: "Tablets", isAvailable: true, addedDate: "2025-07-20", details: { brand: "Microsoft", sku: "SP9-256" } },
+	{ id: 10, name: "Pixel 8 Pro", price: 999, stock: 18, category: "Phones", isAvailable: true, addedDate: "2025-08-03", details: { brand: "Google", sku: "PX8P-256" } },
+	{ id: 11, name: "ThinkPad X1 Carbon", price: 1849, stock: 12, category: "Laptops", isAvailable: true, addedDate: "2025-10-12", details: { brand: "Lenovo", sku: "X1C-G11" } },
+	{ id: 12, name: "Magic Keyboard", price: 299, stock: 0, category: "Accessories", isAvailable: false, addedDate: "2026-01-08", details: { brand: "Apple", sku: "MK-TOUCH" } },
 ];
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
 			stock: 0,
 			category: "Sin categoría",
 			isAvailable: true,
+			addedDate: new Date().toISOString().split('T')[0],
 			details: { brand: "", sku: "" }
 		};
 		setProducts(prev => [...prev, newProduct]);
@@ -129,6 +131,14 @@ function App() {
 			accessor: "isAvailable",
 			header: "Disponible",
 			type: "boolean",
+			filterable: true,
+		},
+		{
+			id: "addedDate",
+			accessor: "addedDate",
+			header: "Fecha agregado",
+			type: "date",
+			sortable: true,
 			filterable: true,
 		},
 	];

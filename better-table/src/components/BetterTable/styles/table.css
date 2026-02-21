@@ -122,6 +122,18 @@
   color: var(--bt-color-text-disabled);
 }
 
+/* Date range filter */
+.bt-filter-date-range {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bt-filter-date {
+  font-size: var(--bt-font-size-xs, 11px);
+  padding: 2px 4px;
+}
+
 /* Body */
 .bt-tbody {
   background-color: var(--bt-color-background);

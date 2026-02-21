@@ -105,10 +105,18 @@ export interface SortState {
 }
 
 /**
+ * Rango de fechas para filtros tipo date
+ */
+export interface DateFilterRange {
+	from?: string;
+	to?: string;
+}
+
+/**
  * Estado de filtros
  */
 export interface FilterState {
-	[columnId: string]: string | number | boolean | null;
+	[columnId: string]: string | number | boolean | DateFilterRange | null;
 }
 
 /**
@@ -151,6 +159,8 @@ export interface TableLocale {
 	sortDesc?: string;
 	filterBy?: string;
 	clearFilters?: string;
+	dateFrom?: string;
+	dateTo?: string;
 	selectAll?: string;
 	deselectAll?: string;
 }
@@ -173,6 +183,8 @@ export const defaultLocale: TableLocale = {
 	sortDesc: "Ordenar descendente",
 	filterBy: "Filtrar por",
 	clearFilters: "Limpiar filtros",
+	dateFrom: "Desde",
+	dateTo: "Hasta",
 	selectAll: "Seleccionar todo",
 	deselectAll: "Deseleccionar todo",
 };

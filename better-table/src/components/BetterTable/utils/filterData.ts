@@ -1,5 +1,17 @@
-import { TableData, Column, FilterState } from "../types";
+import { TableData, Column, FilterState, DateFilterRange } from "../types";
 import { getValueFromPath } from "./getValueFromPath";
+
+/**
+ * Normaliza un valor a Date para comparación
+ */
+function toDate(value: unknown): Date | null {
+	if (value instanceof Date) return value;
+	if (typeof value === 'string' || typeof value === 'number') {
+		const d = new Date(value);
+		return isNaN(d.getTime()) ? null : d;
+	}
+	return null;
+}
 
 /**
  * Filtra un array de datos basado en múltiples filtros de columna
@@ -44,13 +56,36 @@ export function filterData<T extends TableData>(
 				case "number":
 					return String(cellValue) === String(filterValue);
 
-				case "date":
-					// Comparación básica de fechas (mismo día)
-					if (cellValue instanceof Date && filterValue) {
-						const filterDate = new Date(String(filterValue));
-						return cellValue.toDateString() === filterDate.toDateString();
+				case "date": {
+					const cellDate = toDate(cellValue);
+					if (!cellDate) return false;
+
+					// Date range filter { from?, to? }
+					if (filterValue && typeof filterValue === 'object' && ('from' in filterValue || 'to' in filterValue)) {
+						const range = filterValue as DateFilterRange;
+						if (range.from) {
+							const fromDate = toDate(range.from);
+							if (fromDate && cellDate < fromDate) return false;
+						}
+						if (range.to) {
+							const toDateVal = toDate(range.to);
+							if (toDateVal) {
+								// Include the entire "to" day
+								const endOfDay = new Date(toDateVal);
+								endOfDay.setHours(23, 59, 59, 999);
+								if (cellDate > endOfDay) return false;
+							}
+						}
+						return true;
+					}
+
+					// Legacy: single date value comparison
+					const filterDate = toDate(filterValue);
+					if (filterDate) {
+						return cellDate.toDateString() === filterDate.toDateString();
 					}
 					return String(cellValue).includes(String(filterValue));
+				}
 
 				case "string":
 				default:

@@ -1,6 +1,6 @@
 import React, { useCallback, KeyboardEvent } from 'react';
 import { useTableContext } from '../context';
-import { TableData, Column } from '../types';
+import { TableData, Column, DateFilterRange } from '../types';
 import clsx from 'clsx';
 
 interface TableHeaderCellProps<T extends TableData> {
@@ -41,6 +41,15 @@ function TableHeaderCellInner<T extends TableData>({
       }
     },
     [column.id, column.type, setFilter]
+  );
+
+  const handleDateFilterChange = useCallback(
+    (field: 'from' | 'to', value: string) => {
+      const current = (filters[column.id] as DateFilterRange) ?? {};
+      const newRange: DateFilterRange = { ...current, [field]: value || undefined };
+      setFilter(column.id, newRange);
+    },
+    [column.id, filters, setFilter]
   );
 
   const handleKeyDown = useCallback(
@@ -90,6 +99,30 @@ function TableHeaderCellInner<T extends TableData>({
           <option value="true">✅</option>
           <option value="false">❌</option>
         </select>
+      );
+    }
+
+    if (column.type === 'date') {
+      const dateRange = (filterValue as DateFilterRange) ?? {};
+      return (
+        <div className="bt-filter-date-range">
+          <input
+            type="date"
+            className="bt-filter-input bt-filter-date"
+            value={dateRange.from ?? ''}
+            onChange={(e) => handleDateFilterChange('from', e.target.value)}
+            aria-label={`${locale.dateFrom} ${column.header}`}
+            title={locale.dateFrom}
+          />
+          <input
+            type="date"
+            className="bt-filter-input bt-filter-date"
+            value={dateRange.to ?? ''}
+            onChange={(e) => handleDateFilterChange('to', e.target.value)}
+            aria-label={`${locale.dateTo} ${column.header}`}
+            title={locale.dateTo}
+          />
+        </div>
       );
     }
 

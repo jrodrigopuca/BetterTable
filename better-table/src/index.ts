@@ -18,6 +18,7 @@ export type {
 	PaginationConfig,
 	SortState,
 	FilterState,
+	DateFilterRange,
 	TableClassNames,
 	TableLocale,
 	TableData,

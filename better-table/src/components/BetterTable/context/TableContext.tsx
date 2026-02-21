@@ -29,7 +29,7 @@ export interface TableContextValue<T extends TableData = TableData> {
 
   // Filter
   filters: FilterState;
-  setFilter: (columnId: string, value: string | number | boolean | null) => void;
+  setFilter: (columnId: string, value: string | number | boolean | import('../types').DateFilterRange | null) => void;
   clearFilters: () => void;
 
   // Search
