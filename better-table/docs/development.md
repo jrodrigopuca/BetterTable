@@ -65,12 +65,15 @@ better-table/
 │   │       │   ├── TableRow.tsx
 │   │       │   ├── TableCell.tsx
 │   │       │   ├── TableHeaderCell.tsx
+│   │       │   ├── TableFilterPanel.tsx  # Panel colapsable de filtros
 │   │       │   ├── TablePagination.tsx
 │   │       │   ├── TableToolbar.tsx
 │   │       │   ├── TableActions.tsx
 │   │       │   ├── TableModal.tsx
 │   │       │   ├── TableLoading.tsx
 │   │       │   ├── TableEmpty.tsx
+│   │       │   ├── TableCards.tsx    # Vista cards (mobile)
+│   │       │   ├── TableCard.tsx     # Card individual
 │   │       │   └── index.ts
 │   │       │
 │   │       ├── context/             # State management
@@ -93,15 +96,38 @@ better-table/
 │   │       │
 │   │       ├── styles/              # CSS
 │   │       │   ├── variables.css    # CSS variables
-│   │       │   ├── table.css        # Tabla principal
-│   │       │   ├── toolbar.css
+│   │       │   ├── table.css        # Tabla + filter panel
+│   │       │   ├── toolbar.css      # Toolbar + filter toggle
 │   │       │   ├── pagination.css
 │   │       │   ├── modal.css
 │   │       │   └── index.css        # Import all
 │   │       │
-│   │       ├── types.ts             # TypeScript types
+│   │       ├── __tests__/           # Tests (18 archivos, 87 tests)
+│   │       │   ├── helpers/
+│   │       │   │   └── test-data.ts
+│   │       │   ├── rendering.test.tsx
+│   │       │   ├── sorting.test.tsx
+│   │       │   ├── filtering.test.tsx
+│   │       │   ├── date-filter.test.tsx
+│   │       │   ├── search.test.tsx
+│   │       │   ├── search-debounce.test.tsx
+│   │       │   ├── pagination.test.tsx
+│   │       │   ├── selection.test.tsx
+│   │       │   ├── row-actions.test.tsx
+│   │       │   ├── action-overflow.test.tsx
+│   │       │   ├── modal.test.tsx
+│   │       │   ├── loading.test.tsx
+│   │       │   ├── custom-rendering.test.tsx
+│   │       │   ├── nested-data.test.tsx
+│   │       │   ├── callbacks.test.tsx
+│   │       │   ├── accessibility.test.tsx
+│   │       │   ├── responsive-cards.test.tsx
+│   │       │   └── toolbar-responsive.test.tsx
+│   │       │
+│   │       ├── types.ts             # TypeScript types + locales
 │   │       ├── index.ts             # Public exports
-│   │       └── BetterTable.test.tsx # Tests
+│   │       ├── PLAN.md
+│   │       └── README.md
 │   │
 │   ├── index.ts                     # Entry point
 │   ├── styles.ts                    # CSS export
@@ -119,8 +145,11 @@ better-table/
 │   ├── README.md
 │   ├── architecture.md
 │   ├── components.md
+│   ├── development.md
 │   ├── interaction-flows.md
-│   └── known-issues.md
+│   ├── known-issues.md
+│   ├── RESPONSIVE_PLAN.md
+│   └── ROADMAP.md
 │
 ├── dist/                            # Build output (gitignored)
 │

@@ -173,6 +173,33 @@ sequenceDiagram
     TableBody->>User: Muestra resultados
 ```
 
+### Debounce
+
+La búsqueda aplica un debounce configurable para evitar re-renders excesivos:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant SearchInput
+    participant Debounce
+    participant useTableSearch
+
+    User->>SearchInput: Escribe "pro"
+    SearchInput->>Debounce: Inicia timer (300ms default)
+    User->>SearchInput: Escribe "prod"
+    SearchInput->>Debounce: Reinicia timer
+    Note over Debounce: 300ms sin typing...
+    Debounce->>useTableSearch: handleSearch("prod")
+    useTableSearch->>useTableSearch: searchData()
+```
+
+Configurable via `searchDebounceMs` prop:
+
+```tsx
+<BetterTable searchDebounceMs={500} /> // 500ms debounce
+<BetterTable searchDebounceMs={0} />   // Sin debounce
+```
+
 ### Comportamiento
 
 ```typescript
@@ -193,6 +220,74 @@ columns
 | UI      | Input único        | Input por columna |
 | Lógica  | OR entre columnas  | AND entre filtros |
 | Case    | Insensitive        | Depende del tipo  |
+
+---
+
+## 🎛️ 3b. Panel de Filtros (FilterPanel)
+
+### Flujo de Interacción
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant TableToolbar
+    participant FilterPanel
+    participant useTableFilter
+    participant TableBody
+
+    User->>TableToolbar: Click botón "Filtros"
+    TableToolbar->>FilterPanel: Toggle panel (expand/collapse)
+    FilterPanel->>User: Muestra inputs de filtro
+
+    User->>FilterPanel: Escribe filtro en columna X
+    FilterPanel->>useTableFilter: setFilter(columnId, value)
+    useTableFilter->>useTableFilter: filterData()
+    useTableFilter->>TableBody: Datos filtrados
+    TableBody->>User: Muestra resultados
+    FilterPanel->>TableToolbar: Badge actualizado (N filtros)
+```
+
+### Tipos de Input en FilterPanel
+
+| Tipo columna | Input renderizado | Lógica de filtro            |
+| ------------ | ----------------- | --------------------------- |
+| `string`     | `<input text>`    | contains (case-insensitive) |
+| `number`     | `<input number>`  | exact match                 |
+| `boolean`    | `<select>`        | true / false / all          |
+| `date`       | From + To inputs  | rango de fechas             |
+
+### Filtro de Fecha (DateRange)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant FilterPanel
+    participant useTableFilter
+    participant filterData
+
+    User->>FilterPanel: Selecciona "Desde: 2024-01-01"
+    FilterPanel->>useTableFilter: setFilter(col, { from: '2024-01-01' })
+    User->>FilterPanel: Selecciona "Hasta: 2024-06-30"
+    FilterPanel->>useTableFilter: setFilter(col, { from: '2024-01-01', to: '2024-06-30' })
+    useTableFilter->>filterData: Aplica rango
+    filterData->>filterData: from <= value <= to
+    filterData->>User: Filas dentro del rango
+```
+
+### Clear Filters
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant FilterPanel
+    participant useTableFilter
+
+    User->>FilterPanel: Click "Clear filters"
+    FilterPanel->>useTableFilter: clearFilters()
+    useTableFilter->>useTableFilter: filters = {}
+    useTableFilter->>User: Datos sin filtrar
+    FilterPanel->>User: Badge removido
+```
 
 ---
 
@@ -300,6 +395,33 @@ sequenceDiagram
     Browser->>User: Nueva página
 ```
 
+### Action Overflow (maxVisibleActions)
+
+Cuando hay más acciones que `maxVisibleActions`, las extras se agrupan en un dropdown:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant TableActions
+    participant OverflowDropdown
+
+    Note over TableActions: maxVisibleActions=2, 4 acciones definidas
+    TableActions->>User: Muestra 2 botones + "More actions" ⋮
+    User->>TableActions: Click "More actions"
+    TableActions->>OverflowDropdown: Abre dropdown (portal)
+    OverflowDropdown->>User: Muestra acciones 3 y 4
+    Note over OverflowDropdown: Acciones danger separadas con divisor
+    User->>OverflowDropdown: Click acción
+    OverflowDropdown->>TableActions: Ejecuta onClick
+    OverflowDropdown->>User: Cierra dropdown
+```
+
+El dropdown se cierra al:
+
+- Click en una acción
+- Click fuera del dropdown
+- Presionar Escape
+
 ---
 
 ## 🌐 6. Acciones Globales
@@ -396,14 +518,16 @@ const paginatedData = data.slice(startIndex, endIndex);
 ```mermaid
 graph TD
     A[Props: data] --> B[useTableFilter]
-    B --> C[Datos filtrados]
+    B --> B2[HeaderCell filters + FilterPanel filters]
+    B2 --> C[Datos filtrados]
     C --> D[useTableSearch]
-    D --> E[Datos buscados]
+    D --> D2[Debounce → searchData]
+    D2 --> E[Datos buscados]
     E --> F[useTableSort]
     F --> G[Datos ordenados]
     G --> H[useTablePagination]
     H --> I[Datos página actual]
-    I --> J[TableBody]
+    I --> J[TableBody / TableCards]
     J --> K[Render]
 ```
 
@@ -599,19 +723,67 @@ sequenceDiagram
 
 ---
 
+## 🌍 13. Resolución de Locale (i18n)
+
+### Flujo de Resolución
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant BetterTable
+    participant Table
+    participant Components
+
+    User->>BetterTable: locale prop
+
+    alt locale es string ("es", "pt", "en")
+        Table->>Table: base = locales[locale]
+    else locale es objeto TableLocale
+        Table->>Table: base = defaultLocale
+        Table->>Table: merge con overrides del objeto
+    else locale no proporcionado
+        Table->>Table: base = defaultLocale (English)
+    end
+
+    Table->>Table: mergedLocale = useMemo({...base, ...overrides})
+    Table->>Components: locale via TableContext
+    Components->>User: Labels en idioma correcto
+```
+
+### Presets Disponibles
+
+| Key  | Idioma    | Ejemplo labels                      |
+| ---- | --------- | ----------------------------------- |
+| `en` | English   | Search, Clear search, Sort          |
+| `es` | Español   | Buscar, Limpiar búsqueda, Ordenar   |
+| `pt` | Português | Pesquisar, Limpar pesquisa, Ordenar |
+
+### Override Parcial
+
+```tsx
+// Usa español pero personaliza un label
+<BetterTable locale={{ ...locales.es, search: "Filtrar..." }} />
+```
+
+---
+
 ## 📊 Resumen de Interacciones
 
-| Acción del Usuario | Componentes Involucrados | Hooks Usados       | Resultado           |
-| ------------------ | ------------------------ | ------------------ | ------------------- |
-| Click en header    | TableHeaderCell          | useTableSort       | Datos ordenados     |
-| Filtrar columna    | TableHeaderCell          | useTableFilter     | Datos filtrados     |
-| Buscar             | TableToolbar             | useTableSearch     | Datos buscados      |
-| Seleccionar fila   | TableRow                 | useTableSelection  | Fila seleccionada   |
-| Seleccionar todo   | TableHeader              | useTableSelection  | Todas seleccionadas |
-| Acción de fila     | TableActions             | -                  | Callback/Modal/Link |
-| Acción global      | TableToolbar             | -                  | Procesa selección   |
-| Cambiar página     | TablePagination          | useTablePagination | Nueva página        |
-| Cambiar pageSize   | TablePagination          | useTablePagination | Más/menos filas     |
+| Acción del Usuario     | Componentes Involucrados      | Hooks Usados       | Resultado             |
+| ---------------------- | ----------------------------- | ------------------ | --------------------- |
+| Click en header        | TableHeaderCell               | useTableSort       | Datos ordenados       |
+| Filtrar columna        | TableHeaderCell               | useTableFilter     | Datos filtrados       |
+| Filtrar en FilterPanel | TableFilterPanel              | useTableFilter     | Datos filtrados       |
+| Filtrar por fecha      | TableFilterPanel (date range) | useTableFilter     | Datos en rango        |
+| Buscar (con debounce)  | TableToolbar                  | useTableSearch     | Datos buscados        |
+| Seleccionar fila       | TableRow                      | useTableSelection  | Fila seleccionada     |
+| Seleccionar todo       | TableHeader                   | useTableSelection  | Todas seleccionadas   |
+| Acción de fila         | TableActions                  | -                  | Callback/Modal/Link   |
+| Action overflow (⋮)    | TableActionOverflow           | -                  | Dropdown con acciones |
+| Acción global          | TableToolbar                  | -                  | Procesa selección     |
+| Cambiar página         | TablePagination               | useTablePagination | Nueva página          |
+| Cambiar pageSize       | TablePagination               | useTablePagination | Más/menos filas       |
+| Cambiar locale         | Table (useMemo)               | -                  | Labels actualizados   |
 
 ---
 

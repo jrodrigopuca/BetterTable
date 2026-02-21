@@ -87,6 +87,8 @@ function TableToolbarInner<T extends TableData>() {
           <div className={clsx('bt-search', isMobile && 'bt-search-mobile')}>
             <span className="bt-search-icon">🔍</span>
             <input
+              id="bt-search"
+              name="bt-search"
               ref={searchInputRef}
               type="text"
               className="bt-search-input"

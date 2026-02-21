@@ -68,6 +68,8 @@ function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>)
       {selectable && (
         <td className="bt-td bt-checkbox-cell">
           <input
+            id={`bt-row-select-${rowIndex}`}
+            name={`bt-row-select-${rowIndex}`}
             type="checkbox"
             className="bt-checkbox"
             checked={selected}

@@ -4,14 +4,15 @@ A modern, flexible, and fully typed data table component for React.
 
 ## ✨ Features
 
-- 🔍 **Search & Filter** - Global search and per-column filtering
-- 📊 **Sorting** - Multi-type sorting (string, number, date, boolean)
-- ✅ **Selection** - Single or multiple row selection
-- 📱 **Responsive** - Card layout for mobile devices
-- 🎬 **Row Actions** - Callbacks, modals, and links
-- 📄 **Pagination** - Configurable page sizes
-- 🎨 **Customizable** - CSS variables and custom renderers
-- 💪 **TypeScript** - Full type safety with generics
+- 🔍 **Search & Filter** — Global search with debounce + Filter Panel with per-column controls
+- 📊 **Sorting** — Multi-type sorting (string, number, date, boolean)
+- ✅ **Selection** — Single or multiple row selection with global actions
+- 📱 **Responsive** — Card layout for mobile, collapsible toolbar
+- 🎬 **Row Actions** — Callbacks, modals, links + overflow menu
+- 📄 **Pagination** — Configurable page sizes, quick jumper
+- 🌐 **i18n** — Preset locales (EN/ES/PT) + custom overrides
+- 🎨 **Customizable** — CSS variables, custom renderers, class overrides
+- 💪 **TypeScript** — Full type safety with generics
 
 ## 📚 Documentation
 
@@ -43,9 +44,9 @@ const MyTable = () => {
 	];
 
 	const columns = [
-		{ id: "name", accessor: "name", header: "Nombre" },
+		{ id: "name", accessor: "name", header: "Name" },
 		{ id: "email", accessor: "email", header: "Email" },
-		{ id: "active", accessor: "active", header: "Estado", type: "boolean" },
+		{ id: "active", accessor: "active", header: "Status", type: "boolean" },
 	];
 
 	return <BetterTable data={data} columns={columns} />;
@@ -60,19 +61,20 @@ const MyTable = () => {
 	columns={columns}
 	rowKey="id"
 	searchable
+	searchDebounceMs={300}
 	selectable
 	pagination={{ pageSize: 10, showSizeChanger: true }}
 	rowActions={[
 		{
 			id: "edit",
-			label: "Editar",
+			label: "Edit",
 			icon: "✏️",
 			mode: "callback",
 			onClick: (row) => handleEdit(row),
 		},
 		{
 			id: "delete",
-			label: "Eliminar",
+			label: "Delete",
 			mode: "callback",
 			variant: "danger",
 			onClick: (row) => handleDelete(row),
@@ -81,10 +83,11 @@ const MyTable = () => {
 	globalActions={[
 		{
 			id: "export",
-			label: "Exportar",
+			label: "Export",
 			onClick: (selected, all) => exportData(all),
 		},
 	]}
+	maxVisibleActions={3}
 	onSelectionChange={(selected) => console.log("Selected:", selected)}
 />
 ```
@@ -93,14 +96,14 @@ const MyTable = () => {
 
 ```tsx
 const columns = [
-	{ id: "name", accessor: "name", header: "Nombre" },
+	{ id: "name", accessor: "name", header: "Name" },
 	{
 		id: "status",
 		accessor: "active",
-		header: "Estado",
+		header: "Status",
 		cell: (value) => (
 			<span className={value ? "badge-success" : "badge-danger"}>
-				{value ? "✅ Activo" : "❌ Inactivo"}
+				{value ? "✅ Active" : "❌ Inactive"}
 			</span>
 		),
 	},
@@ -112,6 +115,34 @@ const columns = [
 	},
 ];
 ```
+
+### Internationalization (i18n)
+
+BetterTable defaults to English. Choose a preset locale or provide custom overrides:
+
+```tsx
+// Spanish preset
+<BetterTable data={data} columns={columns} locale="es" />
+
+// Portuguese preset
+<BetterTable data={data} columns={columns} locale="pt" />
+
+// Custom overrides (merged over English defaults)
+<BetterTable
+	data={data}
+	columns={columns}
+	locale={{ noData: "Nothing to show", search: "Find" }}
+/>
+```
+
+Available presets: `en` (default), `es`, `pt`. You can also import them directly:
+
+```tsx
+import { locales, defaultLocale } from "better-table";
+// locales.en, locales.es, locales.pt
+```
+
+````
 
 ## 🎨 Customization
 
@@ -125,7 +156,7 @@ const columns = [
 	--bt-selected-bg: #dbeafe;
 	--bt-font-size-medium: 14px;
 }
-```
+````
 
 ### Custom Class Names
 
@@ -148,16 +179,21 @@ See [Components Documentation](./docs/components.md) for complete API reference.
 
 ### Main Props
 
-| Prop         | Type                        | Description              |
-| ------------ | --------------------------- | ------------------------ |
-| `data`       | `T[]`                       | Array of data to display |
-| `columns`    | `Column<T>[]`               | Column configuration     |
-| `rowKey`     | `keyof T \| Function`       | Unique key for rows      |
-| `searchable` | `boolean`                   | Enable search toolbar    |
-| `selectable` | `boolean`                   | Enable row selection     |
-| `pagination` | `PaginationConfig \| false` | Pagination settings      |
-| `rowActions` | `RowAction<T>[]`            | Per-row actions          |
-| `loading`    | `boolean`                   | Loading state            |
+| Prop                | Type                        | Default | Description                        |
+| ------------------- | --------------------------- | ------- | ---------------------------------- |
+| `data`              | `T[]`                       | -       | Array of data to display           |
+| `columns`           | `Column<T>[]`               | -       | Column configuration               |
+| `rowKey`            | `keyof T \| Function`       | `'id'`  | Unique key for rows                |
+| `searchable`        | `boolean`                   | `false` | Enable search toolbar              |
+| `searchDebounceMs`  | `number`                    | `300`   | Search debounce delay (ms)         |
+| `searchColumns`     | `string[]`                  | all     | Columns to search (by accessor)    |
+| `selectable`        | `boolean`                   | auto    | Enable row selection               |
+| `pagination`        | `PaginationConfig \| false` | `false` | Pagination settings                |
+| `rowActions`        | `RowAction<T>[]`            | `[]`    | Per-row actions                    |
+| `globalActions`     | `GlobalAction<T>[]`         | `[]`    | Global toolbar actions             |
+| `maxVisibleActions` | `number`                    | `3`     | Inline actions before overflow (⋯) |
+| `locale`            | `LocaleKey \| TableLocale`  | `'en'`  | Locale preset or custom strings    |
+| `loading`           | `boolean`                   | `false` | Loading state                      |
 
 ## 📄 License
 

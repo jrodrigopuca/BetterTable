@@ -95,8 +95,10 @@ export function TablePagination() {
       <div className="bt-pagination-controls">
         {showSizeChanger && (
           <div className="bt-page-size">
-            <span className="bt-page-size-label">{locale.rowsPerPage}:</span>
+            <label className="bt-page-size-label" htmlFor="bt-page-size">{locale.rowsPerPage}:</label>
             <select
+              id="bt-page-size"
+              name="bt-page-size"
               className="bt-page-size-select"
               value={pageSize}
               onChange={handlePageSizeChange}
@@ -156,8 +158,10 @@ export function TablePagination() {
         </button>
 
         <div className="bt-quick-jumper">
-          <span className="bt-quick-jumper-label">{locale.page}:</span>
+          <label className="bt-quick-jumper-label" htmlFor="bt-quick-jumper">{locale.page}:</label>
           <input
+            id="bt-quick-jumper"
+            name="bt-quick-jumper"
             key={page}
             type="number"
             className="bt-quick-jumper-input"

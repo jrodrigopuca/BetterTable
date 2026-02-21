@@ -36,6 +36,8 @@ function TableHeaderInner<T extends TableData>() {
           <th className="bt-th bt-checkbox-cell">
             {selectionMode === 'multiple' && (
               <input
+                id="bt-select-all"
+                name="bt-select-all"
                 type="checkbox"
                 className="bt-checkbox"
                 checked={isAllSelected}

@@ -134,6 +134,8 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
       <div className="bt-card-header">
         {selectable && (
           <input
+            id={`bt-card-select-${rowIndex}`}
+            name={`bt-card-select-${rowIndex}`}
             type="checkbox"
             className="bt-checkbox"
             checked={selected}

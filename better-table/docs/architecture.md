@@ -106,13 +106,17 @@ graph TD
 graph TD
     A[BetterTable] --> B[TableProvider]
     B --> C[TableToolbar]
+    B --> C2[TableFilterPanel]
     B --> D[Table]
     B --> E[TableCards]
     B --> F[TablePagination]
 
     C --> C1[Search Input]
-    C --> C2[Global Actions]
+    C --> C1b[Filter Toggle]
+    C --> C2a[Global Actions]
     C --> C3[Selection Counter]
+
+    C2 --> C2b[FilterField per column]
 
     D --> D1[TableHeader]
     D --> D2[TableBody]
@@ -126,6 +130,7 @@ graph TD
     E1 --> E1a[Card Actions]
 
     D2c --> G[TableModal]
+    D2c --> H[ActionOverflow Menu]
 ```
 
 ## 🔄 Estados del Sistema
@@ -161,6 +166,31 @@ stateDiagram-v2
 5. **Paginación** → `useTablePagination` divide en páginas
 6. **Renderizado** → Componentes UI muestran datos finales
 
+## 🧱 Sistema de Internacionalización (i18n)
+
+### Locales Preconfigurados
+
+BetterTable incluye locales predefinidos para Inglés, Español y Portugués:
+
+```typescript
+import { locales, defaultLocale } from "better-table";
+// locales.en, locales.es, locales.pt
+```
+
+### Flujo de Resolución de Locale
+
+```
+Prop locale          Resultado
+─────────────────    ────────────────────────────────────────
+undefined            → defaultLocale (English)
+'en'                 → locales.en
+'es'                 → locales.es
+'pt'                 → locales.pt
+{ noData: "..." }    → { ...defaultLocale, noData: "..." }
+```
+
+Todas las keys del `TableLocale` (20 strings) cubren: búsqueda, filtrado, paginación, selección, acciones, ordenamiento y modales.
+
 ## 🎨 Arquitectura de Estilos
 
 ### Sistema de Clases CSS
@@ -176,6 +206,9 @@ bt-tr             → Row
 bt-td, bt-th      → Cells
 bt-pagination     → Paginación
 bt-toolbar        → Barra de herramientas
+bt-filter-panel   → Panel de filtros
+bt-overflow-*     → Dropdown de overflow de acciones
+bt-cards          → Vista de cards (móvil)
 ```
 
 ### Variables CSS
@@ -191,6 +224,19 @@ Customización mediante CSS variables:
 --bt-font-size-medium
 --bt-font-size-large
 ```
+
+### CSS Isolation (Aislamiento de Estilos)
+
+Para evitar que estilos externos rompan BetterTable, el CSS incluye un **bloque de aislamiento** al inicio de `table.css`:
+
+```
+1. Box-sizing reset ─── .bt-container *, ::before, ::after { box-sizing: border-box }
+2. Typography base ──── .bt-container { font-family, font-size, color, line-height }
+3. Element resets ───── .bt-container :where(table, th, td, button, input, select, h2, a)
+4. Portal isolation ─── .bt-overflow-menu { font-family, box-sizing, element resets }
+```
+
+Los resets usan `:where()` para mantener especificidad (0,1,0) — superan selectores de elemento (`table {}`, `button {}`) sin pisar las reglas `.bt-*` propias. El overflow menu se aísla por separado porque usa `createPortal(menu, document.body)`.
 
 ## � Arquitectura Responsive
 
@@ -286,6 +332,8 @@ import { useTableSort, sortData } from "better-table";
 1. **Unit Tests**: Hooks y utilidades (funciones puras)
 2. **Integration Tests**: Componentes con Context
 3. **E2E Tests**: Flujos completos de usuario
+
+**Coverage actual:** 18 archivos de test, 87 tests
 
 ### Testing Library
 

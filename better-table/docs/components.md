@@ -38,7 +38,7 @@ El componente raíz que orquesta toda la funcionalidad de la tabla.
 | `loading`          | `boolean`                        | `false`         | No        | Estado de carga                     |
 | `loadingComponent` | `ReactNode`                      | Spinner         | No        | Componente de loading personalizado |
 | `emptyComponent`   | `ReactNode`                      | Default message | No        | Componente de estado vacío          |
-| `locale`           | `TableLocale`                    | Spanish         | No        | Textos personalizados (i18n)        |
+| `locale`           | `LocaleKey \| TableLocale`       | `'en'`          | No        | Locale preset or custom overrides   |
 | `classNames`       | `TableClassNames`                | -               | No        | Clases CSS personalizadas           |
 | `bordered`         | `boolean`                        | `false`         | No        | Mostrar bordes                      |
 | `striped`          | `boolean`                        | `false`         | No        | Filas con rayas alternas            |
@@ -46,6 +46,19 @@ El componente raíz que orquesta toda la funcionalidad de la tabla.
 | `size`             | `'small' \| 'medium' \| 'large'` | `'medium'`      | No        | Tamaño de la tabla                  |
 | `stickyHeader`     | `boolean`                        | `false`         | No        | Header fijo al hacer scroll         |
 | `maxHeight`        | `string \| number`               | -               | No        | Altura máxima (activa scroll)       |
+
+#### Props de Búsqueda y Filtrado
+
+| Prop               | Tipo       | Default | Requerido | Descripción                           |
+| ------------------ | ---------- | ------- | --------- | ------------------------------------- |
+| `searchDebounceMs` | `number`   | `300`   | No        | Delay de debounce para búsqueda (ms)  |
+| `searchColumns`    | `string[]` | todas   | No        | Columnas a buscar (por accessor o id) |
+
+#### Props de Acciones
+
+| Prop                | Tipo     | Default | Requerido | Descripción                            |
+| ------------------- | -------- | ------- | --------- | -------------------------------------- |
+| `maxVisibleActions` | `number` | `3`     | No        | Acciones inline antes del overflow (⋯) |
 
 #### Callbacks
 
@@ -212,13 +225,12 @@ Renderiza el header de la tabla con capacidades de ordenamiento y filtrado.
 
 **Ubicación:** `src/components/BetterTable/components/TableHeaderCell.tsx`
 
-Celda individual del header con controles de ordenamiento y filtrado.
+Celda individual del header con controles de ordenamiento.
 
 #### Features
 
 - Botones de ordenamiento (↑↓)
-- Input de filtro integrado
-- Soporte para render personalizado
+- Soporte para render personalizado (`headerCell`)
 - Indicadores visuales de estado activo
 
 #### Estados
@@ -226,6 +238,40 @@ Celda individual del header con controles de ordenamiento y filtrado.
 - **Idle**: Sin ordenamiento
 - **Ascending**: Ordenamiento ascendente (↑)
 - **Descending**: Ordenamiento descendente (↓)
+
+---
+
+### TableFilterPanel
+
+**Ubicación:** `src/components/BetterTable/components/TableFilterPanel.tsx`
+
+Panel colapsable de filtros para todas las columnas filtrables.
+
+#### Features
+
+- Se activa desde un botón "Filter by" en el toolbar
+- Grid layout responsive (1 columna en móvil, multi-columna en desktop)
+- Inputs de texto/número para columnas string/number
+- Select para columnas booleanas
+- Date range (desde/hasta) para columnas tipo `date`
+- Badge con conteo de filtros activos
+- Botón "Clear filters" cuando hay filtros activos
+
+#### Estructura
+
+```
+┌─────────────────────────────────────────────┐
+│ [▼ Filter by (2)]                           │  ← Toolbar toggle
+├─────────────────────────────────────────────┤
+│ Name          │ Age           │ Active      │
+│ [__________]  │ [__________]  │ [▼ —     ]  │  ← Filter Panel
+│                                             │
+│ Date                                        │
+│ [From ____] – [To ____]                     │
+│                                             │
+│                        [Clear filters]      │
+└─────────────────────────────────────────────┘
+```
 
 ---
 
@@ -386,21 +432,30 @@ Controles de paginación.
 
 **Ubicación:** `src/components/BetterTable/components/TableToolbar.tsx`
 
-Barra de herramientas superior con búsqueda y acciones globales.
+Barra de herramientas superior con búsqueda, filtros y acciones globales.
 
 #### Features
 
-- Búsqueda global
+- Búsqueda global con debounce y botón clear
+- Botón toggle para Filter Panel (con badge de filtros activos)
 - Botones de acción global
-- Contador de selección
-- Botón clear selection
+- Contador de selección + botón deselect
+- Responsive: búsqueda colapsable, acciones icon-only en móvil
 
-#### Layout
+#### Layout Desktop
 
 ```
-┌─────────────────────────────────────────────┐
-│ [🔍 Buscar...] [Acción1] [Acción2] (3 sel.) │
-└─────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────┐
+│ [▼ Filter by] [🔍 Search...  ✕] [Action1] [Action2] 3 sel│
+└───────────────────────────────────────────────────────────┘
+```
+
+#### Layout Mobile
+
+```
+┌──────────────────────┐
+│ [▼] [🔍] [📥] [🗑️]   │
+└──────────────────────┘
 ```
 
 ---
@@ -413,10 +468,23 @@ Columna de acciones para cada fila.
 
 #### Features
 
-- Botones de acción por fila
-- Tooltips
-- Estados disabled
-- Visibilidad condicional
+- Botones de acción inline (icon-only con tooltip)
+- Overflow menu (⋯) cuando las acciones exceden `maxVisibleActions`
+- Acciones `danger` se separan al final del dropdown con separador
+- Tooltips con labels
+- Estados disabled / visibilidad condicional
+
+#### Estructura con Overflow
+
+```
+ Inline (2)     Overflow
+[👁] [✏️] [⋯]  ┌──────────────────┐
+                │ 📋 Clone          │
+                │ 📦 Archive        │
+                │ ─────────────── │
+                │ 🗑️ Delete         │  ← danger
+                └──────────────────┘
+```
 
 ---
 
@@ -444,7 +512,7 @@ Estado de carga.
 
 #### Default
 
-Spinner + texto "Cargando..."
+Spinner + texto "Loading..."
 
 #### Customizable
 
@@ -460,7 +528,7 @@ Estado vacío cuando no hay datos.
 
 #### Default
 
-Icono + texto "No hay datos disponibles"
+Icono + texto "No data"
 
 #### Customizable
 
@@ -519,8 +587,8 @@ const {
 
 - **String**: Contains (case-insensitive)
 - **Number**: Exact match o comparación
-- **Boolean**: Select dropdown
-- **Date**: Range (futuro)
+- **Boolean**: Select dropdown (✅/❌)
+- **Date**: Range picker (desde/hasta)
 
 ---
 
@@ -534,16 +602,19 @@ Hook para búsqueda global.
 
 ```typescript
 const {
-	searchValue, // string
-	searchedData, // Datos filtrados
+	searchValue, // string (valor del input, inmediato)
+	searchedData, // Datos filtrados (tras debounce)
 	handleSearch, // (value: string) => void
-	clearSearch, // () => void
-} = useTableSearch(data, columns);
+	clearSearch, // () => void (inmediato, sin debounce)
+} = useTableSearch(data, columns, { debounceMs: 300 });
 ```
 
 #### Comportamiento
 
-Busca en todas las columnas searchables (opta-in).
+- Busca en todas las columnas searchables (matchea por `col.id` o `col.accessor`)
+- El input responde al instante, el filtrado se aplica tras el debounce
+- `clearSearch()` bypasea el debounce y limpia inmediatamente
+- Configurable con `searchDebounceMs` prop (0 = instantáneo)
 
 ---
 
@@ -755,7 +826,65 @@ interface SortState {
 ### FilterState
 
 ```typescript
-type FilterState = Record<string, string | number | boolean | null>;
+type FilterState = Record<
+	string,
+	string | number | boolean | DateFilterRange | null
+>;
+```
+
+---
+
+### DateFilterRange
+
+```typescript
+interface DateFilterRange {
+	from?: string; // ISO date string (YYYY-MM-DD)
+	to?: string; // ISO date string (YYYY-MM-DD)
+}
+```
+
+---
+
+### TableLocale
+
+```typescript
+interface TableLocale {
+	search?: string;
+	searchPlaceholder?: string;
+	noData?: string;
+	loading?: string;
+	page?: string;
+	of?: string;
+	items?: string;
+	selected?: string;
+	rowsPerPage?: string;
+	actions?: string;
+	sortAsc?: string;
+	sortDesc?: string;
+	filterBy?: string;
+	clearFilters?: string;
+	dateFrom?: string;
+	dateTo?: string;
+	selectAll?: string;
+	deselectAll?: string;
+	moreActions?: string;
+	clearSearch?: string;
+	closeModal?: string;
+	previousPage?: string;
+	nextPage?: string;
+	jumpToPage?: string;
+	details?: string;
+}
+```
+
+All keys are optional. When using a preset (`'en'`, `'es'`, `'pt'`), all keys are filled. When passing a partial object, it is merged over the English defaults.
+
+---
+
+### LocaleKey
+
+```typescript
+type LocaleKey = "en" | "es" | "pt";
 ```
 
 ---

@@ -112,9 +112,13 @@ function FilterFieldInner<T extends TableData>({
   const isActive = column.type === 'date' ? isDateActive : hasValue;
 
   const renderInput = () => {
+    const fieldId = `bt-filter-${column.id}`;
+
     if (column.type === 'boolean') {
       return (
         <select
+          id={fieldId}
+          name={fieldId}
           className="bt-filter-select"
           value={
             value === null || value === undefined ? '' : String(value)
@@ -134,6 +138,8 @@ function FilterFieldInner<T extends TableData>({
       return (
         <div className="bt-filter-field-dates">
           <input
+            id={`${fieldId}-from`}
+            name={`${fieldId}-from`}
             type="date"
             className="bt-filter-input"
             value={dateRange.from ?? ''}
@@ -143,6 +149,8 @@ function FilterFieldInner<T extends TableData>({
           />
           <span className="bt-filter-field-separator">–</span>
           <input
+            id={`${fieldId}-to`}
+            name={`${fieldId}-to`}
             type="date"
             className="bt-filter-input"
             value={dateRange.to ?? ''}
@@ -156,6 +164,8 @@ function FilterFieldInner<T extends TableData>({
 
     return (
       <input
+        id={fieldId}
+        name={fieldId}
         type={column.type === 'number' ? 'number' : 'text'}
         className="bt-filter-input"
         placeholder={`${locale.filterBy}...`}
@@ -170,7 +180,7 @@ function FilterFieldInner<T extends TableData>({
 
   return (
     <div className={clsx('bt-filter-field', isActive && 'bt-filter-field-active')}>
-      <label className="bt-filter-field-label">{column.header}</label>
+      <label className="bt-filter-field-label" htmlFor={`bt-filter-${column.id}`}>{column.header}</label>
       {renderInput()}
     </div>
   );

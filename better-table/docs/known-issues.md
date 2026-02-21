@@ -15,9 +15,11 @@ Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 | Search no matchea por accessor     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
 | Card actions overflow en móvil     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
 | Toolbar no responsive en móvil     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
+| Quick Jumper desincronizado        | 🟢 Low    | -                            | ✅ Resuelto               | v1.1.1  |
+| Filtrado de columnas tipo Date     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
+| i18n hardcoded strings             | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
 | Rendimiento con >10,000 filas      | 🟡 Medium | Usar paginación reducida     | Limitación                | v1.2.0  |
-| Quick Jumper desincronizado        | 🟢 Low    | Usar botones de paginación   | Bug menor                 | v1.1.0  |
-| Filtrado de columnas tipo Date     | 🟡 Medium | Filtrado manual en padre     | Feature incompleta        | v1.3.0  |
+| CSS Conflicts (style leakage)      | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
 | Keyboard Navigation                | 🟢 Low    | Mouse/touch                  | Parcial                   | v1.3.0  |
 | Exportación de datos               | 🟡 Medium | Implementar con globalAction | No implementada           | v1.4.0  |
 | Server-Side Operations             | 🟡 Medium | Usar callbacks controlados   | Parcialmente implementada | v2.0.0  |
@@ -74,50 +76,25 @@ Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 
 ### 2. Modal onClose No Cierra el Modal
 
-**Estado:** 🔴 Bug Activo
+**Estado:** ✅ RESUELTO
 
 **Descripción:**
-Cuando una acción de fila usa `mode: 'modal'`, el callback `onClose` que recibe `modalContent` es un no-op. Los botones dentro del modal que llaman `onClose()` no cierran el modal.
+Cuando una acción de fila usa `mode: 'modal'`, el callback `onClose` que recibe `modalContent` era un no-op. Los botones dentro del modal que llamaban `onClose()` no cerraban el modal.
 
-**Archivos Afectados:**
+**Solución Implementada:**
 
-- `TableActions.tsx` línea 27: `onClose={() => { /* no-op */ }}`
-- `TableCard.tsx` línea 57: `onClose={() => {}}`
+- `TableActions.tsx` y `TableCard.tsx` ahora pasan `closeModal` del contexto como `onClose`
+- El callback `onClose()` cierra el modal correctamente desde el contenido modal
+- Test de verificación agregado
 
-**Impacto:**
-
-- Botones "Cancelar" y "Guardar" en modales de acciones no cierran el modal
-- Solo funciona cerrar con el botón X o la tecla Escape
-
-**Código del Problema:**
-
-```tsx
-// En TableActions.tsx - onClose es un no-op
-openModal(
-	<ModalContent
-		data={row}
-		onClose={() => {
-			// Modal will be closed by the Table component
-		}}
-	/>,
+**Fecha de Resolución:** Febrero 2026
+}}
+/>,
 );
-```
 
-**Fix Requerido:**
+````
 
-```tsx
-// Pasar closeModal del contexto al onClose
-const { rowActions, openModal, closeModal } = useTableContext<T>();
-
-openModal(
-	<ModalContent
-		data={row}
-		onClose={closeModal} // ← Conectar con closeModal del contexto
-	/>,
-);
-```
-
-**Severidad:** 🔴 Alta — Afecta toda acción `mode: 'modal'`
+**Fecha de Resolución:** Febrero 2026
 
 ---
 
@@ -146,7 +123,7 @@ La tabla puede experimentar lag al renderizar más de 10,000 filas sin virtualiz
     showSizeChanger: true
   }}
 />
-```
+````
 
 **Solución Planeada:**
 
@@ -217,39 +194,37 @@ El hook `useTableSearch` aceptaba `debounceMs` en tipos pero no lo implementaba.
 
 ### 6. Filtrado de Columnas Tipo Date
 
-**Estado:** 🟡 Feature Incompleta
+**Estado:** ✅ RESUELTO
 
 **Descripción:**
-Las columnas tipo `date` no tienen un filtro especializado, se tratan como strings.
+Las columnas tipo `date` no tenían un filtro especializado.
 
-**Comportamiento Actual:**
+**Solución Implementada:**
 
-```typescript
-{
-  id: 'createdAt',
-  accessor: 'createdAt',
-  type: 'date',  // ← Solo afecta display, no filtrado
-  filterable: true  // ← Input de texto genérico
-}
-```
+- `TableFilterPanel.tsx` renderiza dos inputs `type="date"` (desde/hasta) para columnas con `type: 'date'`
+- `DateFilterRange` type: `{ from?: string; to?: string }`
+- `filterData()` en `filterData.ts` soporta filtrado por rango de fechas
+- 5 tests de verificación en `date-filter.test.tsx`
 
-**Workaround:**
+**Fecha de Resolución:** Febrero 2026
 
-```typescript
-// Usar filtrado custom en el componente padre
-const [filteredData, setFilteredData] = useState(data);
+---
 
-// Filtrar antes de pasar a BetterTable
-<BetterTable data={filteredData} columns={columns} />
-```
+### 6b. Internationalization (i18n) Strings Hardcoded
 
-**Solución Planeada:**
+**Estado:** ✅ RESUELTO
 
-- [ ] DatePicker para filtrado de fechas
-- [ ] Range selector (desde/hasta)
-- [ ] Presets (hoy, esta semana, este mes)
+**Descripción:**
+8 textos estaban hardcoded en componentes sin pasar por el sistema `locale`.
 
-**Estimación:** v1.3.0
+**Solución Implementada:**
+
+- 7 nuevas keys agregadas al `TableLocale`: `moreActions`, `clearSearch`, `closeModal`, `previousPage`, `nextPage`, `jumpToPage`, `details`
+- Todos los componentes usan `locale.*` en lugar de strings hardcoded
+- Locales preconfigurados: `en` (default), `es`, `pt`
+- Prop `locale` acepta `LocaleKey | TableLocale` (preset string o objeto de overrides)
+
+**Fecha de Resolución:** Febrero 2026
 
 ---
 
@@ -480,64 +455,62 @@ Previamente algunos tipos causaban errores en strict mode. Ahora el proyecto com
 
 ### 2. CSS Conflicts
 
-**Descripción:**
-Estilos globales pueden interferir con estilos de BetterTable.
+**Estado:** ✅ RESUELTO
 
-**Conflictos Comunes:**
+**Descripción:**
+Estilos globales podían interferir con estilos de BetterTable (ej: `table { font-size: 20px }`, `* { box-sizing: content-box }`).
+
+**Solución Implementada:**
+
+El CSS ahora incluye un **bloque de aislamiento** (`CSS Isolation`) en `table.css` que:
+
+- ✅ **Box-sizing reset**: `.bt-container, .bt-container *, ::before, ::after { box-sizing: border-box }` — previene `* { box-sizing: content-box }` de romper el layout
+- ✅ **Typography baseline**: `.bt-container` establece `font-family`, `font-size`, `color`, `line-height` como base aislada
+- ✅ **Element-level resets con `:where()`**: resetea `table`, `th`, `td`, `button`, `input`, `select`, `h2`, `a` con especificidad (0,1,0) — supera selectores de elemento externos sin pisar las reglas `.bt-*` propias
+- ✅ **Portal isolation**: `.bt-overflow-menu` (portaled a `document.body`) incluye su propio baseline de tipografía, box-sizing y resets de elementos
+- ✅ Navegadores soportados: Chrome 88+, Firefox 78+, Safari 14+, Edge 88+ (`:where()` support)
+
+**Ejemplo — esto ya NO rompe BetterTable:**
 
 ```css
-/* Puede romper layout */
-* {
-	box-sizing: content-box !important;
-}
-
-/* Puede afectar tipografía */
+/* Externo: ya no afecta a BetterTable */
 table {
 	font-size: 20px;
+	border-collapse: separate;
+}
+button {
+	all: unset;
+}
+input {
+	border: none;
+}
+* {
+	box-sizing: content-box;
 }
 ```
 
-**Solución:**
+**Limitaciones restantes:**
 
-```css
-/* Aumentar especificidad */
-.bt-container .bt-table {
-	font-size: 14px !important;
-}
-```
+- Reglas externas con `!important` seguirán ganando (ej: `* { box-sizing: content-box !important }`)
+- Reglas con ID selectors (ej: `#app table { ... }`) pueden superar la especificidad
 
-**Mejor Práctica:**
-
-```typescript
-// Usar CSS Modules o Styled Components
-import styles from './MyTable.module.css';
-
-<div className={styles.wrapper}>
-  <BetterTable ... />
-</div>
-```
+**Fecha de Resolución:** Febrero 2026
 
 ---
 
 ### 6. Quick Jumper de Paginación Desincronizado
 
-**Estado:** 🟢 Bug Menor
+**Estado:** ✅ RESUELTO
 
 **Descripción:**
-El input de "saltar a página" en la paginación usa `defaultValue` (uncontrolled). Cuando el usuario navega con los botones prev/next, el input mantiene el valor antiguo.
+El input de "saltar a página" usaba `defaultValue` (uncontrolled) y no se actualizaba al navegar con los botones prev/next.
 
-**Archivo:** `TablePagination.tsx`
+**Solución Implementada:**
 
-```tsx
-<input
-	type="number"
-	defaultValue={page} // ← Uncontrolled, no se actualiza
-	onKeyDown={handleQuickJump}
-/>
-```
+- Cambiado a input controlado con `value={page}` + `onChange` handler
+- Sincroniza correctamente con la página actual
 
-**Fix Requerido:**
-Cambiar a `value={page}` con `onChange` handler (input controlado), o usar `key={page}` para forzar re-mount.
+**Fecha de Resolución:** Febrero 2026
 
 ---
 
@@ -559,8 +532,13 @@ Cambiar a `value={page}` con `onChange` handler (input controlado), o usar `key=
 - [x] Fix search matcheo por accessor
 - [x] Card actions overflow (icon-only + dropdown)
 - [x] Toolbar responsive en móvil (search colapsable, actions icon-only)
-- [x] Refactor de tests (1 archivo → 17 archivos, 82 tests)
-- [ ] Quick jumper input controlado
+- [x] Refactor de tests (1 archivo → 18 archivos, 87 tests)
+- [x] Quick jumper input controlado
+- [x] Filter Panel (botón en toolbar + panel colapsable con filtros)
+- [x] Date range filtering (desde/hasta para columnas date)
+- [x] i18n: 7 nuevas locale keys para todos los textos del componente
+- [x] Locale presets (EN/ES/PT) + prop `locale` acepta string o objeto
+- [x] CSS Isolation: aislamiento de estilos con `:where()` element resets + box-sizing
 
 ### v1.2.0 (Minor - Próximo)
 

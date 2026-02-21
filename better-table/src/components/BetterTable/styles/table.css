@@ -1,12 +1,98 @@
 /* BetterTable v2 - Main Styles */
 @import './variables.css';
 
-/* Container */
+/* ========================================
+   CSS ISOLATION — Prevent external style conflicts
+   ========================================
+   All rules below use :where() element selectors so their
+   specificity is (0,1,0) — same as .bt-container alone.
+   This means:
+     - They beat bare element selectors (table, button, etc.)
+     - They do NOT override our own .bt-* class rules
+       (which also have 0,1,0 but appear later in source order)
+   ======================================== */
+
+/* 1. Box-sizing: prevent * { box-sizing: content-box } from breaking layout */
+.bt-container,
+.bt-container *,
+.bt-container *::before,
+.bt-container *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Container baseline */
 .bt-container {
   font-family: var(--bt-font-family);
   font-size: var(--bt-font-size-md);
   color: var(--bt-color-text);
+  line-height: 1.5;
   width: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 3. Table element resets */
+.bt-container :where(table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.bt-container :where(thead, tbody, tfoot, tr) {
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  vertical-align: middle;
+}
+
+.bt-container :where(th, td) {
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* 4. Interactive element resets */
+.bt-container :where(button) {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.bt-container :where(input, select) {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+/* 5. Heading / link resets */
+.bt-container :where(h2) {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.bt-container :where(a) {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Table wrapper for scroll */
@@ -393,6 +479,30 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   padding: var(--bt-spacing-xs) 0;
   animation: bt-fade-in 120ms ease-out;
+  /* Isolation: portaled to body, needs own baseline */
+  font-family: var(--bt-font-family);
+  font-size: var(--bt-font-size-md);
+  color: var(--bt-color-text);
+  line-height: 1.5;
+}
+
+/* Box-sizing isolation for portaled overflow menu */
+.bt-overflow-menu,
+.bt-overflow-menu * {
+  box-sizing: border-box;
+}
+
+/* Element resets inside portaled overflow menu */
+.bt-overflow-menu :where(button, a) {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .bt-overflow-menu-up {
