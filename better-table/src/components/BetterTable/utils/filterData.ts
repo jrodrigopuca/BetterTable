@@ -6,7 +6,7 @@ import { getValueFromPath } from "./getValueFromPath";
  */
 function toDate(value: unknown): Date | null {
 	if (value instanceof Date) return value;
-	if (typeof value === 'string' || typeof value === 'number') {
+	if (typeof value === "string" || typeof value === "number") {
 		const d = new Date(value);
 		return isNaN(d.getTime()) ? null : d;
 	}
@@ -61,7 +61,11 @@ export function filterData<T extends TableData>(
 					if (!cellDate) return false;
 
 					// Date range filter { from?, to? }
-					if (filterValue && typeof filterValue === 'object' && ('from' in filterValue || 'to' in filterValue)) {
+					if (
+						filterValue &&
+						typeof filterValue === "object" &&
+						("from" in filterValue || "to" in filterValue)
+					) {
 						const range = filterValue as DateFilterRange;
 						if (range.from) {
 							const fromDate = toDate(range.from);

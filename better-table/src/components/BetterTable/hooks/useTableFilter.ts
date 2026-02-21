@@ -36,11 +36,14 @@ export function useTableFilter<T extends TableData>({
 	const filters = controlledFilters ?? internalFilters;
 
 	const setFilter = useCallback(
-		(columnId: string, value: string | number | boolean | DateFilterRange | null) => {
+		(
+			columnId: string,
+			value: string | number | boolean | DateFilterRange | null,
+		) => {
 			const newFilters = { ...filters };
 
 			// For date ranges, remove if both from and to are empty
-			if (value !== null && typeof value === 'object' && 'from' in value) {
+			if (value !== null && typeof value === "object" && "from" in value) {
 				const range = value as DateFilterRange;
 				if (!range.from && !range.to) {
 					delete newFilters[columnId];
