@@ -3,6 +3,15 @@ import { TableData, Column, DateFilterRange } from '../types';
 import { useTableContext } from '../context';
 import clsx from 'clsx';
 
+/* Inline SVG funnel icon — matches floating filter pattern */
+function PanelFilterIcon() {
+  return (
+    <svg className="bt-fp-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M1.5 2H10.5L7 5.87V9.5L5 8.5V5.87L1.5 2Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 interface TableFilterPanelProps {
   open: boolean;
 }
@@ -116,27 +125,30 @@ function FilterFieldInner<T extends TableData>({
 
     if (column.type === 'boolean') {
       return (
-        <select
-          id={fieldId}
-          name={fieldId}
-          className="bt-filter-select"
-          value={
-            value === null || value === undefined ? '' : String(value)
-          }
-          onChange={handleChange}
-          aria-label={`${locale.filterBy} ${column.header}`}
-        >
-          <option value="">—</option>
-          <option value="true">✅</option>
-          <option value="false">❌</option>
-        </select>
+        <div className={clsx('bt-fp-wrapper', isActive && 'bt-fp-active')}>
+          <PanelFilterIcon />
+          <select
+            id={fieldId}
+            name={fieldId}
+            className="bt-filter-select"
+            value={
+              value === null || value === undefined ? '' : String(value)
+            }
+            onChange={handleChange}
+            aria-label={`${locale.filterBy} ${column.header}`}
+          >
+            <option value="">—</option>
+            <option value="true">✅</option>
+            <option value="false">❌</option>
+          </select>
+        </div>
       );
     }
 
     if (column.type === 'date') {
       const dateRange = (value as DateFilterRange) ?? {};
       return (
-        <div className="bt-filter-field-dates">
+        <div className={clsx('bt-fp-wrapper bt-filter-field-dates', isActive && 'bt-fp-active')}>
           <input
             id={`${fieldId}-from`}
             name={`${fieldId}-from`}
@@ -163,18 +175,21 @@ function FilterFieldInner<T extends TableData>({
     }
 
     return (
-      <input
-        id={fieldId}
-        name={fieldId}
-        type={column.type === 'number' ? 'number' : 'text'}
-        className="bt-filter-input"
-        placeholder={`${locale.filterBy}...`}
-        value={
-          value !== null && value !== undefined ? String(value) : ''
-        }
-        onChange={handleChange}
-        aria-label={`${locale.filterBy} ${column.header}`}
-      />
+      <div className={clsx('bt-fp-wrapper', isActive && 'bt-fp-active')}>
+        <PanelFilterIcon />
+        <input
+          id={fieldId}
+          name={fieldId}
+          type={column.type === 'number' ? 'number' : 'text'}
+          className="bt-filter-input"
+          placeholder="..."
+          value={
+            value !== null && value !== undefined ? String(value) : ''
+          }
+          onChange={handleChange}
+          aria-label={`${locale.filterBy} ${column.header}`}
+        />
+      </div>
     );
   };
 

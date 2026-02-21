@@ -3,6 +3,34 @@ import { useTableContext } from '../context';
 import { TableData, Column } from '../types';
 import clsx from 'clsx';
 
+/* Inline SVG sort icons */
+function SortIdleIcon() {
+  return (
+    <svg className="bt-sort-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M7 2.5L10 5.5H4L7 2.5Z" fill="currentColor" opacity="0.4" />
+      <path d="M7 11.5L4 8.5H10L7 11.5Z" fill="currentColor" opacity="0.4" />
+    </svg>
+  );
+}
+
+function SortAscIcon() {
+  return (
+    <svg className="bt-sort-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M7 2.5L10 5.5H4L7 2.5Z" fill="currentColor" />
+      <path d="M7 11.5L4 8.5H10L7 11.5Z" fill="currentColor" opacity="0.2" />
+    </svg>
+  );
+}
+
+function SortDescIcon() {
+  return (
+    <svg className="bt-sort-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M7 2.5L10 5.5H4L7 2.5Z" fill="currentColor" opacity="0.2" />
+      <path d="M7 11.5L4 8.5H10L7 11.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 interface TableHeaderCellProps<T extends TableData> {
   column: Column<T>;
 }
@@ -39,6 +67,12 @@ function TableHeaderCellInner<T extends TableData>({
       return null;
     }
 
+    const Icon = isSorted
+      ? sortDirection === 'asc'
+        ? SortAscIcon
+        : SortDescIcon
+      : SortIdleIcon;
+
     return (
       <button
         className={clsx('bt-sort-btn', isSorted && 'bt-active')}
@@ -48,7 +82,7 @@ function TableHeaderCellInner<T extends TableData>({
         }
         type="button"
       >
-        {isSorted ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+        <Icon />
       </button>
     );
   };
@@ -67,7 +101,7 @@ function TableHeaderCellInner<T extends TableData>({
 
   return (
     <th
-      className={clsx('bt-th', column.align && `bt-align-${column.align}`)}
+      className={clsx('bt-th', column.align && `bt-align-${column.align}`, isSorted && 'bt-sorted')}
       style={{ width: column.width }}
       role="columnheader"
       aria-sort={

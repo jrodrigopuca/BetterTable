@@ -2,6 +2,7 @@
 import { useTableContext } from '../context';
 import { TableData } from '../types';
 import { TableHeaderCell } from './TableHeaderCell';
+import { TableFloatingFilter } from './TableFloatingFilter';
 import clsx from 'clsx';
 
 function TableHeaderInner<T extends TableData>() {
@@ -16,10 +17,13 @@ function TableHeaderInner<T extends TableData>() {
     deselectAll,
     locale,
     stickyHeader,
+    filterMode,
   } = useTableContext<T>();
 
   const visibleColumns = columns.filter((col) => !col.hidden);
   const hasActions = rowActions && rowActions.length > 0;
+
+  const showFloatingFilter = filterMode === 'floating' || filterMode === 'both';
 
   const handleSelectAllChange = () => {
     if (isAllSelected) {
@@ -59,6 +63,7 @@ function TableHeaderInner<T extends TableData>() {
           <th className="bt-th bt-actions-cell">{locale.actions}</th>
         )}
       </tr>
+      {showFloatingFilter && <TableFloatingFilter />}
     </thead>
   );
 }

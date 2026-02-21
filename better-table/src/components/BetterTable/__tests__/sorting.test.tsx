@@ -58,6 +58,7 @@ describe("BetterTable - Ordenamiento", () => {
 				data={mockUsers}
 				columns={userColumns}
 				rowKey="id"
+				filterMode="panel"
 			/>
 		);
 

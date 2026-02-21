@@ -3,7 +3,7 @@
 .bt-modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--bt-color-backdrop);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +63,10 @@
   cursor: pointer;
   border-radius: var(--bt-border-radius-sm);
   transition: all var(--bt-transition-fast);
-  font-size: 1.25rem;
+}
+
+.bt-modal-close-svg {
+  display: block;
 }
 
 .bt-modal-close:hover {

@@ -90,6 +90,7 @@ export interface TableContextValue<T extends TableData = TableData> {
   filterPanelOpen: boolean;
   toggleFilterPanel: () => void;
   hasFilterableColumns: boolean;
+  filterMode: 'floating' | 'panel' | 'both';
 
   // Modal
   openModal: (content: ReactNode) => void;

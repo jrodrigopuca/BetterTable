@@ -1,6 +1,23 @@
 import React, { useMemo, useCallback } from 'react';
 import { useTableContext } from '../context';
 
+/* Inline SVG chevron icons for pagination */
+function ChevronLeftIcon() {
+  return (
+    <svg className="bt-pagination-svg" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M9 3L5 7L9 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg className="bt-pagination-svg" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M5 3L9 7L5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function TablePagination() {
   const {
     page,
@@ -120,7 +137,7 @@ export function TablePagination() {
           aria-label={locale.previousPage}
           type="button"
         >
-          ←
+          <ChevronLeftIcon />
         </button>
 
         <div className="bt-pagination-pages">
@@ -154,23 +171,26 @@ export function TablePagination() {
           aria-label={locale.nextPage}
           type="button"
         >
-          →
+          <ChevronRightIcon />
         </button>
 
         <div className="bt-quick-jumper">
           <label className="bt-quick-jumper-label" htmlFor="bt-quick-jumper">{locale.page}:</label>
-          <input
-            id="bt-quick-jumper"
-            name="bt-quick-jumper"
-            key={page}
-            type="number"
-            className="bt-quick-jumper-input"
-            min={1}
-            max={totalPages}
-            defaultValue={page}
-            onKeyDown={handleQuickJump}
-            aria-label={locale.jumpToPage}
-          />
+          <div className="bt-qj-wrapper">
+            <input
+              id="bt-quick-jumper"
+              name="bt-quick-jumper"
+              key={page}
+              type="number"
+              className="bt-quick-jumper-input"
+              min={1}
+              max={totalPages}
+              defaultValue={page}
+              onKeyDown={handleQuickJump}
+              aria-label={locale.jumpToPage}
+            />
+            <span className="bt-qj-hint" aria-hidden="true">↵</span>
+          </div>
         </div>
       </div>
     </div>

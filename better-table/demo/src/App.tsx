@@ -4,6 +4,9 @@ import { BetterTable } from "better-table";
 import type { Column, RowAction, GlobalAction } from "better-table";
 import "better-table/styles.css";
 
+type FilterMode = "floating" | "panel" | "both";
+type Theme = "light" | "dark";
+
 interface Product {
 	[key: string]: unknown;
 	id: number;
@@ -36,6 +39,8 @@ const initialProducts: Product[] = [
 
 function App() {
 	const [products, setProducts] = useState<Product[]>(initialProducts);
+	const [filterMode, setFilterMode] = useState<FilterMode>("floating");
+	const [theme, setTheme] = useState<Theme>("light");
 
 	const getNextId = () => Math.max(...products.map(p => p.id), 0) + 1;
 
@@ -280,16 +285,39 @@ function App() {
 	];
 
 	return (
-		<div className="App">
-			<h1>📦 Inventario de Productos</h1>
-			<p style={{ color: "#666", marginBottom: 24 }}>
+		<div className={`App ${theme === "dark" ? "App-dark" : ""}`} data-theme={theme}>
+			<div className="App-header">
+				<h1>📦 Inventario de Productos</h1>
+				<button
+					className="theme-toggle"
+					onClick={() => setTheme(t => t === "light" ? "dark" : "light")}
+					aria-label={`Cambiar a modo ${theme === "light" ? "oscuro" : "claro"}`}
+					type="button"
+				>
+					{theme === "light" ? "🌙" : "☀️"}
+				</button>
+			</div>
+			<p style={{ color: theme === "dark" ? "#9ca3af" : "#666", marginBottom: 12 }}>
 				{products.length} productos • {products.filter(p => p.isAvailable).length} disponibles
 			</p>
+			<div className="demo-controls">
+				<label style={{ fontWeight: 500, fontSize: 14 }}>Filter mode:</label>
+				{(["floating", "panel", "both"] as FilterMode[]).map((mode) => (
+					<button
+						key={mode}
+						onClick={() => setFilterMode(mode)}
+						className={`demo-control-btn ${filterMode === mode ? "active" : ""}`}
+					>
+						{mode}
+					</button>
+				))}
+			</div>
 			<BetterTable<Product>
 				data={products}
 				columns={columns}
 				rowKey="id"
 				locale="es"
+				filterMode={filterMode}
 				rowActions={rowActions}
 				globalActions={globalActions}
 				pagination={{

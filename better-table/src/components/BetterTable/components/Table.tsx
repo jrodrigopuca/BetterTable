@@ -52,6 +52,7 @@ function BetterTableInner<T extends TableData>(
     // Filter
     filters: controlledFilters,
     onFilterChange,
+    filterMode = 'floating',
 
     // Search
     searchable = false,
@@ -322,6 +323,7 @@ function BetterTableInner<T extends TableData>(
       filterPanelOpen,
       toggleFilterPanel,
       hasFilterableColumns,
+      filterMode,
     }),
     [
       data,
@@ -384,6 +386,7 @@ function BetterTableInner<T extends TableData>(
       filterPanelOpen,
       toggleFilterPanel,
       hasFilterableColumns,
+      filterMode,
     ]
   );
 
@@ -405,7 +408,9 @@ function BetterTableInner<T extends TableData>(
         style={styles.container}
       >
         <TableToolbar />
-        <TableFilterPanel open={filterPanelOpen} />
+        {(filterMode === 'panel' || filterMode === 'both') && (
+          <TableFilterPanel open={filterPanelOpen} />
+        )}
 
         <div
           className='bt-table-wrapper'

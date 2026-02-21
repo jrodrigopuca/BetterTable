@@ -3,9 +3,111 @@
 	padding: 20px;
 	max-width: 1200px;
 	margin: 0 auto;
+	min-height: 100vh;
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .App h1 {
 	margin-bottom: 24px;
 	color: #1f2937;
+}
+
+/* Header with theme toggle */
+.App-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	margin-bottom: 8px;
+}
+
+.App-header h1 {
+	margin-bottom: 0;
+}
+
+.theme-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #f9fafb;
+	cursor: pointer;
+	font-size: 20px;
+	transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+	background: #e5e7eb;
+	transform: scale(1.05);
+}
+
+/* Demo controls */
+.demo-controls {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.demo-control-btn {
+	padding: 4px 12px;
+	font-size: 13px;
+	border: 1px solid #d1d5db;
+	border-radius: 4px;
+	cursor: pointer;
+	background: #fff;
+	color: #333;
+	transition: all 0.15s ease;
+}
+
+.demo-control-btn:hover {
+	border-color: #3b82f6;
+}
+
+.demo-control-btn.active {
+	background: #3b82f6;
+	border-color: #3b82f6;
+	color: #fff;
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+.App-dark {
+	background-color: #111827;
+	color: #f9fafb;
+}
+
+.App-dark h1 {
+	color: #f9fafb;
+}
+
+.App-dark .theme-toggle {
+	border-color: #374151;
+	background: #1f2937;
+}
+
+.App-dark .theme-toggle:hover {
+	background: #374151;
+}
+
+.App-dark .demo-control-btn {
+	background: #1f2937;
+	border-color: #374151;
+	color: #d1d5db;
+}
+
+.App-dark .demo-control-btn:hover {
+	border-color: #3b82f6;
+}
+
+.App-dark .demo-control-btn.active {
+	background: #3b82f6;
+	border-color: #3b82f6;
+	color: #fff;
 }

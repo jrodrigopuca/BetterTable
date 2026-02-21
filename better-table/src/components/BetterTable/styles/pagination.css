@@ -39,6 +39,10 @@
   transition: all var(--bt-transition-fast);
 }
 
+.bt-pagination-svg {
+  display: block;
+}
+
 .bt-pagination-btn:hover:not(:disabled) {
   background-color: var(--bt-color-background-hover);
   border-color: var(--bt-color-border-hover);
@@ -53,6 +57,16 @@
   background-color: var(--bt-color-primary);
   border-color: var(--bt-color-primary);
   color: white;
+  box-shadow: var(--bt-shadow-primary);
+}
+
+.bt-pagination-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bt-color-background), 0 0 0 4px var(--bt-color-primary);
+}
+
+.bt-pagination-btn.bt-active:focus-visible {
+  box-shadow: var(--bt-shadow-primary), 0 0 0 2px var(--bt-color-background), 0 0 0 4px var(--bt-color-primary);
 }
 
 .bt-pagination-pages {
@@ -105,20 +119,52 @@
   color: var(--bt-color-text-secondary);
 }
 
-.bt-quick-jumper-input {
-  width: 50px;
-  padding: var(--bt-spacing-xs) var(--bt-spacing-sm);
-  font-size: var(--bt-font-size-sm);
+.bt-qj-wrapper {
+  display: flex;
+  align-items: center;
   border: var(--bt-border-width) solid var(--bt-color-border);
   border-radius: var(--bt-border-radius-sm);
   background-color: var(--bt-color-background);
+  overflow: hidden;
+  transition: all var(--bt-transition-fast);
+}
+
+.bt-qj-wrapper:focus-within {
+  border-color: var(--bt-color-primary);
+  box-shadow: 0 0 0 2px var(--bt-color-primary-light);
+}
+
+.bt-quick-jumper-input {
+  width: 44px;
+  padding: var(--bt-spacing-xs) var(--bt-spacing-sm);
+  font-size: var(--bt-font-size-sm);
+  border: none;
+  background: transparent;
   color: var(--bt-color-text);
   text-align: center;
 }
 
 .bt-quick-jumper-input:focus {
   outline: none;
-  border-color: var(--bt-color-primary);
+}
+
+/* Hide number spinners */
+.bt-quick-jumper-input::-webkit-inner-spin-button,
+.bt-quick-jumper-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.bt-quick-jumper-input {
+  -moz-appearance: textfield;
+}
+
+.bt-qj-hint {
+  flex-shrink: 0;
+  padding: 0 6px 0 2px;
+  font-size: 12px;
+  color: var(--bt-color-text-disabled);
+  line-height: 1;
+  user-select: none;
 }
 
 /* ========================================

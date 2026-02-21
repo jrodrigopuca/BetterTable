@@ -22,12 +22,13 @@ describe("BetterTable - Filtrado de datos", () => {
 				data={mockUsers}
 				columns={userColumns}
 				rowKey="id"
+				filterMode="panel"
 			/>
 		);
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
+		const filterInputs = screen.getAllByPlaceholderText("...");
 		const nameFilter = filterInputs[0];
 
 		await user.type(nameFilter, "Juan");
@@ -45,12 +46,13 @@ describe("BetterTable - Filtrado de datos", () => {
 				data={mockUsers}
 				columns={userColumns}
 				rowKey="id"
+				filterMode="panel"
 			/>
 		);
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
+		const filterInputs = screen.getAllByPlaceholderText("...");
 		const ageFilter = filterInputs[1];
 
 		await user.clear(ageFilter);
@@ -71,6 +73,7 @@ describe("BetterTable - Filtrado de datos", () => {
 				data={mockUsers}
 				columns={userColumns}
 				rowKey="id"
+				filterMode="panel"
 			/>
 		);
 
@@ -95,12 +98,13 @@ describe("BetterTable - Filtrado de datos", () => {
 				data={mockUsers}
 				columns={userColumns}
 				rowKey="id"
+				filterMode="panel"
 			/>
 		);
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
+		const filterInputs = screen.getAllByPlaceholderText("...");
 		await user.type(filterInputs[0], "a");
 
 		const rows = screen.getAllByRole("row");
@@ -115,13 +119,14 @@ describe("BetterTable - Filtrado de datos", () => {
 				data={mockUsers}
 				columns={userColumns}
 				rowKey="id"
+				filterMode="panel"
 				locale={{ noData: "Sin resultados" }}
 			/>
 		);
 
 		await openFilterPanel(user);
 
-		const filterInputs = screen.getAllByPlaceholderText(/filter/i);
+		const filterInputs = screen.getAllByPlaceholderText("...");
 		await user.type(filterInputs[0], "zzzzzzz");
 
 		expect(screen.getByText("Sin resultados")).toBeInTheDocument();

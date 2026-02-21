@@ -10,6 +10,7 @@
   --bt-color-success: #22c55e;
   --bt-color-danger: #ef4444;
   --bt-color-danger-hover: #dc2626;
+  --bt-color-danger-light: #fecaca;
   --bt-color-warning: #f59e0b;
   --bt-color-info: #06b6d4;
 
@@ -21,7 +22,8 @@
   --bt-color-border-hover: #d1d5db;
   --bt-color-background: #ffffff;
   --bt-color-background-hover: #f9fafb;
-  --bt-color-background-striped: #f3f4f6;
+  --bt-color-row-hover: #dbeafe;
+  --bt-color-background-striped: #f9fafb;
   --bt-color-background-selected: #eff6ff;
   --bt-color-background-header: #f9fafb;
 
@@ -51,6 +53,9 @@
   --bt-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --bt-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --bt-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --bt-shadow-primary: 0 2px 4px rgb(59 130 246 / 0.3);
+  --bt-shadow-dropdown: 0 4px 12px rgb(0 0 0 / 0.12);
+  --bt-color-scroll-shadow: rgba(0, 0, 0, 0.08);
 
   /* Transiciones */
   --bt-transition-fast: 150ms ease;
@@ -60,6 +65,10 @@
   --bt-cell-padding-sm: 0.5rem 0.75rem;
   --bt-cell-padding-md: 0.75rem 1rem;
   --bt-cell-padding-lg: 1rem 1.25rem;
+
+  /* Overlay */
+  --bt-color-overlay: rgba(255, 255, 255, 0.7);
+  --bt-color-backdrop: rgba(0, 0, 0, 0.5);
 
   /* Z-index */
   --bt-z-header: 10;
@@ -78,9 +87,14 @@
   --bt-color-border-hover: #4b5563;
   --bt-color-background: #1f2937;
   --bt-color-background-hover: #374151;
+  --bt-color-row-hover: #2d3f56;
   --bt-color-background-striped: #111827;
   --bt-color-background-selected: #1e3a5f;
   --bt-color-background-header: #111827;
+  --bt-color-overlay: rgba(0, 0, 0, 0.5);
+  --bt-color-backdrop: rgba(0, 0, 0, 0.7);
+  --bt-shadow-dropdown: 0 4px 12px rgb(0 0 0 / 0.32);
+  --bt-color-scroll-shadow: rgba(255, 255, 255, 0.06);
 }
 
 /* ========================================

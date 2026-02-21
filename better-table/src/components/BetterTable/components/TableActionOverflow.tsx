@@ -121,7 +121,13 @@ function TableActionOverflowInner<T extends TableData>({
         title={locale.moreActions}
         type="button"
       >
-        <span className="bt-overflow-icon">⋯</span>
+        <span className="bt-overflow-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="3" cy="8" r="1.5" />
+            <circle cx="8" cy="8" r="1.5" />
+            <circle cx="13" cy="8" r="1.5" />
+          </svg>
+        </span>
       </button>
 
       {isOpen && createPortal(

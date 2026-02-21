@@ -4,7 +4,7 @@ A modern, flexible, and fully typed data table component for React.
 
 ## ✨ Features
 
-- 🔍 **Search & Filter** — Global search with debounce + Filter Panel with per-column controls
+- 🔍 **Search & Filter** — Global search with debounce + Floating Filters (inline in header) / Filter Panel / Both
 - 📊 **Sorting** — Multi-type sorting (string, number, date, boolean)
 - ✅ **Selection** — Single or multiple row selection with global actions
 - 📱 **Responsive** — Card layout for mobile, collapsible toolbar
@@ -90,6 +90,25 @@ const MyTable = () => {
 	maxVisibleActions={3}
 	onSelectionChange={(selected) => console.log("Selected:", selected)}
 />
+```
+
+### Filter Mode
+
+```tsx
+{
+	/* Default: floating filters inline in header row */
+}
+<BetterTable data={data} columns={columns} />;
+
+{
+	/* Panel: collapsible filter panel (toggle button in toolbar) */
+}
+<BetterTable data={data} columns={columns} filterMode="panel" />;
+
+{
+	/* Both: floating filters + panel toggle */
+}
+<BetterTable data={data} columns={columns} filterMode="both" />;
 ```
 
 ### Custom Cell Rendering

@@ -300,6 +300,8 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	onSortChange?: (sort: SortState) => void;
 
 	// === Filtrado ===
+	/** Modo de visualización de filtros: 'floating' (en header), 'panel' (colapsable), o 'both' (default: 'floating') */
+	filterMode?: "floating" | "panel" | "both";
 	/** Estado de filtros (controlado) */
 	filters?: FilterState;
 	/** Callback de cambio de filtros */

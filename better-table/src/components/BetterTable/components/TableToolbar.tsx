@@ -4,6 +4,40 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import { TableData } from '../types';
 import clsx from 'clsx';
 
+/* Inline SVG icons */
+function SearchIcon() {
+  return (
+    <svg className="bt-search-svg" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ClearIcon() {
+  return (
+    <svg className="bt-clear-svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M3 3L9 9M9 3L3 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg className="bt-check-svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg className="bt-filter-toggle-svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M1 2.5H11L7.5 6.5V10L4.5 9V6.5L1 2.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function TableToolbarInner<T extends TableData>() {
   const {
     searchable,
@@ -22,6 +56,7 @@ function TableToolbarInner<T extends TableData>() {
     filterPanelOpen,
     toggleFilterPanel,
     hasFilterableColumns,
+    filterMode,
   } = useTableContext<T>();
 
   const isMobile = useMediaQuery('(max-width: 640px)');
@@ -57,8 +92,10 @@ function TableToolbarInner<T extends TableData>() {
     }
   }, [searchValue, searchExpanded]);
 
+  const showFilterPanelToggle = hasFilterableColumns && (filterMode === 'panel' || filterMode === 'both');
+
   const hasToolbar =
-    searchable || hasFilterableColumns || (globalActions && globalActions.length > 0) || (selectable && selectedCount > 0);
+    searchable || showFilterPanelToggle || (globalActions && globalActions.length > 0) || (selectable && selectedCount > 0);
 
   if (!hasToolbar) {
     return null;
@@ -79,13 +116,13 @@ function TableToolbarInner<T extends TableData>() {
             title={locale.search}
             type="button"
           >
-            🔍
+            <SearchIcon />
           </button>
         )}
 
         {showExpandedSearch && (
           <div className={clsx('bt-search', isMobile && 'bt-search-mobile')}>
-            <span className="bt-search-icon">🔍</span>
+            <span className="bt-search-icon"><SearchIcon /></span>
             <input
               id="bt-search"
               name="bt-search"
@@ -104,13 +141,13 @@ function TableToolbarInner<T extends TableData>() {
                 aria-label={locale.clearSearch}
                 type="button"
               >
-                ✕
+                <ClearIcon />
               </button>
             )}
           </div>
         )}
 
-        {hasFilterableColumns && (
+        {showFilterPanelToggle && (
           <button
             className={clsx(
               'bt-filter-toggle',
@@ -122,7 +159,7 @@ function TableToolbarInner<T extends TableData>() {
             title={locale.filterBy}
             type="button"
           >
-            <span className="bt-filter-toggle-icon">▼</span>
+            <span className="bt-filter-toggle-icon"><FilterIcon /></span>
             {!isMobile && <span>{locale.filterBy}</span>}
             {activeFilterCount > 0 && (
               <span className="bt-filter-toggle-badge">{activeFilterCount}</span>
@@ -132,6 +169,7 @@ function TableToolbarInner<T extends TableData>() {
 
         {selectable && selectedCount > 0 && (
           <div className="bt-selection-info">
+            <CheckIcon />
             <span className="bt-selection-count">
               {selectedCount} {isMobile ? 'sel.' : locale.selected}
             </span>
@@ -140,7 +178,7 @@ function TableToolbarInner<T extends TableData>() {
               onClick={deselectAll}
               type="button"
             >
-              {isMobile ? '✕' : locale.deselectAll}
+              {isMobile ? <ClearIcon /> : locale.deselectAll}
             </button>
           </div>
         )}

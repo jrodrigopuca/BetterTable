@@ -49,10 +49,11 @@ El componente raíz que orquesta toda la funcionalidad de la tabla.
 
 #### Props de Búsqueda y Filtrado
 
-| Prop               | Tipo       | Default | Requerido | Descripción                           |
-| ------------------ | ---------- | ------- | --------- | ------------------------------------- |
-| `searchDebounceMs` | `number`   | `300`   | No        | Delay de debounce para búsqueda (ms)  |
-| `searchColumns`    | `string[]` | todas   | No        | Columnas a buscar (por accessor o id) |
+| Prop               | Tipo                              | Default      | Requerido | Descripción                                        |
+| ------------------ | --------------------------------- | ------------ | --------- | -------------------------------------------------- |
+| `filterMode`       | `'floating' \| 'panel' \| 'both'` | `'floating'` | No        | Modo de filtrado: inline en header, panel, o ambos |
+| `searchDebounceMs` | `number`                          | `300`        | No        | Delay de debounce para búsqueda (ms)               |
+| `searchColumns`    | `string[]`                        | todas        | No        | Columnas a buscar (por accessor o id)              |
 
 #### Props de Acciones
 
@@ -272,6 +273,46 @@ Panel colapsable de filtros para todas las columnas filtrables.
 │                        [Clear filters]      │
 └─────────────────────────────────────────────┘
 ```
+
+---
+
+### TableFloatingFilter
+
+**Ubicación:** `src/components/BetterTable/components/TableFloatingFilter.tsx`
+
+Fila de filtros inline dentro de `<thead>`, renderizada debajo del header (patrón "Floating Filters" de AG Grid).
+
+#### Features
+
+- Se renderiza por defecto (`filterMode="floating"`) o combinado (`filterMode="both"`)
+- Input de texto/número para columnas string/number
+- Select para columnas booleanas (—/✅/❌)
+- Date range (desde/hasta) para columnas tipo `date`
+- Comparte el mismo estado de filtros que el FilterPanel (`filters` / `setFilter`)
+- Se oculta si ninguna columna es filtrable
+- Soporte sticky (se queda fijo con el header al hacer scroll)
+- Tamaños compactos según `size` prop (small/medium/large)
+- Accesibilidad: `aria-label` e `id` únicos por input (`bt-ff-{colId}`)
+
+#### Estructura
+
+```
+┌─────────────────────────────────────────────────┐
+│  Nombre ↑↓   │  Email       │  Edad ↑↓  │ ···  │  ← Header row
+│ [__________] │              │ [_______] │ [▼—]  │  ← Floating filter row
+├──────────────┼──────────────┼───────────┼───────┤
+│  Juan García │  juan@...    │  28       │  ✅   │
+│  María López │  maria@...   │  35       │  ✅   │
+└─────────────────────────────────────────────────┘
+```
+
+#### filterMode Comparison
+
+| Valor        | Floating row | Panel toggle | Panel expandible |
+| ------------ | ------------ | ------------ | ---------------- |
+| `'floating'` | ✅           | ❌           | ❌               |
+| `'panel'`    | ❌           | ✅           | ✅               |
+| `'both'`     | ✅           | ✅           | ✅               |
 
 ---
 

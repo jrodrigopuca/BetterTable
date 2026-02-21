@@ -174,8 +174,10 @@ describe("BetterTable - Toolbar Responsive (mobile)", () => {
 		const checkboxes = screen.getAllByRole("checkbox");
 		await user.click(checkboxes[1]);
 
-		// Deselect button should be ✕, not full text
-		const clearBtn = screen.getByText("✕");
+		// Deselect button should be SVG icon, not full text
+		const selectionInfo = document.querySelector('.bt-selection-info');
+		const clearBtn = selectionInfo?.querySelector('.bt-selection-clear');
 		expect(clearBtn).toBeInTheDocument();
+		expect(clearBtn?.querySelector('svg')).toBeInTheDocument();
 	});
 });

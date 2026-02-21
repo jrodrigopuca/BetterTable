@@ -100,6 +100,68 @@
   overflow: auto;
   border-radius: var(--bt-border-radius-md);
   border: var(--bt-border-width) solid var(--bt-color-border);
+  box-shadow: var(--bt-shadow-sm);
+
+  /* Custom scrollbar — always visible, thin, styled */
+  scrollbar-width: thin;
+  scrollbar-color: var(--bt-color-border-hover) transparent;
+}
+
+.bt-table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.bt-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bt-table-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--bt-color-border-hover);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.bt-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bt-color-text-disabled);
+}
+
+.bt-table-wrapper::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Force scrollbar visibility when content overflows */
+@supports (overflow: overlay) {
+  .bt-table-wrapper {
+    overflow: overlay;
+  }
+}
+
+/* Scroll shadow indicators — CSS-only edge fade hints */
+.bt-table-wrapper {
+  background:
+    /* Left shadow */
+    linear-gradient(to right, var(--bt-color-background) 30%, transparent) left center,
+    /* Right shadow */
+    linear-gradient(to left, var(--bt-color-background) 30%, transparent) right center,
+    /* Left shadow cover (scrolls with content) */
+    linear-gradient(to right, var(--bt-color-background), transparent) left center,
+    /* Right shadow cover (scrolls with content) */
+    linear-gradient(to left, var(--bt-color-background), transparent) right center,
+    /* Left shadow indicator */
+    linear-gradient(to right, var(--bt-color-scroll-shadow), transparent) left center,
+    /* Right shadow indicator */
+    linear-gradient(to left, var(--bt-color-scroll-shadow), transparent) right center;
+  background-size:
+    40px 100%,
+    40px 100%,
+    14px 100%,
+    14px 100%,
+    14px 100%,
+    14px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll, scroll, scroll;
 }
 
 .bt-table-wrapper.bt-bordered {
@@ -129,10 +191,19 @@
   padding: var(--bt-cell-padding-md);
   text-align: left;
   font-weight: var(--bt-font-weight-semibold);
-  color: var(--bt-color-text);
-  border-bottom: var(--bt-border-width) solid var(--bt-color-border);
+  color: var(--bt-color-text-secondary);
+  font-size: var(--bt-font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--bt-color-border);
   white-space: nowrap;
   vertical-align: top;
+  transition: color var(--bt-transition-fast);
+}
+
+/* Header takes primary color when column is actively sorted */
+.bt-th.bt-sorted {
+  color: var(--bt-color-primary);
 }
 
 .bt-th.bt-align-center {
@@ -183,6 +254,15 @@
 
 .bt-sort-btn.bt-active {
   color: var(--bt-color-primary);
+  background-color: var(--bt-color-primary-light);
+}
+
+.bt-sort-btn.bt-active:hover {
+  background-color: color-mix(in srgb, var(--bt-color-primary) 15%, transparent);
+}
+
+.bt-sort-icon {
+  display: block;
 }
 
 /* ========================================
@@ -303,25 +383,309 @@
   cursor: pointer;
 }
 
+/* Filter panel wrapper — matches floating filter visual pattern */
+.bt-fp-wrapper {
+  display: flex;
+  align-items: center;
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-md);
+  background-color: var(--bt-color-background);
+  transition: all var(--bt-transition-fast);
+  overflow: hidden;
+}
+
+.bt-fp-wrapper:focus-within {
+  border-color: var(--bt-color-primary);
+  box-shadow: 0 0 0 2px var(--bt-color-primary-light);
+}
+
+.bt-fp-wrapper.bt-fp-active {
+  border-color: var(--bt-color-primary);
+  background-color: var(--bt-color-primary-light);
+}
+
+.bt-fp-icon {
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: var(--bt-color-text-disabled);
+  pointer-events: none;
+  display: block;
+}
+
+.bt-fp-wrapper:focus-within .bt-fp-icon,
+.bt-fp-wrapper.bt-fp-active .bt-fp-icon {
+  color: var(--bt-color-primary);
+}
+
+/* Inputs inside panel wrapper — borderless */
+.bt-fp-wrapper .bt-filter-input,
+.bt-fp-wrapper .bt-filter-select {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.bt-fp-wrapper .bt-filter-input:focus,
+.bt-fp-wrapper .bt-filter-select:focus {
+  box-shadow: none;
+}
+
+/* Date wrapper inherits the wrapper role itself */
+.bt-fp-wrapper.bt-filter-field-dates {
+  gap: 0;
+}
+
+.bt-fp-wrapper.bt-filter-field-dates .bt-filter-input {
+  min-width: 0;
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: var(--bt-spacing-sm) var(--bt-spacing-xs);
+}
+
+.bt-fp-wrapper.bt-filter-field-dates .bt-filter-input:focus {
+  box-shadow: none;
+}
+
+/* Number input in panel: hide spinners */
+.bt-fp-wrapper .bt-filter-input[type="number"]::-webkit-inner-spin-button,
+.bt-fp-wrapper .bt-filter-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.bt-fp-wrapper .bt-filter-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ========================================
+   FLOATING FILTERS
+   ======================================== */
+
+.bt-floating-filter-row {
+  background-color: var(--bt-color-background-header);
+  border-bottom: var(--bt-border-width) solid var(--bt-color-border);
+}
+
+.bt-floating-filter-cell {
+  padding: 4px var(--bt-spacing-md) !important;
+  vertical-align: middle;
+}
+
+/* Wrapper: icon + input in a single visual container */
+.bt-ff-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
+  transition: all var(--bt-transition-fast);
+  overflow: hidden;
+}
+
+.bt-ff-wrapper:focus-within {
+  border-color: var(--bt-color-primary);
+  box-shadow: 0 0 0 2px var(--bt-color-primary-light);
+}
+
+/* Active filter state — subtle primary accent */
+.bt-ff-wrapper.bt-ff-active {
+  border-color: var(--bt-color-primary);
+  background-color: var(--bt-color-primary-light);
+}
+
+/* Funnel icon inside wrapper */
+.bt-ff-icon {
+  flex-shrink: 0;
+  margin-left: 6px;
+  color: var(--bt-color-text-disabled);
+  pointer-events: none;
+}
+
+.bt-ff-wrapper:focus-within .bt-ff-icon,
+.bt-ff-wrapper.bt-ff-active .bt-ff-icon {
+  color: var(--bt-color-primary);
+}
+
+/* Inputs inside wrapper — borderless since wrapper provides the border */
+.bt-ff-wrapper .bt-floating-filter-input,
+.bt-ff-wrapper .bt-floating-filter-select {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.bt-ff-wrapper .bt-floating-filter-input:focus,
+.bt-ff-wrapper .bt-floating-filter-select:focus {
+  box-shadow: none;
+}
+
+.bt-floating-filter-input,
+.bt-floating-filter-select {
+  width: 100%;
+  padding: 4px var(--bt-spacing-sm);
+  font-size: var(--bt-font-size-sm);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  transition: all var(--bt-transition-fast);
+  box-sizing: border-box;
+}
+
+.bt-floating-filter-input:focus,
+.bt-floating-filter-select:focus {
+  outline: none;
+  border-color: var(--bt-color-primary);
+  box-shadow: 0 0 0 2px var(--bt-color-primary-light);
+}
+
+.bt-floating-filter-input::placeholder {
+  color: var(--bt-color-text-disabled);
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
+/* Number input: hide spinners for cleaner look */
+.bt-floating-filter-input[type="number"]::-webkit-inner-spin-button,
+.bt-floating-filter-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.bt-floating-filter-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.bt-floating-filter-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M3 5l3 3 3-3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  padding-right: 22px;
+  cursor: pointer;
+}
+
+/* Date range — two inputs with a separator */
+.bt-floating-filter-dates {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
+  overflow: hidden;
+  transition: all var(--bt-transition-fast);
+}
+
+.bt-floating-filter-dates:focus-within {
+  border-color: var(--bt-color-primary);
+  box-shadow: 0 0 0 2px var(--bt-color-primary-light);
+}
+
+.bt-floating-filter-dates.bt-ff-active {
+  border-color: var(--bt-color-primary);
+  background-color: var(--bt-color-primary-light);
+}
+
+.bt-floating-filter-dates .bt-floating-filter-input {
+  min-width: 0;
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--bt-font-size-sm);
+  padding: 4px 4px;
+  box-shadow: none;
+}
+
+.bt-floating-filter-dates .bt-floating-filter-input:focus {
+  box-shadow: none;
+}
+
+.bt-ff-date-sep {
+  flex-shrink: 0;
+  color: var(--bt-color-text-disabled);
+  font-size: 11px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Sticky floating filter row (stays below header) */
+.bt-sticky .bt-floating-filter-row {
+  position: sticky;
+  top: 0;
+  z-index: 9;
+}
+
+.bt-sticky-filter {
+  position: sticky;
+  z-index: 9;
+}
+
+/* Size variants for floating filters */
+.bt-size-small .bt-floating-filter-cell {
+  padding: 2px var(--bt-spacing-sm) !important;
+}
+
+.bt-size-small .bt-floating-filter-input,
+.bt-size-small .bt-floating-filter-select {
+  padding: 2px var(--bt-spacing-xs);
+  font-size: 12px;
+}
+
+.bt-size-small .bt-ff-icon {
+  width: 10px;
+  height: 10px;
+  margin-left: 4px;
+}
+
+.bt-size-large .bt-floating-filter-cell {
+  padding: var(--bt-spacing-sm) var(--bt-spacing-lg) !important;
+}
+
+.bt-size-large .bt-floating-filter-input,
+.bt-size-large .bt-floating-filter-select {
+  padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+  font-size: var(--bt-font-size-md);
+}
+
+.bt-size-large .bt-ff-icon {
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+}
+
 /* Body */
 .bt-tbody {
   background-color: var(--bt-color-background);
 }
 
 .bt-tr {
-  transition: background-color var(--bt-transition-fast);
-}
-
-.bt-tr.bt-hoverable:hover {
-  background-color: var(--bt-color-background-hover);
-}
-
-.bt-tr.bt-selected {
-  background-color: var(--bt-color-background-selected);
+  transition: all var(--bt-transition-fast);
+  border-left: 3px solid transparent;
 }
 
 .bt-tr.bt-striped:nth-child(even) {
   background-color: var(--bt-color-background-striped);
+}
+
+/* Hover wins over stripes — must come after striped rule */
+.bt-tr.bt-hoverable:hover {
+  background-color: var(--bt-color-row-hover);
+  border-left-color: var(--bt-color-primary);
+  box-shadow: inset 0 0 0 1px var(--bt-color-border-hover);
+}
+
+/* Selected wins over hover and stripes */
+.bt-tr.bt-selected {
+  background-color: var(--bt-color-background-selected);
+  border-left-color: var(--bt-color-primary);
+}
+
+/* Selected + hover: slightly different shade */
+.bt-tr.bt-selected.bt-hoverable:hover {
+  background-color: color-mix(in srgb, var(--bt-color-primary) 15%, var(--bt-color-background-selected));
 }
 
 .bt-tr.bt-clickable {
@@ -362,10 +726,40 @@
 }
 
 .bt-checkbox {
+  /* Custom checkbox — hide native, build custom look */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   width: 18px;
   height: 18px;
+  border: 2px solid var(--bt-color-border-hover);
+  border-radius: var(--bt-border-radius-sm);
+  background-color: var(--bt-color-background);
   cursor: pointer;
-  accent-color: var(--bt-color-primary);
+  transition: all var(--bt-transition-fast);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bt-checkbox:hover {
+  border-color: var(--bt-color-primary);
+}
+
+.bt-checkbox:checked {
+  background-color: var(--bt-color-primary);
+  border-color: var(--bt-color-primary);
+}
+
+.bt-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 /* Actions cell */
@@ -377,6 +771,14 @@
   display: flex;
   align-items: center;
   gap: var(--bt-spacing-xs);
+  opacity: 0.6;
+  transition: opacity var(--bt-transition-fast);
+}
+
+.bt-tr:hover .bt-actions-wrapper,
+.bt-tr:focus-within .bt-actions-wrapper,
+.bt-tr.bt-selected .bt-actions-wrapper {
+  opacity: 1;
 }
 
 /* Action button */
@@ -465,9 +867,10 @@
 }
 
 .bt-overflow-icon {
-  font-size: var(--bt-font-size-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
-  letter-spacing: 2px;
 }
 
 .bt-overflow-menu {
@@ -476,7 +879,7 @@
   background: var(--bt-color-background);
   border: var(--bt-border-width) solid var(--bt-color-border);
   border-radius: var(--bt-border-radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--bt-shadow-dropdown);
   padding: var(--bt-spacing-xs) 0;
   animation: bt-fade-in 120ms ease-out;
   /* Isolation: portaled to body, needs own baseline */
@@ -543,7 +946,7 @@
 }
 
 .bt-overflow-item-danger {
-  border-left: 3px solid #efaeae;
+  border-left: 3px solid var(--bt-color-danger-light);
 }
 
 .bt-overflow-item-danger:hover:not(:disabled) {
@@ -562,19 +965,32 @@
 
 /* Empty state */
 .bt-empty {
-  padding: var(--bt-spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--bt-spacing-xl) var(--bt-spacing-lg);
+  margin: var(--bt-spacing-lg) auto;
+  max-width: 320px;
   text-align: center;
   color: var(--bt-color-text-secondary);
+  border: 2px dashed var(--bt-color-border);
+  border-radius: var(--bt-border-radius-lg);
+  background-color: var(--bt-color-background-header);
 }
 
 .bt-empty-icon {
-  font-size: 3rem;
   margin-bottom: var(--bt-spacing-md);
-  opacity: 0.5;
+  color: var(--bt-color-text-disabled);
+}
+
+.bt-empty-svg {
+  display: block;
 }
 
 .bt-empty-text {
   font-size: var(--bt-font-size-md);
+  font-weight: var(--bt-font-weight-medium);
 }
 
 /* Loading state */
@@ -612,12 +1028,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: var(--bt-color-overlay);
   z-index: 5;
 }
 
 .bt-container-loading {
   position: relative;
+}
+
+/* ========================================
+   FOCUS-VISIBLE — Keyboard navigation rings
+   ======================================== */
+
+.bt-sort-btn:focus-visible,
+.bt-action-btn:focus-visible,
+.bt-overflow-trigger:focus-visible,
+.bt-checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bt-color-background), 0 0 0 4px var(--bt-color-primary);
+}
+
+.bt-tr:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--bt-color-primary);
 }
 
 /* ========================================
@@ -679,16 +1112,19 @@
     border: var(--bt-border-width) solid var(--bt-color-border);
     border-radius: var(--bt-border-radius-md);
     background: var(--bt-color-background);
+    box-shadow: var(--bt-shadow-sm);
     transition: all var(--bt-transition-fast);
+  }
+
+  .bt-card.bt-hoverable:active {
+    background-color: var(--bt-color-background-hover);
+    box-shadow: var(--bt-shadow-md);
   }
 
   .bt-card.bt-selected {
     background-color: var(--bt-color-background-selected);
     border-color: var(--bt-color-primary);
-  }
-
-  .bt-card.bt-hoverable:active {
-    background-color: var(--bt-color-background-hover);
+    box-shadow: var(--bt-shadow-md);
   }
 
   /* Header de card (checkbox + primera columna) */

@@ -1,6 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
 import { useTableContext } from '../context';
 
+/* Inline SVG close icon */
+function CloseIcon() {
+  return (
+    <svg className="bt-modal-close-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function TableModal() {
   const { isModalOpen, modalContent, closeModal, locale } = useTableContext();
 
@@ -54,7 +63,7 @@ export function TableModal() {
             aria-label={locale.closeModal}
             type="button"
           >
-            ✕
+            <CloseIcon />
           </button>
         </div>
         <div className="bt-modal-body">{modalContent}</div>

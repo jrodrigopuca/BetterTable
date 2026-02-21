@@ -48,6 +48,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 				data={events}
 				columns={columns}
 				rowKey="id"
+				filterMode="panel"
 			/>
 		);
 
@@ -70,6 +71,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 				data={events}
 				columns={columns}
 				rowKey="id"
+				filterMode="panel"
 				searchDebounceMs={0}
 			/>
 		);
@@ -99,6 +101,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 				data={events}
 				columns={columns}
 				rowKey="id"
+				filterMode="panel"
 				searchDebounceMs={0}
 			/>
 		);
@@ -126,6 +129,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 				data={events}
 				columns={columns}
 				rowKey="id"
+				filterMode="panel"
 				searchDebounceMs={0}
 			/>
 		);
@@ -158,6 +162,7 @@ describe("BetterTable - Filtrado de fechas", () => {
 				data={events}
 				columns={columns}
 				rowKey="id"
+				filterMode="panel"
 				searchDebounceMs={0}
 			/>
 		);
