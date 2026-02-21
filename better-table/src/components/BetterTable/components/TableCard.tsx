@@ -1,8 +1,12 @@
-import React, { useCallback, KeyboardEvent, ReactNode } from 'react';
+import React, { useCallback, useMemo, KeyboardEvent, ReactNode } from 'react';
 import { useTableContext } from '../context';
 import { TableData, RowAction } from '../types';
 import { getValueFromPath } from '../utils';
+import { TableActionOverflow } from './TableActionOverflow';
 import clsx from 'clsx';
+
+/** Default icon for actions that don't define one */
+const DEFAULT_ACTION_ICON = '📦';
 
 interface TableCardProps<T extends TableData> {
   row: T;
@@ -14,6 +18,7 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
     columns,
     selectable,
     rowActions,
+    maxVisibleActions,
     isSelected,
     toggleRow,
     hoverable,
@@ -29,6 +34,25 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
   // Primera columna como título
   const titleColumn = visibleColumns[0];
   const otherColumns = visibleColumns.slice(1);
+
+  // Split visible actions into inline vs overflow
+  const { inlineActions, overflowActions } = useMemo(() => {
+    if (!rowActions) return { inlineActions: [], overflowActions: [] };
+
+    const visible = rowActions.filter(
+      (a) => !a.visible || a.visible(row)
+    );
+
+    if (visible.length <= maxVisibleActions) {
+      return { inlineActions: visible, overflowActions: [] };
+    }
+
+    const inlineSlots = maxVisibleActions - 1;
+    return {
+      inlineActions: visible.slice(0, inlineSlots),
+      overflowActions: visible.slice(inlineSlots),
+    };
+  }, [rowActions, maxVisibleActions, row]);
 
   const handleCheckboxChange = useCallback(() => {
     toggleRow(row, rowIndex);
@@ -144,12 +168,9 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
       {/* Acciones */}
       {hasActions && (
         <div className="bt-card-actions">
-          {rowActions!.map((action) => {
-            if (action.visible && !action.visible(row)) {
-              return null;
-            }
-
+          {inlineActions.map((action) => {
             const isDisabled = action.disabled ? action.disabled(row) : false;
+            const icon = action.icon ?? DEFAULT_ACTION_ICON;
 
             if (action.mode === 'link' && action.href) {
               const url =
@@ -161,13 +182,14 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
                   target="_blank"
                   rel="noopener noreferrer"
                   className={clsx(
-                    'bt-action-btn',
+                    'bt-action-btn bt-action-icon-only',
                     action.variant && `bt-variant-${action.variant}`
                   )}
+                  aria-label={action.label}
+                  title={action.label}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {action.icon && <span className="bt-action-icon">{action.icon}</span>}
-                  <span>{action.label}</span>
+                  <span className="bt-action-icon">{icon}</span>
                 </a>
               );
             }
@@ -176,7 +198,7 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
               <button
                 key={action.id}
                 className={clsx(
-                  'bt-action-btn',
+                  'bt-action-btn bt-action-icon-only',
                   action.variant && `bt-variant-${action.variant}`
                 )}
                 onClick={(e) => {
@@ -184,13 +206,24 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
                   handleActionClick(action);
                 }}
                 disabled={isDisabled}
+                aria-label={action.label}
+                title={action.label}
                 type="button"
               >
-                {action.icon && <span className="bt-action-icon">{action.icon}</span>}
-                <span>{action.label}</span>
+                <span className="bt-action-icon">{icon}</span>
               </button>
             );
           })}
+
+          {overflowActions.length > 0 && (
+            <TableActionOverflow
+              actions={overflowActions}
+              row={row}
+              rowIndex={rowIndex}
+              onActionClick={handleActionClick}
+              direction="up"
+            />
+          )}
         </div>
       )}
     </div>

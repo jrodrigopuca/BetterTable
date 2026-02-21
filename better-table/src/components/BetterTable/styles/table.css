@@ -255,6 +255,106 @@
   background-color: var(--bt-color-background-hover);
 }
 
+/* Icon-only action buttons */
+.bt-action-icon-only {
+  padding: var(--bt-spacing-xs);
+  min-width: 32px;
+  min-height: 32px;
+}
+
+/* ========================================
+   OVERFLOW MENU (⋯)
+   ======================================== */
+.bt-overflow-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.bt-overflow-trigger {
+  padding: var(--bt-spacing-xs);
+  min-width: 32px;
+  min-height: 32px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.bt-overflow-trigger:hover:not(:disabled) {
+  background-color: var(--bt-color-background-hover);
+  border-color: var(--bt-color-border);
+}
+
+.bt-overflow-icon {
+  font-size: var(--bt-font-size-md);
+  line-height: 1;
+  letter-spacing: 2px;
+}
+
+.bt-overflow-menu {
+  z-index: var(--bt-z-dropdown);
+  min-width: 180px;
+  background: var(--bt-color-background);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: var(--bt-spacing-xs) 0;
+  animation: bt-fade-in 120ms ease-out;
+}
+
+.bt-overflow-menu-up {
+  /* positioning handled by inline styles */
+}
+
+.bt-overflow-separator {
+  height: 1px;
+  background: var(--bt-color-border);
+  margin: var(--bt-spacing-xs) 0;
+}
+
+.bt-overflow-item {
+  display: flex;
+  align-items: center;
+  gap: var(--bt-spacing-sm);
+  width: 100%;
+  padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+  font-size: var(--bt-font-size-sm);
+  font-weight: var(--bt-font-weight-medium);
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--bt-color-text);
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+  transition: background-color var(--bt-transition-fast);
+}
+
+.bt-overflow-item:hover:not(:disabled) {
+  background-color: var(--bt-color-background-hover);
+}
+
+.bt-overflow-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bt-overflow-item-danger {
+  border-left: 3px solid #efaeae;
+}
+
+.bt-overflow-item-danger:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--bt-color-danger) 8%, transparent);
+}
+
+.bt-overflow-item-icon {
+  flex-shrink: 0;
+  font-size: var(--bt-font-size-md);
+  line-height: 1;
+}
+
+.bt-overflow-item-label {
+  flex: 1;
+}
+
 /* Empty state */
 .bt-empty {
   padding: var(--bt-spacing-xl);
@@ -438,6 +538,7 @@
   /* Acciones de card */
   .bt-card-actions {
     display: flex;
+    align-items: center;
     gap: var(--bt-spacing-sm);
     margin-top: var(--bt-spacing-md);
     padding-top: var(--bt-spacing-sm);
@@ -445,8 +546,13 @@
   }
 
   .bt-card-actions .bt-action-btn {
-    flex: 1;
     justify-content: center;
     min-height: 44px; /* Touch-friendly */
+    min-width: 44px;
+  }
+
+  .bt-card-actions .bt-overflow-trigger {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

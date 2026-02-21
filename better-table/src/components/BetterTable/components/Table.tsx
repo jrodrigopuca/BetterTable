@@ -37,6 +37,7 @@ function BetterTableInner<T extends TableData>(
     // Actions
     rowActions,
     globalActions,
+    maxVisibleActions = 3,
 
     // Pagination
     pagination = { pageSize: 10 },
@@ -220,6 +221,7 @@ function BetterTableInner<T extends TableData>(
       // Actions
       rowActions,
       globalActions,
+      maxVisibleActions,
 
       // Sort
       sortState,
@@ -302,6 +304,7 @@ function BetterTableInner<T extends TableData>(
       rowKey,
       rowActions,
       globalActions,
+      maxVisibleActions,
       sortState,
       handleSort,
       filters,

@@ -194,6 +194,8 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	rowActions?: RowAction<T>[];
 	/** Acciones globales (toolbar) */
 	globalActions?: GlobalAction<T>[];
+	/** Máximo de acciones visibles inline antes de agrupar en menú overflow (default: 3) */
+	maxVisibleActions?: number;
 
 	// === Paginación ===
 	/** Configuración de paginación (false para desactivar) */

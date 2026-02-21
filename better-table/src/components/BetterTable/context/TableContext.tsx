@@ -21,6 +21,7 @@ export interface TableContextValue<T extends TableData = TableData> {
   // Actions
   rowActions?: RowAction<T>[];
   globalActions?: GlobalAction<T>[];
+  maxVisibleActions: number;
 
   // Sort
   sortState: SortState;

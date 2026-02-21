@@ -63,6 +63,7 @@
 
   /* Z-index */
   --bt-z-header: 10;
+  --bt-z-dropdown: 60;
   --bt-z-modal-backdrop: 100;
   --bt-z-modal: 101;
 }
