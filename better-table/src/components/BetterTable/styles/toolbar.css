@@ -182,47 +182,93 @@
   }
 }
 
+/* Search toggle button (mobile collapsed state) */
+.bt-search-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-md);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text-secondary);
+  cursor: pointer;
+  transition: all var(--bt-transition-fast);
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.bt-search-toggle:hover {
+  background-color: var(--bt-color-background-hover);
+  border-color: var(--bt-color-border-hover);
+  color: var(--bt-color-text);
+}
+
+/* Mobile global button: icon-only */
+.bt-global-btn-mobile {
+  padding: var(--bt-spacing-sm);
+  min-width: 40px;
+  min-height: 40px;
+  justify-content: center;
+}
+
+.bt-global-btn-mobile .bt-global-icon {
+  margin: 0;
+}
+
 /* Móvil */
 @media (max-width: 640px) {
   .bt-toolbar {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: var(--bt-spacing-sm);
-  }
-
-  .bt-toolbar-left,
-  .bt-toolbar-right {
-    width: 100%;
+    padding: var(--bt-spacing-sm) var(--bt-spacing-md);
   }
 
   .bt-toolbar-left {
-    flex-direction: column;
+    flex: 1;
+    min-width: 0;
     gap: var(--bt-spacing-sm);
   }
 
-  .bt-search {
+  .bt-toolbar-right {
+    flex-shrink: 0;
+  }
+
+  /* Expanded search takes full toolbar width */
+  .bt-search-mobile {
     width: 100%;
-    max-width: none;
+    min-width: 0;
+    flex: 1;
   }
 
   .bt-search-input {
-    font-size: 16px; /* Previene zoom en iOS */
+    font-size: 16px; /* Prevents iOS zoom */
   }
 
   .bt-selection-info {
-    width: 100%;
-    justify-content: space-between;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .bt-selection-count {
+    white-space: nowrap;
+  }
+
+  .bt-selection-clear {
+    padding: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1;
   }
 
   .bt-global-actions {
-    flex-wrap: wrap;
-    width: 100%;
+    gap: var(--bt-spacing-xs);
   }
 
   .bt-global-btn {
-    flex: 1;
-    min-width: calc(50% - var(--bt-spacing-xs));
-    justify-content: center;
-    min-height: 44px; /* Touch-friendly */
+    min-height: 40px; /* Touch-friendly */
   }
 }
