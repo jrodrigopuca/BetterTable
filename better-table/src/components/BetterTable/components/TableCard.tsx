@@ -19,6 +19,7 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
     hoverable,
     onRowClick,
     openModal,
+    closeModal,
   } = useTableContext<T>();
 
   const visibleColumns = columns.filter((col) => !col.hidden);
@@ -52,13 +53,13 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
         action.onClick(row, rowIndex);
       } else if (action.mode === 'modal' && action.modalContent) {
         const ModalContent = action.modalContent;
-        openModal(<ModalContent data={row} onClose={() => {}} />);
+        openModal(<ModalContent data={row} onClose={closeModal} />);
       } else if (action.mode === 'link' && action.href) {
         const url = typeof action.href === 'function' ? action.href(row) : action.href;
         window.open(url, '_blank');
       }
     },
-    [row, rowIndex, openModal]
+    [row, rowIndex, openModal, closeModal]
   );
 
   // Renderizar valor de celda

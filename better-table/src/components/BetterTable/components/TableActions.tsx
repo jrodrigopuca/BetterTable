@@ -12,7 +12,7 @@ function TableActionsInner<T extends TableData>({
   row,
   rowIndex,
 }: TableActionsProps<T>) {
-  const { rowActions, openModal } = useTableContext<T>();
+  const { rowActions, openModal, closeModal } = useTableContext<T>();
 
   const handleActionClick = useCallback(
     (action: RowAction<T>) => {
@@ -23,9 +23,7 @@ function TableActionsInner<T extends TableData>({
         openModal(
           <ModalContent
             data={row}
-            onClose={() => {
-              // Modal will be closed by the Table component
-            }}
+            onClose={closeModal}
           />
         );
       } else if (action.mode === 'link' && action.href) {
@@ -33,7 +31,7 @@ function TableActionsInner<T extends TableData>({
         window.open(url, '_blank');
       }
     },
-    [row, rowIndex, openModal]
+    [row, rowIndex, openModal, closeModal]
   );
 
   if (!rowActions || rowActions.length === 0) {

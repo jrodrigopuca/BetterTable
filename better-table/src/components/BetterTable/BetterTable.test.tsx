@@ -1367,3 +1367,91 @@ describe("BetterTable - Responsive Card Layout", () => {
 		expect(mockRowClick).toHaveBeenCalledWith(fewUsers[0], 0);
 	});
 });
+
+// ============================================================================
+// CASO 15: Modal con onClose funcional
+// ============================================================================
+
+describe("BetterTable - Modal onClose", () => {
+	it("cierra el modal al llamar onClose desde el contenido", async () => {
+		const user = userEvent.setup();
+
+		const rowActions: RowAction<User>[] = [
+			{
+				id: "edit",
+				label: "Editar",
+				icon: "✏️",
+				mode: "modal",
+				modalContent: ({ data, onClose }: { data: User; onClose: () => void }) => (
+					<div>
+						<p>Editando: {data.name}</p>
+						<button onClick={onClose}>Cerrar desde contenido</button>
+					</div>
+				),
+			},
+		];
+
+		render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				rowActions={rowActions}
+			/>
+		);
+
+		// El modal no debería ser visible inicialmente
+		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+		// Click en el botón de acción "Editar" de la primera fila (tabla desktop)
+		const editButtons = screen.getAllByRole("button", { name: /editar/i });
+		await user.click(editButtons[0]);
+
+		// El modal debería abrirse
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		expect(screen.getByText(/Editando: Juan García/)).toBeInTheDocument();
+
+		// Click en el botón "Cerrar desde contenido" que llama onClose
+		const closeButton = screen.getByText("Cerrar desde contenido");
+		await user.click(closeButton);
+
+		// El modal debería haberse cerrado
+		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+	});
+
+	it("cierra el modal con el botón X", async () => {
+		const user = userEvent.setup();
+
+		const rowActions: RowAction<User>[] = [
+			{
+				id: "view",
+				label: "Ver",
+				mode: "modal",
+				modalContent: ({ data }: { data: User; onClose: () => void }) => (
+					<p>Detalles de {data.name}</p>
+				),
+			},
+		];
+
+		render(
+			<BetterTable<User>
+				data={fewUsers}
+				columns={userColumns}
+				rowKey="id"
+				rowActions={rowActions}
+			/>
+		);
+
+		// Abrir modal
+		const viewButtons = screen.getAllByRole("button", { name: /ver/i });
+		await user.click(viewButtons[0]);
+
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+		// Cerrar con botón X
+		const closeX = screen.getByLabelText("Close modal");
+		await user.click(closeX);
+
+		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+	});
+});

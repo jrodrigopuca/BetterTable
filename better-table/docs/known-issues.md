@@ -2,18 +2,24 @@
 
 Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 
-## � Resumen de Issues
+## 📋 Resumen de Issues
 
-| Issue                              | Severidad | Workaround                   | Estado             | Versión |
-| ---------------------------------- | --------- | ---------------------------- | ------------------ | ------- |
-| Tests con Testing Library Matchers | 🟢 Low    | -                            | ✅ Resuelto        | v1.0.0  |
-| Rendimiento con >10,000 filas      | 🟡 Medium | Usar paginación reducida     | Limitación         | v1.2.0  |
-| Filtrado de columnas tipo Date     | 🟡 Medium | Filtrado manual en padre     | Feature incompleta | v1.3.0  |
-| Exportación de datos               | 🟡 Medium | Implementar con globalAction | No implementada    | v1.4.0  |
-| Server-Side Operations             | 🟡 Medium | Manejo manual en padre       | Limitación         | v2.0.0  |
-| Column Resizing                    | 🟢 Low    | CSS width fijo               | No implementada    | v2.0.0  |
-| Virtual Scrolling                  | 🟡 Medium | Paginación                   | No implementada    | v2.0.0  |
-| Keyboard Navigation                | 🟢 Low    | Mouse/touch                  | Parcial            | v1.3.0  |
+| Issue                              | Severidad | Workaround                   | Estado                    | Versión |
+| ---------------------------------- | --------- | ---------------------------- | ------------------------- | ------- |
+| Tests con Testing Library Matchers | 🟢 Low    | -                            | ✅ Resuelto               | v1.0.0  |
+| Mobile Responsiveness              | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.0  |
+| TypeScript Strict Mode             | 🟢 Low    | -                            | ✅ Resuelto               | v1.1.0  |
+| Modal onClose no funciona          | 🔴 High   | Cerrar con X o Escape        | Bug activo                | v1.1.0  |
+| Rendimiento con >10,000 filas      | 🟡 Medium | Usar paginación reducida     | Limitación                | v1.2.0  |
+| DOM duplicado (table + cards)      | 🟡 Medium | Paginación reducida          | Limitación                | v1.1.0  |
+| Search debounce no implementado    | 🟡 Medium | Datasets pequeños            | Feature incompleta        | v1.1.0  |
+| Filtrado de columnas tipo Date     | 🟡 Medium | Filtrado manual en padre     | Feature incompleta        | v1.3.0  |
+| Exportación de datos               | 🟡 Medium | Implementar con globalAction | No implementada           | v1.4.0  |
+| Server-Side Operations             | 🟡 Medium | Usar callbacks controlados   | Parcialmente implementada | v2.0.0  |
+| Column Resizing                    | 🟢 Low    | CSS width fijo               | No implementada           | v2.0.0  |
+| Virtual Scrolling                  | 🟡 Medium | Paginación                   | No implementada           | v2.0.0  |
+| Quick Jumper desincronizado        | 🟢 Low    | Usar botones de paginación   | Bug menor                 | v1.1.0  |
+| Keyboard Navigation                | 🟢 Low    | Mouse/touch                  | Parcial                   | v1.3.0  |
 
 **Niveles de Severidad:**
 
@@ -57,13 +63,62 @@ Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 - ✅ Agregado `waitFor()` para filtros que necesitan tiempo de procesamiento
 
 **Resultado:**
-🎉 **Todos los 42 tests ahora pasan correctamente**
+🎉 **Todos los 58 tests ahora pasan correctamente** (42 originales + 16 tests de responsive/cards)
 
 **Fecha de Resolución:** 15 de febrero, 2026
 
 ---
 
-### 2. Rendimiento con Grandes Datasets (>10,000 filas)
+### 2. Modal onClose No Cierra el Modal
+
+**Estado:** 🔴 Bug Activo
+
+**Descripción:**
+Cuando una acción de fila usa `mode: 'modal'`, el callback `onClose` que recibe `modalContent` es un no-op. Los botones dentro del modal que llaman `onClose()` no cierran el modal.
+
+**Archivos Afectados:**
+
+- `TableActions.tsx` línea 27: `onClose={() => { /* no-op */ }}`
+- `TableCard.tsx` línea 57: `onClose={() => {}}`
+
+**Impacto:**
+
+- Botones "Cancelar" y "Guardar" en modales de acciones no cierran el modal
+- Solo funciona cerrar con el botón X o la tecla Escape
+
+**Código del Problema:**
+
+```tsx
+// En TableActions.tsx - onClose es un no-op
+openModal(
+	<ModalContent
+		data={row}
+		onClose={() => {
+			// Modal will be closed by the Table component
+		}}
+	/>,
+);
+```
+
+**Fix Requerido:**
+
+```tsx
+// Pasar closeModal del contexto al onClose
+const { rowActions, openModal, closeModal } = useTableContext<T>();
+
+openModal(
+	<ModalContent
+		data={row}
+		onClose={closeModal} // ← Conectar con closeModal del contexto
+	/>,
+);
+```
+
+**Severidad:** 🔴 Alta — Afecta toda acción `mode: 'modal'`
+
+---
+
+### 3. Rendimiento con Grandes Datasets (>10,000 filas)
 
 **Estado:** 🟡 Limitación Conocida
 
@@ -75,6 +130,7 @@ La tabla puede experimentar lag al renderizar más de 10,000 filas sin virtualiz
 - Renderizado inicial lento (>2s)
 - Scroll no fluido
 - Alto uso de memoria
+- Agravado por renderizado dual DOM (ver issue #4)
 
 **Workaround:**
 
@@ -99,7 +155,79 @@ La tabla puede experimentar lag al renderizar más de 10,000 filas sin virtualiz
 
 ---
 
-### 3. Filtrado de Columnas Tipo Date
+### 4. Renderizado Dual de DOM (Table + Cards)
+
+**Estado:** 🟡 Limitación Conocida
+
+**Descripción:**
+El diseño responsive renderiza simultáneamente `<table>` (desktop) y `<TableCards>` (móvil) en el DOM. CSS oculta uno según el viewport, pero ambos existen en memoria.
+
+**Archivo:** `Table.tsx` líneas 378-394
+
+```tsx
+{/* Ambos se renderizan siempre */}
+<table className={clsx('bt-table', classNames.table)} ...>
+  <TableHeader />
+  {hasData ? <TableBody /> : <TableEmpty />}
+</table>
+{hasData && <TableCards />}
+```
+
+**Impacto:**
+
+- Cada fila se renderiza **dos veces** (como `<tr>` y como `<div>` card)
+- Renderers custom (`cell()`) se ejecutan dos veces por fila
+- Duplica nodos DOM y consumo de memoria
+
+**Workaround:**
+Usar paginación con `pageSize` reducido para limitar el impacto.
+
+**Solución Planeada:**
+
+- [ ] Renderizado condicional basado en `matchMedia` en JS
+- [ ] O usar un hook `useMediaQuery` para renderizar solo el layout activo
+
+**Estimación:** v1.2.0
+
+---
+
+### 5. Search Debounce Declarado pero No Implementado
+
+**Estado:** 🟡 Feature Incompleta
+
+**Descripción:**
+El hook `useTableSearch` acepta una opción `debounceMs` en su interfaz de tipos, pero nunca se usa internamente. Cada keystroke ejecuta la búsqueda inmediatamente.
+
+**Archivo:** `useTableSearch.ts`
+
+```typescript
+interface UseTableSearchOptions<T extends TableData> {
+  debounceMs?: number; // ← Declarado
+  // ...
+}
+
+export function useTableSearch<T extends TableData>({
+  data, columns, searchColumns, initialValue,
+  controlledValue, onSearchChange,
+  // debounceMs NO se destructura
+}: UseTableSearchOptions<T>) { ... }
+```
+
+**Impacto:**
+
+- Con datasets grandes, cada keystroke recalcula la búsqueda
+- Puede causar lag en el input de búsqueda
+
+**Solución Planeada:**
+
+- [ ] Implementar debounce real usando `setTimeout`/`clearTimeout`
+- [ ] O usar `useDeferredValue` de React 19
+
+**Estimación:** v1.2.0
+
+---
+
+### 6. Filtrado de Columnas Tipo Date
 
 **Estado:** 🟡 Feature Incompleta
 
@@ -137,9 +265,9 @@ const [filteredData, setFilteredData] = useState(data);
 
 ---
 
-### 4. Exportación de Datos
+### 7. Exportación de Datos
 
-**Estado:** 🔴 No Implementada
+**Estado:** 🟡 No Implementada
 
 **Descripción:**
 No existe funcionalidad built-in para exportar datos a CSV, Excel o PDF.
@@ -178,42 +306,42 @@ No existe funcionalidad built-in para exportar datos a CSV, Excel o PDF.
 
 ### 1. Server-Side Operations
 
+**Estado:** 🟡 Parcialmente Implementada
+
 **Descripción:**
-Filtrado, búsqueda y ordenamiento son siempre client-side.
+Filtrado, búsqueda y ordenamiento son por defecto client-side, pero ahora existen callbacks controlados que permiten server-side.
 
-**Impacto:**
-No es ideal para datasets que viven en el servidor (ej: APIs con paginación).
+**Lo que YA funciona (v1.1.0):**
 
-**Workaround Actual:**
+- `onPageChange` y `totalItems` en pagination (paginación server-side)
+- `onSortChange` callback para ordenamiento controlado
+- `onFilterChange` callback para filtros controlados
+- `onSearchChange` callback para búsqueda controlada
+
+**Ejemplo actual funcional:**
 
 ```typescript
-// Manejar en componente padre
-const [data, setData] = useState([]);
-const [page, setPage] = useState(1);
-
-useEffect(() => {
-  fetch(`/api/users?page=${page}&sort=${sortState}`)
-    .then(res => res.json())
-    .then(setData);
-}, [page, sortState]);
-
 <BetterTable
-  data={data}
+  data={serverData}
   pagination={{
     page,
-    onPageChange: setPage,
-    totalItems: serverTotalCount  // ← No implementado aún
+    pageSize: 20,
+    totalItems: serverTotalCount,  // ✅ Ahora funciona
+    onPageChange: (page, pageSize) => fetchFromServer(page, pageSize),
   }}
+  onSortChange={(sort) => fetchSorted(sort)}
+  onFilterChange={(filters) => fetchFiltered(filters)}
+  onSearchChange={(value) => fetchSearched(value)}
 />
 ```
 
-**Solución Planeada:**
+**Lo que FALTA:**
 
-- [ ] Prop `serverSide: boolean`
-- [ ] Callbacks: `onServerFilter`, `onServerSort`, `onServerSearch`
-- [ ] Loading states automáticos
+- [ ] Prop `serverSide: boolean` dedicado para modo explícito
+- [ ] Loading states automáticos durante fetch
+- [ ] Manejo de errores de red integrado
 
-**Estimación:** v2.0.0 (Breaking change)
+**Estimación:** v2.0.0 (API dedicada completa)
 
 ---
 
@@ -310,40 +438,26 @@ No hay soporte para filas expandibles con sub-tablas.
 
 ### 5. Mobile Responsiveness
 
+**Estado:** ✅ RESUELTO
+
 **Descripción:**
-La tabla no es completamente responsive en móviles pequeños.
+La tabla no era responsive en móviles. Esto fue completamente implementado en v1.1.0.
 
-**Problemas:**
+**Solución Implementada (febrero 2026):**
 
-- Overflow horizontal sin feedback visual
-- Acciones difíciles de clickear
-- Filtros ocupan mucho espacio
+- ✅ Card layout automático en móviles (<640px)
+- ✅ Scroll horizontal compacto en tablets (640-1024px)
+- ✅ Touch-friendly targets (44px min-height)
+- ✅ Toolbar stacked en móviles
+- ✅ Paginación simplificada en móviles
+- ✅ Modal 95vw en móviles
+- ✅ Prevención de zoom iOS (font-size: 16px en inputs)
+- ✅ 16 tests nuevos para cards responsive
+- ✅ Selección, acciones, columnas ocultas, booleanos y nulls en cards
 
-**Workaround:**
+**Componentes Nuevos:** `TableCard.tsx`, `TableCards.tsx`
 
-```css
-/* Wrapper con scroll */
-.table-wrapper {
-	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
-}
-
-/* Columnas prioritarias visibles */
-@media (max-width: 768px) {
-	.bt-td:not(.priority-column) {
-		display: none;
-	}
-}
-```
-
-**Solución Planeada:**
-
-- [ ] Card view en móviles
-- [ ] Prioridad de columnas
-- [ ] Sticky first column
-- [ ] Bottom sheet para filtros
-
-**Estimación:** v1.7.0
+**Detalle completo:** Ver `docs/RESPONSIVE_PLAN.md`
 
 ---
 
@@ -351,26 +465,28 @@ La tabla no es completamente responsive en móviles pequeños.
 
 ### 1. TypeScript Strict Mode
 
+**Estado:** ✅ RESUELTO
+
 **Descripción:**
-Algunos tipos pueden causar errores en strict mode extremo.
+Previamente algunos tipos causaban errores en strict mode. Ahora el proyecto compila limpiamente con `tsc --noEmit` y strict mode habilitado.
 
-**Ejemplo:**
+**Configuración actual en `tsconfig.json`:**
 
-```typescript
-// Error en tsconfig con strictNullChecks
-const value = getValueFromPath(row, "nested.path");
-// value puede ser undefined, requiere null check
+```jsonc
+"strict": true,
+"noUnusedLocals": true,
+"noUnusedParameters": true,
+"noFallthroughCasesInSwitch": true,
+"noUncheckedSideEffectImports": true
 ```
 
-**Solución:**
+**Detalles:**
 
-```typescript
-// Siempre verificar undefined
-const value = getValueFromPath(row, "nested.path");
-if (value !== undefined) {
-	// Usar value
-}
-```
+- Tipo base `TableData = Record<string, unknown>` (no `any`)
+- Todos los componentes son correctamente genéricos
+- Cero errores de TypeScript en compilación
+
+**Fecha de Resolución:** Febrero 2026
 
 ---
 
@@ -415,33 +531,61 @@ import styles from './MyTable.module.css';
 
 ---
 
+### 6. Quick Jumper de Paginación Desincronizado
+
+**Estado:** 🟢 Bug Menor
+
+**Descripción:**
+El input de "saltar a página" en la paginación usa `defaultValue` (uncontrolled). Cuando el usuario navega con los botones prev/next, el input mantiene el valor antiguo.
+
+**Archivo:** `TablePagination.tsx`
+
+```tsx
+<input
+	type="number"
+	defaultValue={page} // ← Uncontrolled, no se actualiza
+	onKeyDown={handleQuickJump}
+/>
+```
+
+**Fix Requerido:**
+Cambiar a `value={page}` con `onChange` handler (input controlado), o usar `key={page}` para forzar re-mount.
+
+---
+
 ## 🚧 Roadmap de Fixes
 
-### v1.0.2 (Patch - Próximo)
+### v1.0.2 (Patch)
 
 - [x] Actualizar dependencias
-- [ ] Fix tests de TypeScript
-- [ ] Documentación mejorada
+- [x] Fix tests de TypeScript
+- [x] Mobile responsiveness (cards)
+- [x] TypeScript strict mode
 - [ ] Performance: evitar re-renders innecesarios
 
-### v1.1.0 (Minor)
+### v1.1.1 (Patch - Próximo)
 
-- [ ] Date filtering
-- [ ] Column hiding/showing
-- [ ] Export básico (CSV)
-- [ ] Mobile improvements
+- [ ] 🔴 Fix modal `onClose` callback
+- [ ] Quick jumper input controlado
+- [ ] Implementar debounce en búsqueda
 
 ### v1.2.0 (Minor)
 
+- [ ] Renderizado condicional table/cards (eliminar DOM dual)
 - [ ] Virtualización
 - [ ] Column resizing
-- [ ] Advanced filtering
+- [ ] Advanced filtering (Date picker)
+
+### v1.3.0 (Minor)
+
+- [ ] Column hiding/showing
+- [ ] Export básico (CSV)
+- [ ] Keyboard navigation completa
 
 ### v2.0.0 (Major)
 
-- [ ] Server-side operations
+- [ ] Server-side operations (API dedicada)
 - [ ] Breaking changes necesarios
-- [ ] Reescritura de arquitectura si necesario
 
 ---
 
