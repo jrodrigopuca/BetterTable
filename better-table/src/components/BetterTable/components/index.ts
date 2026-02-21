@@ -7,6 +7,7 @@ export { TableCard } from "./TableCard";
 export { TableCards } from "./TableCards";
 export { TableActions } from "./TableActions";
 export { TableActionOverflow } from "./TableActionOverflow";
+export { TableFilterPanel } from "./TableFilterPanel";
 export { TablePagination } from "./TablePagination";
 export { TableToolbar } from "./TableToolbar";
 export { TableEmpty } from "./TableEmpty";

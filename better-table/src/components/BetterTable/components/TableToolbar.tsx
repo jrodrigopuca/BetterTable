@@ -18,11 +18,17 @@ function TableToolbarInner<T extends TableData>() {
     locale,
     classNames,
     selectable,
+    filters,
+    filterPanelOpen,
+    toggleFilterPanel,
+    hasFilterableColumns,
   } = useTableContext<T>();
 
   const isMobile = useMediaQuery('(max-width: 640px)');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const activeFilterCount = Object.keys(filters).length;
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +58,7 @@ function TableToolbarInner<T extends TableData>() {
   }, [searchValue, searchExpanded]);
 
   const hasToolbar =
-    searchable || (globalActions && globalActions.length > 0) || (selectable && selectedCount > 0);
+    searchable || hasFilterableColumns || (globalActions && globalActions.length > 0) || (selectable && selectedCount > 0);
 
   if (!hasToolbar) {
     return null;
@@ -100,6 +106,26 @@ function TableToolbarInner<T extends TableData>() {
               </button>
             )}
           </div>
+        )}
+
+        {hasFilterableColumns && (
+          <button
+            className={clsx(
+              'bt-filter-toggle',
+              filterPanelOpen && 'bt-filter-toggle-active'
+            )}
+            onClick={toggleFilterPanel}
+            aria-expanded={filterPanelOpen}
+            aria-label={locale.filterBy}
+            title={locale.filterBy}
+            type="button"
+          >
+            <span className="bt-filter-toggle-icon">▼</span>
+            {!isMobile && <span>{locale.filterBy}</span>}
+            {activeFilterCount > 0 && (
+              <span className="bt-filter-toggle-badge">{activeFilterCount}</span>
+            )}
+          </button>
         )}
 
         {selectable && selectedCount > 0 && (

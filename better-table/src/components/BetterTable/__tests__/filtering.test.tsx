@@ -5,6 +5,14 @@ import { BetterTable } from "../index";
 import { mockUsers, userColumns, withinTable } from "./helpers/test-data";
 import type { User } from "./helpers/test-data";
 
+/**
+ * Helper: opens the filter panel by clicking the "Filtrar por" toggle button.
+ */
+async function openFilterPanel(user: ReturnType<typeof userEvent.setup>) {
+	const toggleBtn = screen.getByRole("button", { name: /filtrar por/i });
+	await user.click(toggleBtn);
+}
+
 describe("BetterTable - Filtrado de datos", () => {
 	it("filtra por texto en columna string", async () => {
 		const user = userEvent.setup();
@@ -16,6 +24,8 @@ describe("BetterTable - Filtrado de datos", () => {
 				rowKey="id"
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
 		const nameFilter = filterInputs[0];
@@ -37,6 +47,8 @@ describe("BetterTable - Filtrado de datos", () => {
 				rowKey="id"
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
 		const ageFilter = filterInputs[1];
@@ -62,6 +74,8 @@ describe("BetterTable - Filtrado de datos", () => {
 			/>
 		);
 
+		await openFilterPanel(user);
+
 		const selects = screen.getAllByRole("combobox");
 
 		if (selects.length > 0) {
@@ -84,6 +98,8 @@ describe("BetterTable - Filtrado de datos", () => {
 			/>
 		);
 
+		await openFilterPanel(user);
+
 		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
 		await user.type(filterInputs[0], "a");
 
@@ -102,6 +118,8 @@ describe("BetterTable - Filtrado de datos", () => {
 				locale={{ noData: "Sin resultados" }}
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const filterInputs = screen.getAllByPlaceholderText(/filtrar/i);
 		await user.type(filterInputs[0], "zzzzzzz");

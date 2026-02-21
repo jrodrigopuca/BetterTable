@@ -30,6 +30,7 @@ export interface TableContextValue<T extends TableData = TableData> {
   // Filter
   filters: FilterState;
   setFilter: (columnId: string, value: string | number | boolean | import('../types').DateFilterRange | null) => void;
+  clearFilter: (columnId: string) => void;
   clearFilters: () => void;
 
   // Search
@@ -84,6 +85,11 @@ export interface TableContextValue<T extends TableData = TableData> {
   // Callbacks
   onRowClick?: (row: T, rowIndex: number) => void;
   onRowDoubleClick?: (row: T, rowIndex: number) => void;
+
+  // Filter panel
+  filterPanelOpen: boolean;
+  toggleFilterPanel: () => void;
+  hasFilterableColumns: boolean;
 
   // Modal
   openModal: (content: ReactNode) => void;
@@ -150,4 +156,6 @@ export const defaultTableContext: Partial<TableContextValue> = {
   showSizeChanger: false,
   isModalOpen: false,
   modalContent: null,
+  filterPanelOpen: false,
+  hasFilterableColumns: false,
 };

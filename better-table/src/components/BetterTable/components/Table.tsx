@@ -20,6 +20,7 @@ import {
   TableEmpty,
   TableLoadingOverlay,
   TableModal,
+  TableFilterPanel,
 } from '../components';
 import { TableCards } from './TableCards';
 import '../styles/index.css';
@@ -116,6 +117,17 @@ function BetterTableInner<T extends TableData>(
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
 
+  // Filter panel state
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const toggleFilterPanel = useCallback(() => {
+    setFilterPanelOpen((prev) => !prev);
+  }, []);
+
+  const hasFilterableColumns = useMemo(
+    () => columns.some((col) => col.filterable !== false && col.type !== 'custom' && !col.hidden),
+    [columns]
+  );
+
   const openModal = useCallback((content: ReactNode) => {
     setModalContent(content);
     setModalOpen(true);
@@ -157,6 +169,7 @@ function BetterTableInner<T extends TableData>(
     filteredData,
     filters,
     setFilter,
+    clearFilter,
     clearFilters,
   } = useTableFilter({
     data: searchedData,
@@ -232,6 +245,7 @@ function BetterTableInner<T extends TableData>(
       // Filter
       filters,
       setFilter,
+      clearFilter,
       clearFilters,
 
       // Search
@@ -298,6 +312,11 @@ function BetterTableInner<T extends TableData>(
       closeModal,
       modalContent,
       isModalOpen,
+
+      // Filter panel
+      filterPanelOpen,
+      toggleFilterPanel,
+      hasFilterableColumns,
     }),
     [
       data,
@@ -311,6 +330,7 @@ function BetterTableInner<T extends TableData>(
       handleSort,
       filters,
       setFilter,
+      clearFilter,
       clearFilters,
       searchValue,
       handleSearch,
@@ -356,6 +376,9 @@ function BetterTableInner<T extends TableData>(
       closeModal,
       modalContent,
       isModalOpen,
+      filterPanelOpen,
+      toggleFilterPanel,
+      hasFilterableColumns,
     ]
   );
 
@@ -377,6 +400,7 @@ function BetterTableInner<T extends TableData>(
         style={styles.container}
       >
         <TableToolbar />
+        <TableFilterPanel open={filterPanelOpen} />
 
         <div
           className='bt-table-wrapper'

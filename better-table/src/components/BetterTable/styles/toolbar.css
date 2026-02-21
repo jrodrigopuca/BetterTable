@@ -171,6 +171,62 @@
 }
 
 /* ========================================
+   FILTER TOGGLE BUTTON
+   ======================================== */
+
+.bt-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bt-spacing-xs);
+  padding: var(--bt-spacing-sm) var(--bt-spacing-md);
+  font-size: var(--bt-font-size-sm);
+  font-weight: var(--bt-font-weight-medium);
+  border: var(--bt-border-width) solid var(--bt-color-border);
+  border-radius: var(--bt-border-radius-md);
+  background-color: var(--bt-color-background);
+  color: var(--bt-color-text);
+  cursor: pointer;
+  transition: all var(--bt-transition-fast);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.bt-filter-toggle:hover {
+  background-color: var(--bt-color-background-hover);
+  border-color: var(--bt-color-border-hover);
+}
+
+.bt-filter-toggle-active {
+  border-color: var(--bt-color-primary);
+  color: var(--bt-color-primary);
+  background-color: var(--bt-color-primary-light);
+}
+
+.bt-filter-toggle-active:hover {
+  background-color: var(--bt-color-primary-light);
+}
+
+.bt-filter-toggle-icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.bt-filter-toggle-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: var(--bt-font-weight-semibold);
+  background-color: var(--bt-color-primary);
+  color: white;
+  border-radius: 9px;
+  line-height: 1;
+}
+
+/* ========================================
    RESPONSIVE TOOLBAR
    ======================================== */
 
@@ -270,5 +326,31 @@
 
   .bt-global-btn {
     min-height: 40px; /* Touch-friendly */
+  }
+
+  /* Filter toggle: icon-only on mobile */
+  .bt-filter-toggle {
+    padding: var(--bt-spacing-sm);
+    min-width: 40px;
+    min-height: 40px;
+    justify-content: center;
+  }
+
+  /* Filter panel: single column on mobile */
+  .bt-filter-panel {
+    padding: var(--bt-spacing-md);
+  }
+
+  .bt-filter-panel-grid {
+    grid-template-columns: 1fr;
+    gap: var(--bt-spacing-md);
+  }
+
+  .bt-filter-field-dates {
+    flex-direction: column;
+  }
+
+  .bt-filter-field-separator {
+    display: none;
   }
 }

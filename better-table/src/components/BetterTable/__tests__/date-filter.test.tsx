@@ -31,8 +31,18 @@ const columns: Column<Event>[] = [
 	},
 ];
 
+/**
+ * Helper: opens the filter panel by clicking the "Filtrar por" toggle button.
+ */
+async function openFilterPanel(user: ReturnType<typeof userEvent.setup>) {
+	const toggleBtn = screen.getByRole("button", { name: /filtrar por/i });
+	await user.click(toggleBtn);
+}
+
 describe("BetterTable - Filtrado de fechas", () => {
-	it("renderiza dos inputs date (desde/hasta) para columnas tipo date", () => {
+	it("renderiza dos inputs date (desde/hasta) para columnas tipo date", async () => {
+		const user = userEvent.setup();
+
 		render(
 			<BetterTable<Event>
 				data={events}
@@ -40,6 +50,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 				rowKey="id"
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const fromInput = screen.getByLabelText(/desde fecha/i);
 		const toInput = screen.getByLabelText(/hasta fecha/i);
@@ -61,6 +73,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 				searchDebounceMs={0}
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const fromInput = screen.getByLabelText(/desde fecha/i);
 		await user.clear(fromInput);
@@ -89,6 +103,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 			/>
 		);
 
+		await openFilterPanel(user);
+
 		const toInput = screen.getByLabelText(/hasta fecha/i);
 		await user.clear(toInput);
 		await user.type(toInput, "2025-03-31");
@@ -113,6 +129,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 				searchDebounceMs={0}
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const fromInput = screen.getByLabelText(/desde fecha/i);
 		const toInput = screen.getByLabelText(/hasta fecha/i);
@@ -143,6 +161,8 @@ describe("BetterTable - Filtrado de fechas", () => {
 				searchDebounceMs={0}
 			/>
 		);
+
+		await openFilterPanel(user);
 
 		const fromInput = screen.getByLabelText(/desde fecha/i);
 
