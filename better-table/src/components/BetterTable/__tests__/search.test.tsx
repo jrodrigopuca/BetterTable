@@ -15,6 +15,7 @@ describe("BetterTable - Búsqueda global", () => {
 				columns={userColumns}
 				rowKey="id"
 				searchable
+				searchDebounceMs={0}
 				searchColumns={["name", "email"]}
 			/>
 		);
@@ -37,6 +38,7 @@ describe("BetterTable - Búsqueda global", () => {
 				columns={userColumns}
 				rowKey="id"
 				searchable
+				searchDebounceMs={0}
 				searchColumns={["name", "email"]}
 			/>
 		);
@@ -59,6 +61,7 @@ describe("BetterTable - Búsqueda global", () => {
 				columns={userColumns}
 				rowKey="id"
 				searchable
+				searchDebounceMs={0}
 			/>
 		);
 

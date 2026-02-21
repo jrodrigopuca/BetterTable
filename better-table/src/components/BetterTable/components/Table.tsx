@@ -56,6 +56,7 @@ function BetterTableInner<T extends TableData>(
     searchValue: controlledSearchValue,
     onSearchChange,
     searchColumns,
+    searchDebounceMs = 300,
 
     // Selection - now auto-inferred if not explicitly set
     selectable: selectableProp,
@@ -148,6 +149,7 @@ function BetterTableInner<T extends TableData>(
     searchColumns,
     controlledValue: controlledSearchValue,
     onSearchChange,
+    debounceMs: searchDebounceMs,
   });
 
   // Filter hook

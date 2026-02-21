@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { TableData, Column } from "../types";
 import { searchData } from "../utils/filterData";
 
@@ -26,11 +26,32 @@ export function useTableSearch<T extends TableData>({
 	initialValue,
 	controlledValue,
 	onSearchChange,
+	debounceMs = 0,
 }: UseTableSearchOptions<T>): UseTableSearchReturn<T> {
 	const [internalValue, setInternalValue] = useState(initialValue ?? "");
+	const [debouncedValue, setDebouncedValue] = useState(initialValue ?? "");
+	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	// Usar valor controlado si está disponible
 	const searchValue = controlledValue ?? internalValue;
+
+	// Debounce: update debouncedValue after delay
+	useEffect(() => {
+		if (debounceMs <= 0) {
+			setDebouncedValue(searchValue);
+			return;
+		}
+
+		timerRef.current = setTimeout(() => {
+			setDebouncedValue(searchValue);
+		}, debounceMs);
+
+		return () => {
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+			}
+		};
+	}, [searchValue, debounceMs]);
 
 	const handleSearch = useCallback(
 		(value: string) => {
@@ -46,12 +67,17 @@ export function useTableSearch<T extends TableData>({
 		if (controlledValue === undefined) {
 			setInternalValue("");
 		}
+		// Clear immediately, bypass debounce
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+		}
+		setDebouncedValue("");
 		onSearchChange?.("");
 	}, [controlledValue, onSearchChange]);
 
 	const searchedData = useMemo(() => {
-		return searchData(data, searchValue, columns, searchColumns);
-	}, [data, searchValue, columns, searchColumns]);
+		return searchData(data, debouncedValue, columns, searchColumns);
+	}, [data, debouncedValue, columns, searchColumns]);
 
 	return { searchedData, searchValue, handleSearch, clearSearch };
 }

@@ -158,6 +158,7 @@ export function TablePagination() {
         <div className="bt-quick-jumper">
           <span className="bt-quick-jumper-label">{locale.page}:</span>
           <input
+            key={page}
             type="number"
             className="bt-quick-jumper-input"
             min={1}

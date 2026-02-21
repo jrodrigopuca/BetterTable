@@ -82,7 +82,11 @@ export function searchData<T extends TableData>(
 
 	const searchLower = searchValue.toLowerCase().trim();
 	const columnsToSearch = searchColumnIds
-		? columns.filter((col) => searchColumnIds.includes(col.id))
+		? columns.filter(
+				(col) =>
+					searchColumnIds.includes(col.id) ||
+					searchColumnIds.includes(String(col.accessor)),
+			)
 		: columns.filter((col) => col.type !== "custom");
 
 	return data.filter((row) =>

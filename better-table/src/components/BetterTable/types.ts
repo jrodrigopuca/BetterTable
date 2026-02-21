@@ -224,6 +224,8 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	onSearchChange?: (value: string) => void;
 	/** Columnas en las que buscar (default: todas) */
 	searchColumns?: string[];
+	/** Milisegundos de debounce en la búsqueda (default: 300) */
+	searchDebounceMs?: number;
 
 	// === Selección ===
 	/** Habilitar selección de filas */

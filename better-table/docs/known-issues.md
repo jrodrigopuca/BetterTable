@@ -9,17 +9,20 @@ Lista de problemas conocidos, limitaciones y workarounds en BetterTable.
 | Tests con Testing Library Matchers | 🟢 Low    | -                            | ✅ Resuelto               | v1.0.0  |
 | Mobile Responsiveness              | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.0  |
 | TypeScript Strict Mode             | 🟢 Low    | -                            | ✅ Resuelto               | v1.1.0  |
-| Modal onClose no funciona          | 🔴 High   | Cerrar con X o Escape        | Bug activo                | v1.1.0  |
+| Modal onClose no funciona          | 🔴 High   | -                            | ✅ Resuelto               | v1.1.1  |
+| DOM duplicado (table + cards)      | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
+| Search debounce no implementado    | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
+| Search no matchea por accessor     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
+| Card actions overflow en móvil     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
+| Toolbar no responsive en móvil     | 🟡 Medium | -                            | ✅ Resuelto               | v1.1.1  |
 | Rendimiento con >10,000 filas      | 🟡 Medium | Usar paginación reducida     | Limitación                | v1.2.0  |
-| DOM duplicado (table + cards)      | 🟡 Medium | Paginación reducida          | Limitación                | v1.1.0  |
-| Search debounce no implementado    | 🟡 Medium | Datasets pequeños            | Feature incompleta        | v1.1.0  |
+| Quick Jumper desincronizado        | 🟢 Low    | Usar botones de paginación   | Bug menor                 | v1.1.0  |
 | Filtrado de columnas tipo Date     | 🟡 Medium | Filtrado manual en padre     | Feature incompleta        | v1.3.0  |
+| Keyboard Navigation                | 🟢 Low    | Mouse/touch                  | Parcial                   | v1.3.0  |
 | Exportación de datos               | 🟡 Medium | Implementar con globalAction | No implementada           | v1.4.0  |
 | Server-Side Operations             | 🟡 Medium | Usar callbacks controlados   | Parcialmente implementada | v2.0.0  |
 | Column Resizing                    | 🟢 Low    | CSS width fijo               | No implementada           | v2.0.0  |
 | Virtual Scrolling                  | 🟡 Medium | Paginación                   | No implementada           | v2.0.0  |
-| Quick Jumper desincronizado        | 🟢 Low    | Usar botones de paginación   | Bug menor                 | v1.1.0  |
-| Keyboard Navigation                | 🟢 Low    | Mouse/touch                  | Parcial                   | v1.3.0  |
 
 **Niveles de Severidad:**
 
@@ -130,7 +133,7 @@ La tabla puede experimentar lag al renderizar más de 10,000 filas sin virtualiz
 - Renderizado inicial lento (>2s)
 - Scroll no fluido
 - Alto uso de memoria
-- Agravado por renderizado dual DOM (ver issue #4)
+- Agravado por ~~renderizado dual DOM (ver issue #4)~~ _(resuelto: ahora solo renderiza el layout activo)_
 
 **Workaround:**
 
@@ -180,37 +183,35 @@ El diseño responsive renderizaba simultáneamente `<table>` (desktop) y `<Table
 
 ### 5. Search Debounce Declarado pero No Implementado
 
-**Estado:** 🟡 Feature Incompleta
+**Estado:** ✅ RESUELTO
 
 **Descripción:**
-El hook `useTableSearch` acepta una opción `debounceMs` en su interfaz de tipos, pero nunca se usa internamente. Cada keystroke ejecuta la búsqueda inmediatamente.
+El hook `useTableSearch` aceptaba `debounceMs` en tipos pero no lo implementaba.
 
-**Archivo:** `useTableSearch.ts`
+**Solución Implementada:**
 
-```typescript
-interface UseTableSearchOptions<T extends TableData> {
-  debounceMs?: number; // ← Declarado
-  // ...
-}
+- `useTableSearch` ahora mantiene un `debouncedValue` separado del `searchValue` usando `setTimeout`/`clearTimeout`
+- El input responde al instante (sin lag), el filtrado se aplica tras el delay
+- `clearSearch()` bypasea el debounce y limpia inmediatamente
+- Nueva prop `searchDebounceMs` (default: 300ms), configurable con `searchDebounceMs={0}` para filtrado instantáneo
+- 5 tests nuevos con fake timers verifican debounce, reset de timer, clear inmediato y modo sin debounce
 
-export function useTableSearch<T extends TableData>({
-  data, columns, searchColumns, initialValue,
-  controlledValue, onSearchChange,
-  // debounceMs NO se destructura
-}: UseTableSearchOptions<T>) { ... }
-```
+**Fecha de Resolución:** 21 de febrero, 2026
 
-**Impacto:**
+---
 
-- Con datasets grandes, cada keystroke recalcula la búsqueda
-- Puede causar lag en el input de búsqueda
+### 5b. Search No Matchea por Accessor en searchColumns
 
-**Solución Planeada:**
+**Estado:** ✅ RESUELTO
 
-- [ ] Implementar debounce real usando `setTimeout`/`clearTimeout`
-- [ ] O usar `useDeferredValue` de React 19
+**Descripción:**
+`searchData` solo comparaba `searchColumns` contra `col.id`, no contra `col.accessor`. Columnas con accessor anidado (ej: `accessor: "details.brand"`, `id: "brand"`) no se encontraban al pasar `searchColumns={["details.brand"]}`.
 
-**Estimación:** v1.2.0
+**Solución Implementada:**
+
+- `searchData` en `filterData.ts` ahora matchea `searchColumnIds` contra **`col.id`** y **`col.accessor`**
+
+**Fecha de Resolución:** 21 de febrero, 2026
 
 ---
 
@@ -550,24 +551,28 @@ Cambiar a `value={page}` con `onChange` handler (input controlado), o usar `key=
 - [x] TypeScript strict mode
 - [ ] Performance: evitar re-renders innecesarios
 
-### v1.1.1 (Patch - Próximo)
+### v1.1.1 (Patch - Completado ✅)
 
-- [ ] 🔴 Fix modal `onClose` callback
+- [x] 🔴 Fix modal `onClose` callback
+- [x] Renderizado condicional table/cards (eliminar DOM dual)
+- [x] Implementar debounce en búsqueda
+- [x] Fix search matcheo por accessor
+- [x] Card actions overflow (icon-only + dropdown)
+- [x] Toolbar responsive en móvil (search colapsable, actions icon-only)
+- [x] Refactor de tests (1 archivo → 17 archivos, 82 tests)
 - [ ] Quick jumper input controlado
-- [ ] Implementar debounce en búsqueda
 
-### v1.2.0 (Minor)
+### v1.2.0 (Minor - Próximo)
 
-- [ ] Renderizado condicional table/cards (eliminar DOM dual)
-- [ ] Virtualización
-- [ ] Column resizing
+- [ ] Virtualización (react-window o @tanstack/virtual)
 - [ ] Advanced filtering (Date picker)
+- [ ] Keyboard navigation completa
 
 ### v1.3.0 (Minor)
 
 - [ ] Column hiding/showing
+- [ ] Column resizing
 - [ ] Export básico (CSV)
-- [ ] Keyboard navigation completa
 
 ### v2.0.0 (Major)
 
