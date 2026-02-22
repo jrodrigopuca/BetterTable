@@ -3,6 +3,7 @@ import {
   TableData,
   Column,
   SortState,
+  MultiSortState,
   FilterState,
   TableLocale,
   TableClassNames,
@@ -16,6 +17,7 @@ export interface TableContextValue<T extends TableData = TableData> {
   data: T[];
   processedData: T[];
   columns: Column<T>[];
+  visibleColumns: Column<T>[];
   rowKey: keyof T | ((row: T, index: number) => string);
 
   // Actions
@@ -26,6 +28,16 @@ export interface TableContextValue<T extends TableData = TableData> {
   // Sort
   sortState: SortState;
   handleSort: (columnId: string) => void;
+  multiSortState: MultiSortState;
+  isMultiSort: boolean;
+  clearSort: () => void;
+
+  // Column Visibility
+  columnVisibilityEnabled: boolean;
+  hiddenColumnIds: Set<string>;
+  toggleColumn: (columnId: string) => void;
+  showAllColumns: () => void;
+  isColumnVisible: (columnId: string) => boolean;
 
   // Filter
   filters: FilterState;
@@ -128,6 +140,8 @@ export function TableProvider<T extends TableData>({
 // Default context values para evitar undefined
 export const defaultTableContext: Partial<TableContextValue> = {
   sortState: { columnId: null, direction: 'asc' },
+  multiSortState: [],
+  isMultiSort: false,
   filters: {},
   searchValue: '',
   selectedRows: [],
@@ -148,6 +162,7 @@ export const defaultTableContext: Partial<TableContextValue> = {
   bordered: false,
   striped: false,
   hoverable: true,
+  columnVisibilityEnabled: false,
   stickyHeader: false,
   selectable: false,
   selectionMode: 'multiple',

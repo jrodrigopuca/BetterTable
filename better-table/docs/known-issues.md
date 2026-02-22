@@ -532,7 +532,7 @@ El input de "saltar a página" usaba `defaultValue` (uncontrolled) y no se actua
 - [x] Fix search matcheo por accessor
 - [x] Card actions overflow (icon-only + dropdown)
 - [x] Toolbar responsive en móvil (search colapsable, actions icon-only)
-- [x] Refactor de tests (1 archivo → 18 archivos, 87 tests)
+- [x] Refactor de tests (1 archivo → 21 archivos, 113 tests)
 - [x] Quick jumper input controlado
 - [x] Filter Panel (botón en toolbar + panel colapsable con filtros)
 - [x] Date range filtering (desde/hasta para columnas date)
@@ -542,13 +542,14 @@ El input de "saltar a página" usaba `defaultValue` (uncontrolled) y no se actua
 
 ### v1.2.0 (Minor - Próximo)
 
+- [x] Column visibility toggle (dropdown interactivo en toolbar)
+- [x] Multi-sort (ciclo de 3 estados por columna, sin tecla modificadora)
 - [ ] Virtualización (react-window o @tanstack/virtual)
 - [ ] Advanced filtering (Date picker)
 - [ ] Keyboard navigation completa
 
 ### v1.3.0 (Minor)
 
-- [ ] Column hiding/showing
 - [ ] Column resizing
 - [ ] Export básico (CSV)
 

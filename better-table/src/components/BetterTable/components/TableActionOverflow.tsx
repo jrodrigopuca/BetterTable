@@ -29,7 +29,7 @@ interface TableActionOverflowProps<T extends TableData> {
 function TableActionOverflowInner<T extends TableData>({
   actions,
   row,
-  rowIndex,
+  rowIndex: _rowIndex,
   onActionClick,
   direction = 'down',
 }: TableActionOverflowProps<T>) {

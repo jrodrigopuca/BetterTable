@@ -12,6 +12,7 @@ export type {
 	GlobalAction,
 	PaginationConfig,
 	SortState,
+	MultiSortState,
 	FilterState,
 	TableClassNames,
 	TableLocale,
@@ -25,6 +26,7 @@ export { useTableFilter } from "./hooks/useTableFilter";
 export { useTablePagination } from "./hooks/useTablePagination";
 export { useTableSelection } from "./hooks/useTableSelection";
 export { useTableSearch } from "./hooks/useTableSearch";
+export { useColumnVisibility } from "./hooks/useColumnVisibility";
 
 // Context (for custom sub-components)
 export { useTableContext, TableProvider } from "./context";

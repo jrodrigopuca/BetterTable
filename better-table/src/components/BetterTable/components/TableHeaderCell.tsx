@@ -42,10 +42,29 @@ function TableHeaderCellInner<T extends TableData>({
     sortState,
     handleSort,
     locale,
+    multiSortState,
+    isMultiSort,
   } = useTableContext<T>();
 
   const isSorted = sortState.columnId === column.id;
-  const sortDirection = isSorted ? sortState.direction : null;
+
+  // For multi-sort, check if this column is in the multi-sort array
+  const multiSortIndex = isMultiSort
+    ? multiSortState.findIndex((s) => s.columnId === column.id)
+    : -1;
+  const isInMultiSort = multiSortIndex >= 0;
+  const multiSortDirection = isInMultiSort
+    ? multiSortState[multiSortIndex].direction
+    : null;
+  const showMultiSortBadge = isMultiSort && multiSortState.length > 1 && isInMultiSort;
+
+  // Determine effective sort state for this column
+  const effectivelySorted = isMultiSort ? isInMultiSort : isSorted;
+  const effectiveDirection = isMultiSort
+    ? multiSortDirection
+    : isSorted
+      ? sortState.direction
+      : null;
 
   const handleSortClick = useCallback(() => {
     if (column.sortable !== false) {
@@ -67,22 +86,27 @@ function TableHeaderCellInner<T extends TableData>({
       return null;
     }
 
-    const Icon = isSorted
-      ? sortDirection === 'asc'
+    const Icon = effectivelySorted
+      ? effectiveDirection === 'asc'
         ? SortAscIcon
         : SortDescIcon
       : SortIdleIcon;
 
     return (
       <button
-        className={clsx('bt-sort-btn', isSorted && 'bt-active')}
+        className={clsx('bt-sort-btn', effectivelySorted && 'bt-active')}
         onClick={handleSortClick}
         aria-label={
-          sortDirection === 'asc' ? locale.sortDesc : locale.sortAsc
+          effectiveDirection === 'asc' ? locale.sortDesc : locale.sortAsc
         }
         type="button"
       >
         <Icon />
+        {showMultiSortBadge && (
+          <span className="bt-sort-priority" aria-label={`${locale.sortPriority} ${multiSortIndex + 1}`}>
+            {multiSortIndex + 1}
+          </span>
+        )}
       </button>
     );
   };
@@ -101,12 +125,12 @@ function TableHeaderCellInner<T extends TableData>({
 
   return (
     <th
-      className={clsx('bt-th', column.align && `bt-align-${column.align}`, isSorted && 'bt-sorted')}
+      className={clsx('bt-th', column.align && `bt-align-${column.align}`, effectivelySorted && 'bt-sorted')}
       style={{ width: column.width }}
       role="columnheader"
       aria-sort={
-        isSorted
-          ? sortDirection === 'asc'
+        effectivelySorted
+          ? effectiveDirection === 'asc'
             ? 'ascending'
             : 'descending'
           : undefined

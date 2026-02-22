@@ -210,7 +210,7 @@
 | **Zero-config** | ✅ | ❌ | ⚡ | ⚡ | ⚡ | ❌ |
 | **TypeScript Generics** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Sorting** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Multi-sort** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Multi-sort** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Column Filters** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Global Search** | ✅ | ✅ | ✅ | ❌¹ | ✅ | ✅ |
 | **Date Range Filter** | ✅ | ❌² | ✅ | ❌² | ✅ | ❌² |
@@ -223,7 +223,7 @@
 | **i18n Presets** | ✅ | ❌ | ✅ | ✅ | ✅ | ❌ |
 | **CSS Isolation** | ✅ | N/A | ✅ | ✅ | ✅ | N/A |
 | **Inline Editing** | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| **Column Visibility Toggle** | ❌⁴ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Column Visibility Toggle** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Column Pinning** | ❌ | ✅ | ✅ | ✅ | ✅(Pro) | ❌ |
 | **Column Resize** | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ |
 | **Row DnD** | ❌ | ✅ | ❌³ | ✅ | ✅(Pro) | ❌ |
@@ -284,9 +284,9 @@ Sistema elegante con 3 presets (en/es/pt) y override granular.
 
 | # | Feature | Quién lo tiene | Impacto | Esfuerzo |
 |---|---|---|---|---|
-| 1 | **Column Visibility Toggle** | Todos menos shadcn | Alto — feature esperada | 3-4h |
+| 1 | **Column Visibility Toggle** | Todos menos shadcn | Alto — feature esperada | ✅ Implementado |
 | 2 | **Inline Editing** | AG Grid, Ant, MUI | Alto — caso de uso común | 4-6h |
-| 3 | **Multi-Sort** | Todos | Medio — power users | 2-3h |
+| 3 | **Multi-Sort** | Todos | Medio — power users | ✅ Implementado |
 | 4 | **Expandable Rows** | Todos menos shadcn | Alto — detalle sin navegar | 4-5h |
 | 5 | **Export CSV** | AG Grid, MUI | Medio — feature esperada | 2-3h |
 
@@ -378,14 +378,14 @@ classNames={{
 
 ## 🎯 Recomendaciones para el Roadmap
 
-### v1.2 — "Feature Parity" (próximo release)
+### v1.2 — "Feature Parity" (✅ Completado parcialmente)
 
-| Feature | Justificación |
-|---|---|
-| Column Visibility Toggle | Todas las librerías lo tienen, es esperado |
-| Multi-Sort | Standard en tablas modernas |
-| Export CSV | Muy solicitado, bajo esfuerzo |
-| `onChange` unificado | Simplifica server-side drastically |
+| Feature | Justificación | Estado |
+|---|---|---|
+| Column Visibility Toggle | Todas las librerías lo tienen, es esperado | ✅ Implementado |
+| Multi-Sort | Standard en tablas modernas | ✅ Implementado |
+| Export CSV | Muy solicitado, bajo esfuerzo | Pendiente |
+| `onChange` unificado | Simplifica server-side drastically | Pendiente |
 
 ### v1.3 — "Power User"
 
@@ -417,7 +417,7 @@ Nuestras ventajas competitivas principales son:
 3. **Responsive cards**: Feature única en el mercado
 4. **Bundle size competitivo**: ~50KB JS + ~25KB CSS vs AG Grid (>200KB)
 
-Los gaps más críticos a cerrar son **Column Visibility Toggle** (lo tiene todo el mundo), **Inline Editing** (la feature más demandada), y **Multi-Sort** (esperado como estándar).
+Los gaps más críticos a cerrar son **Inline Editing** (la feature más demandada), **Expandable Rows** (detalle sin navegar), y **Export CSV** (feature esperada). Los gaps de **Column Visibility Toggle** y **Multi-Sort** ya fueron cerrados en v1.2.
 
 La filosofía de BetterTable debe mantenerse: **declarativo > imperativo, convention over configuration, y zero-config como default**.
 

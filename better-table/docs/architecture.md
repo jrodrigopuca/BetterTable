@@ -63,21 +63,24 @@ Context API que proporciona estado y funciones a todos los componentes hijos.
 **Estado Compartido:**
 
 - Datos procesados (filtrados, ordenados)
-- Estado de ordenamiento
+- Estado de ordenamiento (single-sort y multi-sort)
 - Filtros activos
 - Búsqueda global
 - Selección de filas
 - Paginación
+- Visibilidad de columnas (columnas ocultas)
 
 ### Hooks Especializados
 
 Cada hook maneja un aspecto específico de la funcionalidad:
 
-- **useTableSort**: Ordenamiento de columnas
+- **useTableSort**: Ordenamiento de columnas (single-sort y multi-sort con ciclo de 3 estados)
 - **useTableFilter**: Filtrado por columna
 - **useTableSearch**: Búsqueda global
 - **useTableSelection**: Selección de filas
 - **useTablePagination**: Paginación de datos
+- **useColumnVisibility**: Visibilidad de columnas (toggle show/hide)
+- **useMediaQuery**: Detección de viewport (responsive cards vs tabla)
 
 ## 🔄 Flujo de Datos
 
@@ -189,7 +192,7 @@ undefined            → defaultLocale (English)
 { noData: "..." }    → { ...defaultLocale, noData: "..." }
 ```
 
-Todas las keys del `TableLocale` (20 strings) cubren: búsqueda, filtrado, paginación, selección, acciones, ordenamiento y modales.
+Todas las keys del `TableLocale` (~30 strings) cubren: búsqueda, filtrado, paginación, selección, acciones, ordenamiento, modales, visibilidad de columnas y multi-sort.
 
 ## 🎨 Arquitectura de Estilos
 
@@ -333,7 +336,7 @@ import { useTableSort, sortData } from "better-table";
 2. **Integration Tests**: Componentes con Context
 3. **E2E Tests**: Flujos completos de usuario
 
-**Coverage actual:** 18 archivos de test, 87 tests
+**Coverage actual:** 21 archivos de test, 113 tests
 
 ### Testing Library
 

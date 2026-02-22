@@ -55,39 +55,112 @@ sequenceDiagram
 
 ```typescript
 // En TableHeaderCell
-const handleHeaderClick = () => {
-	if (column.sortable) {
-		handleSort(column.id);
-	}
-};
+const handleSortClick = useCallback(() => {
+	handleSort(column.id);
+}, [column.id, handleSort]);
 
-// En useTableSort
+// En useTableSort (single sort mode)
 const handleSort = (columnId: string) => {
 	setSortState((prev) => {
-		if (prev.column === columnId) {
-			// Ciclo: asc → desc → null
-			const nextDirection =
-				prev.direction === "asc"
-					? "desc"
-					: prev.direction === "desc"
-						? null
-						: "asc";
-
-			return {
-				column: nextDirection ? columnId : null,
-				direction: nextDirection,
-			};
+		if (prev.columnId === columnId) {
+			// Ciclo: asc → desc → unsorted
+			if (prev.direction === "asc") {
+				return { columnId, direction: "desc" };
+			}
+			// desc → unsorted
+			return { columnId: null, direction: "asc" };
 		}
-		return { column: columnId, direction: "asc" };
+		return { columnId, direction: "asc" };
 	});
 };
 ```
 
 ### Estados del Ordenamiento
 
-1. **No ordenado**: `{ column: null, direction: null }`
-2. **Ascendente**: `{ column: 'name', direction: 'asc' }` → Icono ↑
-3. **Descendente**: `{ column: 'name', direction: 'desc' }` → Icono ↓
+1. **No ordenado**: `{ columnId: null, direction: 'asc' }`
+2. **Ascendente**: `{ columnId: 'name', direction: 'asc' }` → Icono ↑
+3. **Descendente**: `{ columnId: 'name', direction: 'desc' }` → Icono ↓
+
+---
+
+## 📊 1b. Multi-Sort (Ordenamiento Múltiple)
+
+### Flujo de Interacción
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant TableHeaderCell
+    participant useTableSort
+    participant TableBody
+
+    User->>TableHeaderCell: Click en columna A
+    TableHeaderCell->>useTableSort: handleSort('A')
+    useTableSort->>useTableSort: multiSortState = [{ columnId: 'A', direction: 'asc' }]
+    useTableSort->>TableBody: Datos ordenados por A↑
+    TableHeaderCell->>User: Badge "1" en A
+
+    User->>TableHeaderCell: Click en columna B
+    TableHeaderCell->>useTableSort: handleSort('B')
+    useTableSort->>useTableSort: multiSortState = [A↑, { columnId: 'B', direction: 'asc' }]
+    useTableSort->>TableBody: Datos ordenados por A↑, luego B↑
+    TableHeaderCell->>User: Badge "1" en A, Badge "2" en B
+
+    User->>TableHeaderCell: Click en columna A (2do click)
+    TableHeaderCell->>useTableSort: handleSort('A')
+    useTableSort->>useTableSort: multiSortState = [{ columnId: 'A', direction: 'desc' }, B↑]
+    useTableSort->>TableBody: Datos ordenados por A↓, luego B↑
+
+    User->>TableHeaderCell: Click en columna A (3er click)
+    TableHeaderCell->>useTableSort: handleSort('A')
+    useTableSort->>useTableSort: multiSortState = [B↑] (A removida)
+    useTableSort->>TableBody: Datos ordenados solo por B↑
+```
+
+### Ciclo de 3 Estados por Columna
+
+```
+Click 1: unsorted → asc    (se agrega al array)
+Click 2: asc     → desc   (permanece en su posición)
+Click 3: desc    → remove (se remueve del array)
+```
+
+### Código Relevante
+
+```typescript
+// En useTableSort (multi-sort mode)
+const handleSort = (columnId: string) => {
+	setMultiSortState((prev) => {
+		const existingIndex = prev.findIndex((s) => s.columnId === columnId);
+
+		if (existingIndex === -1) {
+			// Nueva columna → agregar como asc
+			return [...prev, { columnId, direction: "asc" }];
+		}
+
+		const existing = prev[existingIndex];
+		if (existing.direction === "asc") {
+			// asc → desc
+			const next = [...prev];
+			next[existingIndex] = { columnId, direction: "desc" };
+			return next;
+		}
+
+		// desc → remove
+		return prev.filter((_, i) => i !== existingIndex);
+	});
+};
+```
+
+### Badge de Prioridad
+
+Cuando `multiSortState.length > 1`, cada header cell muestra un badge numérico con su posición en el array:
+
+```
+| Name ↑ ① | Email ↓ ② | Age ↑ ③ |
+```
+
+Si solo queda 1 columna en multi-sort, el badge no se muestra.
 
 ---
 
@@ -619,9 +692,13 @@ const processedData = useMemo(() => {
 	let result = data;
 	result = filterData(result, filters, columns);
 	result = searchData(result, searchValue, columns);
-	result = sortData(result, sortState.column, sortState.direction, columns);
+	if (multiSort && multiSortState.length > 0) {
+		result = multiSortData(result, multiSortState);
+	} else {
+		result = sortData(result, sortState.columnId, sortState.direction);
+	}
 	return result;
-}, [data, filters, searchValue, sortState, columns]);
+}, [data, filters, searchValue, sortState, multiSortState, columns]);
 
 // ✅ Bueno: useCallback para funciones
 const handleSort = useCallback((columnId: string) => {

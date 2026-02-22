@@ -14,10 +14,9 @@ function EmptyIcon() {
 }
 
 export function TableEmpty() {
-  const { locale, emptyComponent, columns, selectable, rowActions } =
+  const { locale, emptyComponent, visibleColumns, selectable, rowActions } =
     useTableContext();
 
-  const visibleColumns = columns.filter((col) => !col.hidden);
   const hasActions = rowActions && rowActions.length > 0;
   const colSpan = visibleColumns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0);
 

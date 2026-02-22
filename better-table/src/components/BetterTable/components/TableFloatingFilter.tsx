@@ -30,7 +30,7 @@ const FilterIcon = () => (
  */
 function TableFloatingFilterInner<T extends TableData>() {
   const {
-    columns,
+    visibleColumns,
     filters,
     setFilter,
     selectable,
@@ -40,7 +40,6 @@ function TableFloatingFilterInner<T extends TableData>() {
     stickyHeader,
   } = useTableContext<T>();
 
-  const visibleColumns = columns.filter((col) => !col.hidden);
   const hasActions = rowActions && rowActions.length > 0;
 
   // Only render if at least one column is filterable

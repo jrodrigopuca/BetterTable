@@ -7,7 +7,7 @@ import clsx from 'clsx';
 
 function TableHeaderInner<T extends TableData>() {
   const {
-    columns,
+    visibleColumns,
     selectable,
     selectionMode,
     rowActions,
@@ -20,7 +20,6 @@ function TableHeaderInner<T extends TableData>() {
     filterMode,
   } = useTableContext<T>();
 
-  const visibleColumns = columns.filter((col) => !col.hidden);
   const hasActions = rowActions && rowActions.length > 0;
 
   const showFloatingFilter = filterMode === 'floating' || filterMode === 'both';

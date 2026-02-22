@@ -5,7 +5,8 @@ A modern, flexible, and fully typed data table component for React.
 ## ✨ Features
 
 - 🔍 **Search & Filter** — Global search with debounce + Floating Filters (inline in header) / Filter Panel / Both
-- 📊 **Sorting** — Multi-type sorting (string, number, date, boolean)
+- 📊 **Sorting** — Single & multi-sort with 3-state cycle (asc → desc → unsorted)
+- 👁️ **Column Visibility** — Interactive toggle to show/hide columns at runtime
 - ✅ **Selection** — Single or multiple row selection with global actions
 - 📱 **Responsive** — Card layout for mobile, collapsible toolbar
 - 🎬 **Row Actions** — Callbacks, modals, links + overflow menu
@@ -51,6 +52,20 @@ const MyTable = () => {
 
 	return <BetterTable data={data} columns={columns} />;
 };
+```
+
+### Multi-Sort & Column Visibility
+
+```tsx
+<BetterTable
+	data={users}
+	columns={columns}
+	rowKey="id"
+	multiSort // Each column cycles: unsorted → asc → desc → unsorted
+	columnVisibility // Show/hide columns dropdown in toolbar
+	onMultiSortChange={(sorts) => console.log(sorts)}
+	onColumnVisibilityChange={(hidden) => console.log(hidden)}
+/>
 ```
 
 ### With Search, Pagination & Actions
@@ -213,6 +228,9 @@ See [Components Documentation](./docs/components.md) for complete API reference.
 | `maxVisibleActions` | `number`                    | `3`     | Inline actions before overflow (⋯) |
 | `locale`            | `LocaleKey \| TableLocale`  | `'en'`  | Locale preset or custom strings    |
 | `loading`           | `boolean`                   | `false` | Loading state                      |
+| `multiSort`         | `boolean`                   | `false` | Enable multi-column sorting        |
+| `columnVisibility`  | `boolean`                   | `false` | Show column visibility toggle      |
+| `filterMode`        | `'floating' \| 'panel' \| 'both'` | `'floating'` | Filter display mode        |
 
 ## 📄 License
 

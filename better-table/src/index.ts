@@ -17,6 +17,7 @@ export type {
 	GlobalAction,
 	PaginationConfig,
 	SortState,
+	MultiSortState,
 	FilterState,
 	DateFilterRange,
 	TableClassNames,
@@ -31,6 +32,7 @@ export { useTableFilter } from "./components/BetterTable/hooks/useTableFilter";
 export { useTablePagination } from "./components/BetterTable/hooks/useTablePagination";
 export { useTableSelection } from "./components/BetterTable/hooks/useTableSelection";
 export { useTableSearch } from "./components/BetterTable/hooks/useTableSearch";
+export { useColumnVisibility } from "./components/BetterTable/hooks/useColumnVisibility";
 
 // Context (for custom sub-components)
 export {

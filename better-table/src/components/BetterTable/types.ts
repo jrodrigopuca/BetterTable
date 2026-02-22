@@ -105,6 +105,11 @@ export interface SortState {
 }
 
 /**
+ * Estado de multi-sort (array de sort states en orden de prioridad)
+ */
+export type MultiSortState = SortState[];
+
+/**
  * Rango de fechas para filtros tipo date
  */
 export interface DateFilterRange {
@@ -170,6 +175,11 @@ export interface TableLocale {
 	nextPage?: string;
 	jumpToPage?: string;
 	details?: string;
+	columns?: string;
+	showAllColumns?: string;
+	hideColumn?: string;
+	sortPriority?: string;
+	clearSort?: string;
 }
 
 /**
@@ -201,6 +211,11 @@ export const defaultLocale: Required<TableLocale> = {
 	nextPage: "Next page",
 	jumpToPage: "Go to page",
 	details: "Details",
+	columns: "Columns",
+	showAllColumns: "Show all",
+	hideColumn: "Hide column",
+	sortPriority: "Sort priority",
+	clearSort: "Clear sort",
 };
 
 /**
@@ -234,6 +249,11 @@ export const locales = {
 		nextPage: "Página siguiente",
 		jumpToPage: "Ir a página",
 		details: "Detalles",
+		columns: "Columnas",
+		showAllColumns: "Mostrar todas",
+		hideColumn: "Ocultar columna",
+		sortPriority: "Prioridad de orden",
+		clearSort: "Quitar orden",
 	} satisfies Required<TableLocale>,
 	pt: {
 		search: "Pesquisar",
@@ -261,6 +281,11 @@ export const locales = {
 		nextPage: "Próxima página",
 		jumpToPage: "Ir para página",
 		details: "Detalhes",
+		columns: "Colunas",
+		showAllColumns: "Mostrar todas",
+		hideColumn: "Ocultar coluna",
+		sortPriority: "Prioridade de ordem",
+		clearSort: "Remover ordem",
 	} satisfies Required<TableLocale>,
 } as const;
 
@@ -298,6 +323,12 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	sort?: SortState;
 	/** Callback de cambio de ordenamiento */
 	onSortChange?: (sort: SortState) => void;
+	/** Habilitar multi-sort (cada columna cicla: sin orden → asc → desc → sin orden, default: false) */
+	multiSort?: boolean;
+	/** Estado de multi-sort (controlado) */
+	multiSortState?: MultiSortState;
+	/** Callback de cambio de multi-sort */
+	onMultiSortChange?: (sorts: MultiSortState) => void;
 
 	// === Filtrado ===
 	/** Modo de visualización de filtros: 'floating' (en header), 'panel' (colapsable), o 'both' (default: 'floating') */
@@ -328,6 +359,14 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	onSelectionChange?: (selectedRows: T[]) => void;
 	/** Modo de selección */
 	selectionMode?: "single" | "multiple";
+
+	// === Column Visibility ===
+	/** Mostrar toggle de visibilidad de columnas en el toolbar */
+	columnVisibility?: boolean;
+	/** Estado controlado de columnas ocultas (array de column IDs) */
+	hiddenColumns?: string[];
+	/** Callback cuando cambia la visibilidad de columnas */
+	onColumnVisibilityChange?: (hiddenColumns: string[]) => void;
 
 	// === Estados ===
 	/** Estado de carga */

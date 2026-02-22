@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useTableContext } from '../context';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { TableColumnVisibility } from './TableColumnVisibility';
 import { TableData } from '../types';
 import clsx from 'clsx';
 
@@ -57,6 +58,7 @@ function TableToolbarInner<T extends TableData>() {
     toggleFilterPanel,
     hasFilterableColumns,
     filterMode,
+    columnVisibilityEnabled,
   } = useTableContext<T>();
 
   const isMobile = useMediaQuery('(max-width: 640px)');
@@ -95,7 +97,7 @@ function TableToolbarInner<T extends TableData>() {
   const showFilterPanelToggle = hasFilterableColumns && (filterMode === 'panel' || filterMode === 'both');
 
   const hasToolbar =
-    searchable || showFilterPanelToggle || (globalActions && globalActions.length > 0) || (selectable && selectedCount > 0);
+    searchable || showFilterPanelToggle || columnVisibilityEnabled || (globalActions && globalActions.length > 0) || (selectable && selectedCount > 0);
 
   if (!hasToolbar) {
     return null;
@@ -166,6 +168,8 @@ function TableToolbarInner<T extends TableData>() {
             )}
           </button>
         )}
+
+        <TableColumnVisibility />
 
         {selectable && selectedCount > 0 && (
           <div className="bt-selection-info">

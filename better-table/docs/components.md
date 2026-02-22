@@ -30,6 +30,8 @@ El componente raíz que orquesta toda la funcionalidad de la tabla.
 | `searchable`    | `boolean`                   | `false`      | No        | Mostrar barra de búsqueda    |
 | `selectable`    | `boolean`                   | `false`      | No        | Habilitar selección de filas |
 | `selectionMode` | `'single' \| 'multiple'`    | `'multiple'` | No        | Modo de selección            |
+| `multiSort`     | `boolean`                   | `false`      | No        | Habilitar multi-sort (ciclo de 3 estados por columna) |
+| `columnVisibility` | `boolean`                | `false`      | No        | Mostrar toggle de visibilidad de columnas en toolbar |
 
 #### Props de Personalización
 
@@ -63,15 +65,17 @@ El componente raíz que orquesta toda la funcionalidad de la tabla.
 
 #### Callbacks
 
-| Evento              | Payload                            | Descripción            |
-| ------------------- | ---------------------------------- | ---------------------- |
-| `onSort`            | `SortState`                        | Cambio de ordenamiento |
-| `onFilter`          | `FilterState`                      | Cambio de filtros      |
-| `onSearch`          | `string`                           | Cambio de búsqueda     |
-| `onSelectionChange` | `T[]`                              | Cambio de selección    |
-| `onRowClick`        | `(row: T, index: number)`          | Click en fila          |
-| `onRowDoubleClick`  | `(row: T, index: number)`          | Doble click en fila    |
-| `onPageChange`      | `(page: number, pageSize: number)` | Cambio de página       |
+| Evento                     | Payload                            | Descripción                      |
+| -------------------------- | ---------------------------------- | -------------------------------- |
+| `onSortChange`             | `SortState`                        | Cambio de ordenamiento           |
+| `onMultiSortChange`        | `MultiSortState`                   | Cambio de multi-sort             |
+| `onFilterChange`           | `FilterState`                      | Cambio de filtros                |
+| `onSearchChange`           | `string`                           | Cambio de búsqueda               |
+| `onSelectionChange`        | `T[]`                              | Cambio de selección              |
+| `onColumnVisibilityChange` | `string[]`                         | Cambio de columnas ocultas       |
+| `onRowClick`               | `(row: T, index: number)`          | Click en fila                    |
+| `onRowDoubleClick`         | `(row: T, index: number)`          | Doble click en fila              |
+| `onPageChange`             | `(page: number, pageSize: number)` | Cambio de página                 |
 
 Ver [types.ts](../src/components/BetterTable/types.ts) para definición completa de tipos.
 
@@ -230,15 +234,30 @@ Celda individual del header con controles de ordenamiento.
 
 #### Features
 
-- Botones de ordenamiento (↑↓)
+- Botones de ordenamiento (↑↓) con ciclo de 3 estados
 - Soporte para render personalizado (`headerCell`)
 - Indicadores visuales de estado activo
+- Badge de prioridad en multi-sort (muestra número de orden)
 
 #### Estados
 
-- **Idle**: Sin ordenamiento
-- **Ascending**: Ordenamiento ascendente (↑)
-- **Descending**: Ordenamiento descendente (↓)
+- **Idle**: Sin ordenamiento — icono con opacidad reducida
+- **Ascending**: Ordenamiento ascendente (↑) — icono activo
+- **Descending**: Ordenamiento descendente (↓) — icono activo
+
+#### Comportamiento de Sort
+
+**Single sort** (default):
+- Click 1: Ordena ascendente
+- Click 2: Ordena descendente
+- Click 3: Quita ordenamiento (vuelve al estado original)
+- Click en otra columna: Reemplaza el sort
+
+**Multi-sort** (`multiSort={true}`):
+- Cada click en una columna nueva la agrega al array de sort
+- Clicks subsecuentes en la misma columna ciclan: asc → desc → remove
+- Se muestra un badge numérico de prioridad cuando hay >1 columna ordenada
+- No requiere tecla modificadora (Shift/Ctrl)
 
 ---
 
@@ -583,27 +602,39 @@ Puede reemplazarse con `emptyComponent` prop.
 
 **Ubicación:** `src/components/BetterTable/hooks/useTableSort.ts`
 
-Hook para ordenamiento de datos.
+Hook para ordenamiento de datos. Soporta single-sort y multi-sort.
 
 #### API
 
 ```typescript
 const {
-	sortState, // { column: string, direction: 'asc' | 'desc' | null }
-	sortedData, // Datos ordenados
-	handleSort, // (columnId: string) => void
-} = useTableSort(data, columns);
+	sortState,      // { columnId: string | null, direction: 'asc' | 'desc' }
+	sortedData,     // Datos ordenados
+	handleSort,     // (columnId: string) => void
+	clearSort,      // () => void
+	multiSortState, // SortState[] — array de sorts en orden de prioridad
+	isMultiSort,    // boolean — si multi-sort está habilitado
+} = useTableSort({ data, multiSort, ... });
 ```
 
-#### Comportamiento
+#### Comportamiento (Single Sort)
 
 - Click 1: Ordenar ascendente
 - Click 2: Ordenar descendente
 - Click 3: Quitar ordenamiento
+- Click en otra columna: Reemplaza
+
+#### Comportamiento (Multi-Sort)
+
+- Click en columna nueva: La agrega como asc al final del array
+- Click en columna existente asc: Cambia a desc
+- Click en columna existente desc: La remueve del array
+- Cada columna mantiene su estado independiente
+- Badge de prioridad visible cuando >1 columna activa
 
 #### Algoritmo
 
-Usa `sortData()` utility con comparaciones type-safe.
+Usa `sortData()` para single-sort y `multiSortData()` para multi-sort con comparaciones type-safe.
 
 ---
 
@@ -857,10 +888,20 @@ interface GlobalAction<T extends TableData> {
 
 ```typescript
 interface SortState {
-	column: string | null;
-	direction: "asc" | "desc" | null;
+	columnId: string | null;
+	direction: "asc" | "desc";
 }
 ```
+
+---
+
+### MultiSortState
+
+```typescript
+type MultiSortState = SortState[];
+```
+
+Array de `SortState` en orden de prioridad. La primera entrada es el sort primario.
 
 ---
 
@@ -915,6 +956,11 @@ interface TableLocale {
 	nextPage?: string;
 	jumpToPage?: string;
 	details?: string;
+	columns?: string;
+	showAllColumns?: string;
+	hideColumn?: string;
+	sortPriority?: string;
+	clearSort?: string;
 }
 ```
 

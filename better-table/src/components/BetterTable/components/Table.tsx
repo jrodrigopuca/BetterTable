@@ -12,6 +12,7 @@ import { useTableFilter } from '../hooks/useTableFilter';
 import { useTablePagination } from '../hooks/useTablePagination';
 import { useTableSelection } from '../hooks/useTableSelection';
 import { useTableSearch } from '../hooks/useTableSearch';
+import { useColumnVisibility } from '../hooks/useColumnVisibility';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import {
   TableHeader,
@@ -48,6 +49,9 @@ function BetterTableInner<T extends TableData>(
     // Sort
     sort: controlledSort,
     onSortChange,
+    multiSort = false,
+    multiSortState: controlledMultiSort,
+    onMultiSortChange,
 
     // Filter
     filters: controlledFilters,
@@ -66,6 +70,11 @@ function BetterTableInner<T extends TableData>(
     selectedRows: controlledSelectedRows,
     onSelectionChange,
     selectionMode = 'multiple',
+
+    // Column Visibility
+    columnVisibility = false,
+    hiddenColumns: controlledHiddenColumns,
+    onColumnVisibilityChange,
 
     // States
     loading = false,
@@ -185,10 +194,26 @@ function BetterTableInner<T extends TableData>(
   });
 
   // Sort hook
-  const { sortedData, sortState, handleSort } = useTableSort({
+  const { sortedData, sortState, handleSort, clearSort, multiSortState, isMultiSort } = useTableSort({
     data: filteredData,
     controlledSort,
     onSortChange,
+    multiSort,
+    controlledMultiSort,
+    onMultiSortChange,
+  });
+
+  // Column visibility hook
+  const {
+    visibleColumns,
+    hiddenColumnIds,
+    toggleColumn,
+    showAllColumns,
+    isColumnVisible,
+  } = useColumnVisibility({
+    columns,
+    controlledHiddenColumns,
+    onColumnVisibilityChange,
   });
 
   // Selection hook
@@ -237,6 +262,7 @@ function BetterTableInner<T extends TableData>(
       data,
       processedData: paginatedData,
       columns,
+      visibleColumns,
       rowKey,
 
       // Actions
@@ -247,6 +273,16 @@ function BetterTableInner<T extends TableData>(
       // Sort
       sortState,
       handleSort,
+      multiSortState,
+      isMultiSort,
+      clearSort,
+
+      // Column Visibility
+      columnVisibilityEnabled: columnVisibility,
+      hiddenColumnIds,
+      toggleColumn,
+      showAllColumns,
+      isColumnVisible,
 
       // Filter
       filters,
@@ -329,12 +365,21 @@ function BetterTableInner<T extends TableData>(
       data,
       paginatedData,
       columns,
+      visibleColumns,
       rowKey,
       rowActions,
       globalActions,
       maxVisibleActions,
       sortState,
       handleSort,
+      multiSortState,
+      isMultiSort,
+      clearSort,
+      columnVisibility,
+      hiddenColumnIds,
+      toggleColumn,
+      showAllColumns,
+      isColumnVisible,
       filters,
       setFilter,
       clearFilter,

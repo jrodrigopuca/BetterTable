@@ -176,7 +176,7 @@ const columns: Column<Product>[] = [
 
 ## 🔧 Funcionalidad Avanzada
 
-### 5. Column Visibility Toggle
+### 5. Column Visibility Toggle — ✅ IMPLEMENTADO
 
 **Problema**: En móvil o con muchas columnas, el usuario no puede elegir qué ver.
 
@@ -186,18 +186,15 @@ const columns: Column<Product>[] = [
 <BetterTable
 	data={products}
 	columns={columns}
-	columnVisibility={{
-		enabled: true,
-		defaultHidden: ["sku", "createdAt"], // Ocultas por defecto
-		persist: "localStorage", // Recordar preferencias
-		persistKey: "products-columns",
-	}}
+	columnVisibility  // Habilita dropdown de visibilidad en toolbar
+	hiddenColumns={["sku", "createdAt"]} // Ocultas por defecto
+	onColumnVisibilityChange={(hidden) => setHidden(hidden)}
 />
 ```
 
-**UI**: Dropdown multiselect en toolbar.
+**UI**: Dropdown multiselect en toolbar con checkbox por columna y botón "Show all".
 
-**Estimación**: 3-4 horas
+**Implementado en:** v1.2.0
 
 ---
 

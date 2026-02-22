@@ -15,7 +15,7 @@ interface TableCardProps<T extends TableData> {
 
 function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T>) {
   const {
-    columns,
+    visibleColumns,
     selectable,
     rowActions,
     maxVisibleActions,
@@ -27,7 +27,6 @@ function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T
     closeModal,
   } = useTableContext<T>();
 
-  const visibleColumns = columns.filter((col) => !col.hidden);
   const hasActions = rowActions && rowActions.length > 0;
   const selected = selectable && isSelected(row, rowIndex);
 

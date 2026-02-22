@@ -328,6 +328,8 @@ function App() {
 				searchable
 				searchColumns={["name", "details.brand", "category"]}
 				selectionMode="multiple"
+				multiSort
+				columnVisibility
 				striped
 				hoverable
 				bordered

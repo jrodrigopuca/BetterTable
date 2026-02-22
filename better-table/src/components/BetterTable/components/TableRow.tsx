@@ -12,7 +12,7 @@ interface TableRowProps<T extends TableData> {
 
 function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>) {
   const {
-    columns,
+    visibleColumns,
     selectable,
     rowActions,
     isSelected,
@@ -23,7 +23,6 @@ function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>)
     onRowDoubleClick,
   } = useTableContext<T>();
 
-  const visibleColumns = columns.filter((col) => !col.hidden);
   const hasActions = rowActions && rowActions.length > 0;
   const selected = selectable && isSelected(row, rowIndex);
   const isClickable = Boolean(onRowClick);
