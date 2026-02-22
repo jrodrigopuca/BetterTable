@@ -213,24 +213,24 @@ See [Components Documentation](./docs/components.md) for complete API reference.
 
 ### Main Props
 
-| Prop                | Type                        | Default | Description                        |
-| ------------------- | --------------------------- | ------- | ---------------------------------- |
-| `data`              | `T[]`                       | -       | Array of data to display           |
-| `columns`           | `Column<T>[]`               | -       | Column configuration               |
-| `rowKey`            | `keyof T \| Function`       | `'id'`  | Unique key for rows                |
-| `searchable`        | `boolean`                   | `false` | Enable search toolbar              |
-| `searchDebounceMs`  | `number`                    | `300`   | Search debounce delay (ms)         |
-| `searchColumns`     | `string[]`                  | all     | Columns to search (by accessor)    |
-| `selectable`        | `boolean`                   | auto    | Enable row selection               |
-| `pagination`        | `PaginationConfig \| false` | `false` | Pagination settings                |
-| `rowActions`        | `RowAction<T>[]`            | `[]`    | Per-row actions                    |
-| `globalActions`     | `GlobalAction<T>[]`         | `[]`    | Global toolbar actions             |
-| `maxVisibleActions` | `number`                    | `3`     | Inline actions before overflow (⋯) |
-| `locale`            | `LocaleKey \| TableLocale`  | `'en'`  | Locale preset or custom strings    |
-| `loading`           | `boolean`                   | `false` | Loading state                      |
-| `multiSort`         | `boolean`                   | `false` | Enable multi-column sorting        |
-| `columnVisibility`  | `boolean`                   | `false` | Show column visibility toggle      |
-| `filterMode`        | `'floating' \| 'panel' \| 'both'` | `'floating'` | Filter display mode        |
+| Prop                | Type                              | Default      | Description                        |
+| ------------------- | --------------------------------- | ------------ | ---------------------------------- |
+| `data`              | `T[]`                             | -            | Array of data to display           |
+| `columns`           | `Column<T>[]`                     | -            | Column configuration               |
+| `rowKey`            | `keyof T \| Function`             | `'id'`       | Unique key for rows                |
+| `searchable`        | `boolean`                         | `false`      | Enable search toolbar              |
+| `searchDebounceMs`  | `number`                          | `300`        | Search debounce delay (ms)         |
+| `searchColumns`     | `string[]`                        | all          | Columns to search (by accessor)    |
+| `selectable`        | `boolean`                         | auto         | Enable row selection               |
+| `pagination`        | `PaginationConfig \| false`       | `false`      | Pagination settings                |
+| `rowActions`        | `RowAction<T>[]`                  | `[]`         | Per-row actions                    |
+| `globalActions`     | `GlobalAction<T>[]`               | `[]`         | Global toolbar actions             |
+| `maxVisibleActions` | `number`                          | `3`          | Inline actions before overflow (⋯) |
+| `locale`            | `LocaleKey \| TableLocale`        | `'en'`       | Locale preset or custom strings    |
+| `loading`           | `boolean`                         | `false`      | Loading state                      |
+| `multiSort`         | `boolean`                         | `false`      | Enable multi-column sorting        |
+| `columnVisibility`  | `boolean`                         | `false`      | Show column visibility toggle      |
+| `filterMode`        | `'floating' \| 'panel' \| 'both'` | `'floating'` | Filter display mode                |
 
 ## 📄 License
 

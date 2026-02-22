@@ -186,7 +186,7 @@ const columns: Column<Product>[] = [
 <BetterTable
 	data={products}
 	columns={columns}
-	columnVisibility  // Habilita dropdown de visibilidad en toolbar
+	columnVisibility // Habilita dropdown de visibilidad en toolbar
 	hiddenColumns={["sku", "createdAt"]} // Ocultas por defecto
 	onColumnVisibilityChange={(hidden) => setHidden(hidden)}
 />
