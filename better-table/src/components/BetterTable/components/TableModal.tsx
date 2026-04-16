@@ -1,5 +1,6 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useTableContext } from '../context';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 /* Inline SVG close icon */
 function CloseIcon() {
@@ -12,6 +13,9 @@ function CloseIcon() {
 
 export function TableModal() {
   const { isModalOpen, modalContent, closeModal, locale } = useTableContext();
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(modalRef, isModalOpen);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -54,7 +58,7 @@ export function TableModal() {
       role="dialog"
       aria-modal="true"
     >
-      <div className="bt-modal bt-modal-md">
+      <div className="bt-modal bt-modal-md" ref={modalRef}>
         <div className="bt-modal-header">
           <h2 className="bt-modal-title">{locale.details}</h2>
           <button

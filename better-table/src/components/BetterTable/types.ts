@@ -180,6 +180,10 @@ export interface TableLocale {
 	hideColumn?: string;
 	sortPriority?: string;
 	clearSort?: string;
+	/** aria-live announcements */
+	resultsFound?: string;
+	noResultsFound?: string;
+	rowsSelected?: string;
 }
 
 /**
@@ -216,6 +220,9 @@ export const defaultLocale: Required<TableLocale> = {
 	hideColumn: "Hide column",
 	sortPriority: "Sort priority",
 	clearSort: "Clear sort",
+	resultsFound: "{count} results found",
+	noResultsFound: "No results found",
+	rowsSelected: "{count} rows selected",
 };
 
 /**
@@ -254,6 +261,9 @@ export const locales = {
 		hideColumn: "Ocultar columna",
 		sortPriority: "Prioridad de orden",
 		clearSort: "Quitar orden",
+		resultsFound: "{count} resultados encontrados",
+		noResultsFound: "No se encontraron resultados",
+		rowsSelected: "{count} filas seleccionadas",
 	} satisfies Required<TableLocale>,
 	pt: {
 		search: "Pesquisar",
@@ -286,6 +296,9 @@ export const locales = {
 		hideColumn: "Ocultar coluna",
 		sortPriority: "Prioridade de ordem",
 		clearSort: "Remover ordem",
+		resultsFound: "{count} resultados encontrados",
+		noResultsFound: "Nenhum resultado encontrado",
+		rowsSelected: "{count} linhas selecionadas",
 	} satisfies Required<TableLocale>,
 } as const;
 

@@ -5,3 +5,4 @@ export { useTableSelection } from "./useTableSelection";
 export { useTableSearch } from "./useTableSearch";
 export { useColumnVisibility } from "./useColumnVisibility";
 export { useMediaQuery } from "./useMediaQuery";
+export { useFocusTrap } from "./useFocusTrap";

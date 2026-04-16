@@ -438,6 +438,30 @@ function BetterTableInner<T extends TableData>(
   const hasData = paginatedData.length > 0;
   const isMobile = useMediaQuery('(max-width: 640px)');
 
+  // Announcement for screen readers (aria-live region)
+  const announcement = useMemo(() => {
+    const parts: string[] = [];
+
+    // Results count (only when search or filters are active)
+    const hasActiveSearch = searchValue.length > 0;
+    const hasActiveFilters = Object.keys(filters).length > 0;
+
+    if (hasActiveSearch || hasActiveFilters) {
+      if (sortedData.length === 0) {
+        parts.push(locale.noResultsFound);
+      } else {
+        parts.push(locale.resultsFound.replace('{count}', String(sortedData.length)));
+      }
+    }
+
+    // Selection count
+    if (selectable && selectedCount > 0) {
+      parts.push(locale.rowsSelected.replace('{count}', String(selectedCount)));
+    }
+
+    return parts.join('. ');
+  }, [sortedData.length, searchValue, filters, selectable, selectedCount, locale]);
+
   return (
     <TableProvider value={contextValue}>
       <div
@@ -485,6 +509,11 @@ function BetterTableInner<T extends TableData>(
         {pagination !== false && <TablePagination />}
 
         <TableModal />
+
+        {/* Screen reader announcements for dynamic content changes */}
+        <div aria-live="polite" aria-atomic="true" className="bt-sr-only">
+          {announcement}
+        </div>
       </div>
     </TableProvider>
   );

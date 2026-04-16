@@ -1,5 +1,7 @@
+"use client";
+
 /**
- * @juanb/better-table
+ * better-table
  * A modern, flexible, and fully typed React data table component
  *
  * @packageDocumentation
@@ -50,4 +52,4 @@ export {
 } from "./components/BetterTable/utils/filterData";
 
 // Styles - users should import separately:
-// import '@juanb/better-table/styles.css'
+// import 'better-table/styles.css'
