@@ -10,10 +10,6 @@ const serverPage1: User[] = [
   { id: 2, name: 'Bob', email: 'bob@test.com', age: 30, isActive: false, role: 'user' },
 ];
 
-const serverPage2: User[] = [
-  { id: 3, name: 'Carlos', email: 'carlos@test.com', age: 35, isActive: true, role: 'user' },
-  { id: 4, name: 'Diana', email: 'diana@test.com', age: 28, isActive: true, role: 'admin' },
-];
 
 describe('Server-side data mode', () => {
   describe('manualPagination', () => {
@@ -45,7 +41,6 @@ describe('Server-side data mode', () => {
       );
 
       // Click next page button
-      const nextBtn = container.querySelector('button[aria-label]');
       const buttons = container.querySelectorAll('.bt-pagination button');
       const nextPageBtn = Array.from(buttons).find(
         btn => btn.getAttribute('aria-label')?.includes('next') || btn.getAttribute('aria-label')?.includes('siguiente')
@@ -74,7 +69,7 @@ describe('Server-side data mode', () => {
 
   describe('manualSorting', () => {
     it('does not sort data client-side when manualSorting is true', () => {
-      const { container, rerender } = render(
+      const { container } = render(
         <BetterTable
           data={serverPage1}
           columns={userColumns}

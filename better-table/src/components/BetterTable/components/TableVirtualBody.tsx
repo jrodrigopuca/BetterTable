@@ -45,6 +45,7 @@ function TableVirtualBodyInner<T extends TableData>({
             key={getRowKey(row, actualIndex)}
             row={row}
             rowIndex={actualIndex}
+            rowKey={getRowKey(row, actualIndex)}
           />
         );
       })}
