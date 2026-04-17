@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-04-16
+
+### Added
+
+- **Column Resizing**: Drag-to-resize columns with configurable min/max widths. Resize handles appear on header cell edges. Content truncates with ellipsis when columns shrink.
+  - New props: `resizable` (global and per-column), `minWidth`, `maxWidth` on Column
+  - New hook: `useColumnResize`
+- **Virtualization**: Built-in row virtualization (zero dependencies) for large datasets. Auto-enables when `pagination={false}` and dataset exceeds 500 rows.
+  - New props: `virtualize`, `rowHeight`, `virtualBuffer`
+  - New hook: `useVirtualization`
+  - New component: `TableVirtualBody`
+- **Expandable Rows**: Expand rows to show detail content. Supports controlled/uncontrolled modes and accordion mode (one row at a time).
+  - New prop: `expandable` (`ExpandableConfig`)
+  - New hook: `useExpandableRows`
+  - New component: `TableExpandedRow`
+  - New type: `ExpandableConfig`
+- **Server-Side Data Mode**: Delegate sorting, filtering, and pagination to your API. The table fires callbacks without processing data client-side.
+  - New props: `manualSorting`, `manualFiltering`, `manualPagination`
+  - New callbacks: `onSortChange`, `onSearchChange`, `onFilterChange`
+- **Sticky Headers**: Headers stay visible when scrolling long tables.
+  - New prop: `stickyHeader`
+- **Accessibility Enhancements**: `aria-live` region for screen reader announcements on search/filter/selection changes. Focus trap in modals (WCAG 2.4.3).
+  - New hook: `useFocusTrap`
+- **`"use client"` directive** in entry point for Next.js App Router compatibility
+- **CI/CD**: GitHub Actions workflows for tests (Node 20/22 matrix) and Storybook deployment to GitHub Pages
+- **Storybook**: Interactive documentation with 11 story files covering all features. Deployed to GitHub Pages.
+- 37 new tests (column-resize: 9, virtualization: 8, server-side: 8, expandable-rows: 9, sticky-header: 3) — total: 150 tests
+
+### Changed
+
+- **Context Split**: Monolithic `TableContext` split into 6 focused contexts (`TableDataContext`, `TableSortContext`, `TableFilterContext`, `TableSelectionContext`, `TablePaginationContext`, `TableUIContext`). Reduces unnecessary re-renders. Backwards-compatible facade maintained.
+
+### Fixed
+
+- Column content overflow on resize — cells now use `overflow: hidden; text-overflow: ellipsis`
+- Flex container headers properly support ellipsis via `min-width: 0`
+- Special cells (checkbox, expand, actions) excluded from overflow clipping
+
 ## [1.2.0] - 2026-02-21
 
 ### Added
