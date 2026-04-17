@@ -10,7 +10,8 @@
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "better-table": "file:../better-table"
+    "clsx": "^2.1.1",
+    "better-table": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-links": "^10.3.5",

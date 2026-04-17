@@ -299,22 +299,32 @@ BetterTable uses CSS Variables for customization:
 
 ```bash
 git clone https://github.com/jrodrigopuca/BetterTable.git
-cd BetterTable/better-table
+cd BetterTable
 
-npm install
-npm run dev          # Run demo app
-npm run test         # Run tests (watch mode)
-npm run test:run     # Run tests (single run)
-npm run lint         # Type check
-npm run build        # Build library
+# Install all dependencies (requires pnpm)
+pnpm install
+
+# Run demo app
+pnpm dev
+
+# Run tests (watch mode)
+pnpm test
+
+# Run tests (single run)
+pnpm test:run
+
+# Type check
+pnpm lint
+
+# Build library
+pnpm build
 ```
 
 ### Storybook
 
 ```bash
-cd storybook
-npm install
-npm run storybook    # Dev server on port 6006
+pnpm storybook       # Dev server on port 6006
+pnpm build-storybook  # Production build
 ```
 
 ## 📁 Project Structure

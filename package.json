@@ -1,0 +1,19 @@
+{
+  "name": "better-table-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "test": "pnpm --filter better-table test",
+    "test:run": "pnpm --filter better-table test:run",
+    "lint": "pnpm --filter better-table lint",
+    "build": "pnpm --filter better-table build",
+    "dev": "pnpm --filter better-table dev",
+    "storybook": "pnpm --filter better-table-storybook storybook",
+    "build-storybook": "pnpm --filter better-table-storybook build-storybook"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
