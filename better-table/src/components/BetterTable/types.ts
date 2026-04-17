@@ -429,4 +429,12 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	ariaLabel?: string;
 	/** ID del elemento que describe la tabla */
 	ariaDescribedBy?: string;
+
+	// === Virtualización ===
+	/** Force-enable virtualization (auto-enabled when pagination is off and dataset > VIRTUALIZATION_THRESHOLD) */
+	virtualize?: boolean;
+	/** Fixed row height in px for virtualized rendering (default: 48) */
+	rowHeight?: number;
+	/** Extra rows rendered above/below the viewport as scroll buffer (default: 5) */
+	virtualBuffer?: number;
 }

@@ -16,3 +16,16 @@ Object.defineProperty(window, "matchMedia", {
 		dispatchEvent: () => false,
 	}),
 });
+
+// Mock ResizeObserver for jsdom (not natively supported).
+// Used by useVirtualization to measure container height.
+class ResizeObserverMock {
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+}
+
+Object.defineProperty(window, "ResizeObserver", {
+	writable: true,
+	value: ResizeObserverMock,
+});

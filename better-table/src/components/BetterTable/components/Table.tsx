@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, ReactNode } from 'react';
+import { useMemo, useState, useCallback, useRef, ReactNode } from 'react';
 import {
   BetterTableProps,
   TableData,
@@ -22,6 +22,7 @@ import { useTableSelection } from '../hooks/useTableSelection';
 import { useTableSearch } from '../hooks/useTableSearch';
 import { useColumnVisibility } from '../hooks/useColumnVisibility';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { useVirtualization } from '../hooks/useVirtualization';
 import {
   TableHeader,
   TableBody,
@@ -33,6 +34,12 @@ import {
   TableFilterPanel,
 } from '../components';
 import { TableCards } from './TableCards';
+import { TableVirtualBody } from './TableVirtualBody';
+import {
+  VIRTUALIZATION_THRESHOLD,
+  DEFAULT_ROW_HEIGHT,
+  DEFAULT_VIRTUAL_BUFFER,
+} from '../constants';
 import '../styles/index.css';
 import clsx from 'clsx';
 
@@ -107,6 +114,11 @@ function BetterTableInner<T extends TableData>(
     // Accessibility
     ariaLabel,
     ariaDescribedBy,
+
+    // Virtualization
+    virtualize: virtualizeProp,
+    rowHeight = DEFAULT_ROW_HEIGHT,
+    virtualBuffer = DEFAULT_VIRTUAL_BUFFER,
   } = props;
 
   // Auto-infer selectable: show selection if there's a reason to select
@@ -263,11 +275,33 @@ function BetterTableInner<T extends TableData>(
     onPageChange,
   });
 
+  // Virtualization: auto-enable when no pagination and dataset exceeds threshold
+  const isPaginationDisabled = pagination === false;
+  const shouldVirtualize = useMemo(() => {
+    // User explicitly controls it
+    if (virtualizeProp !== undefined) return virtualizeProp;
+    // Auto-enable only when pagination is off and dataset is large
+    return isPaginationDisabled && sortedData.length > VIRTUALIZATION_THRESHOLD;
+  }, [virtualizeProp, isPaginationDisabled, sortedData.length]);
+
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
+
+  // Data to render: when pagination is off, use sortedData directly
+  const displayData = isPaginationDisabled ? sortedData : paginatedData;
+
+  const { totalHeight, startIndex: virtualStartIndex, endIndex: virtualEndIndex, offsetTop } = useVirtualization({
+    containerRef: tableWrapperRef,
+    itemCount: displayData.length,
+    rowHeight,
+    buffer: virtualBuffer,
+    enabled: shouldVirtualize,
+  });
+
   // Build split context values
   const dataCtx: TableDataContextValue<T> = useMemo(
     () => ({
       data,
-      processedData: paginatedData,
+      processedData: displayData,
       columns,
       visibleColumns,
       rowKey,
@@ -275,7 +309,7 @@ function BetterTableInner<T extends TableData>(
       globalActions,
       maxVisibleActions,
     }),
-    [data, paginatedData, columns, visibleColumns, rowKey, rowActions, globalActions, maxVisibleActions]
+    [data, displayData, columns, visibleColumns, rowKey, rowActions, globalActions, maxVisibleActions]
   );
 
   const sortCtx: TableSortContextValue = useMemo(
@@ -378,7 +412,7 @@ function BetterTableInner<T extends TableData>(
     [locale, classNames, size, bordered, striped, hoverable, stickyHeader, loading, loadingComponent, emptyComponent, onRowClick, onRowDoubleClick, openModal, closeModal, modalContent, isModalOpen, columnVisibility, hiddenColumnIds, toggleColumn, showAllColumns, isColumnVisible, columns]
   );
 
-  const hasData = paginatedData.length > 0;
+  const hasData = displayData.length > 0;
   const isMobile = useMediaQuery('(max-width: 640px)');
 
   // Announcement for screen readers (aria-live region)
@@ -425,8 +459,12 @@ function BetterTableInner<T extends TableData>(
         )}
 
         <div
+          ref={tableWrapperRef}
           className='bt-table-wrapper'
-          style={{ maxHeight }}
+          style={{
+            maxHeight,
+            ...(shouldVirtualize && !maxHeight ? { maxHeight: '80vh', overflow: 'auto' } : {}),
+          }}
         >
           {isMobile ? (
             /* Cards (móvil) */
@@ -440,9 +478,23 @@ function BetterTableInner<T extends TableData>(
               aria-label={ariaLabel}
               aria-describedby={ariaDescribedBy}
               aria-busy={loading}
+              aria-rowcount={shouldVirtualize ? displayData.length : undefined}
             >
               <TableHeader />
-              {hasData ? <TableBody /> : <TableEmpty />}
+              {hasData ? (
+                shouldVirtualize ? (
+                  <TableVirtualBody
+                    startIndex={virtualStartIndex}
+                    endIndex={virtualEndIndex}
+                    totalHeight={totalHeight}
+                    offsetTop={offsetTop}
+                  />
+                ) : (
+                  <TableBody />
+                )
+              ) : (
+                <TableEmpty />
+              )}
             </table>
           )}
 

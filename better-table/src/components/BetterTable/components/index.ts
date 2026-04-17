@@ -15,4 +15,5 @@ export { TableToolbar } from "./TableToolbar";
 export { TableEmpty } from "./TableEmpty";
 export { TableLoading, TableLoadingOverlay } from "./TableLoading";
 export { TableModal } from "./TableModal";
+export { TableVirtualBody } from "./TableVirtualBody";
 export { BetterTable, default } from "./Table";

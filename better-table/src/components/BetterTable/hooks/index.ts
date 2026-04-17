@@ -6,3 +6,4 @@ export { useTableSearch } from "./useTableSearch";
 export { useColumnVisibility } from "./useColumnVisibility";
 export { useMediaQuery } from "./useMediaQuery";
 export { useFocusTrap } from "./useFocusTrap";
+export { useVirtualization } from "./useVirtualization";
