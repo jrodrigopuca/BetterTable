@@ -20,19 +20,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: storybook/package-lock.json
+          cache: pnpm
 
-      - name: Install storybook dependencies
-        run: npm ci
-        working-directory: storybook
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Storybook
-        run: npm run build-storybook
-        working-directory: storybook
+        run: pnpm --filter better-table-storybook build-storybook
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
