@@ -4,6 +4,7 @@ export { useTablePagination } from "./useTablePagination";
 export { useTableSelection } from "./useTableSelection";
 export { useTableSearch } from "./useTableSearch";
 export { useColumnVisibility } from "./useColumnVisibility";
+export { useColumnResize } from "./useColumnResize";
 export { useMediaQuery } from "./useMediaQuery";
 export { useFocusTrap } from "./useFocusTrap";
 export { useVirtualization } from "./useVirtualization";

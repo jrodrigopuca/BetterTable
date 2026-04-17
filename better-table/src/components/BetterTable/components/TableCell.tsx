@@ -1,6 +1,7 @@
 import React from 'react';
 import { TableData, Column } from '../types';
 import { getValueFromPath } from '../utils';
+import { useTableUI } from '../context';
 import clsx from 'clsx';
 
 interface TableCellProps<T extends TableData> {
@@ -14,6 +15,7 @@ function TableCellInner<T extends TableData>({
   column,
   rowIndex,
 }: TableCellProps<T>) {
+  const { resizable, getColumnWidth } = useTableUI<T>();
   const value = getValueFromPath(
     row as Record<string, unknown>,
     String(column.accessor)
@@ -54,10 +56,12 @@ function TableCellInner<T extends TableData>({
 
   const content = renderCellContent();
 
+  const effectiveWidth = resizable ? (getColumnWidth(column.id) ?? column.width) : column.width;
+
   return (
     <td
       className={clsx('bt-td', column.align && `bt-align-${column.align}`)}
-      style={{ width: column.width }}
+      style={{ width: effectiveWidth }}
     >
       {content as React.ReactNode}
     </td>

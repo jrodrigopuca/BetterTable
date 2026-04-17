@@ -6,6 +6,7 @@ import "better-table/styles.css";
 
 type FilterMode = "floating" | "panel" | "both";
 type Theme = "light" | "dark";
+type DemoMode = "products" | "virtualization";
 
 interface Product {
 	[key: string]: unknown;
@@ -21,6 +22,57 @@ interface Product {
 		sku?: string;
 	};
 }
+
+interface VirtualItem {
+	[key: string]: unknown;
+	id: number;
+	name: string;
+	email: string;
+	department: string;
+	salary: number;
+	isActive: boolean;
+	hireDate: string;
+}
+
+function generateLargeDataset(count: number): VirtualItem[] {
+	const departments = ["Engineering", "Marketing", "Sales", "HR", "Finance", "Operations", "Design", "Support"];
+	const firstNames = ["Alice", "Bob", "Carlos", "Diana", "Elena", "Frank", "Grace", "Hugo", "Iris", "Jack"];
+	const lastNames = ["Smith", "García", "Johnson", "López", "Williams", "Chen", "Brown", "Kim", "Jones", "Davis"];
+
+	return Array.from({ length: count }, (_, i) => {
+		const first = firstNames[i % firstNames.length];
+		const last = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
+		return {
+			id: i + 1,
+			name: `${first} ${last}`,
+			email: `${first.toLowerCase()}.${last.toLowerCase()}${i}@example.com`,
+			department: departments[i % departments.length],
+			salary: 40000 + Math.floor(Math.random() * 80000),
+			isActive: Math.random() > 0.15,
+			hireDate: new Date(2020, Math.floor(Math.random() * 60), Math.floor(Math.random() * 28) + 1).toISOString().split("T")[0],
+		};
+	});
+}
+
+const largeDataset = generateLargeDataset(2000);
+
+const virtualColumns: Column<VirtualItem>[] = [
+	{ id: "id", accessor: "id", header: "ID", type: "number", sortable: true },
+	{ id: "name", accessor: "name", header: "Name", sortable: true, filterable: true },
+	{ id: "email", accessor: "email", header: "Email", sortable: true, filterable: true },
+	{ id: "department", accessor: "department", header: "Department", sortable: true, filterable: true },
+	{
+		id: "salary",
+		accessor: "salary",
+		header: "Salary",
+		type: "number",
+		sortable: true,
+		filterable: true,
+		cell: (value: unknown) => <span style={{ fontWeight: 600 }}>${(value as number).toLocaleString()}</span>,
+	},
+	{ id: "isActive", accessor: "isActive", header: "Active", type: "boolean", filterable: true },
+	{ id: "hireDate", accessor: "hireDate", header: "Hire Date", type: "date", sortable: true, filterable: true },
+];
 
 const initialProducts: Product[] = [
 	{ id: 1, name: "MacBook Pro 14\"", price: 1999, stock: 15, category: "Laptops", isAvailable: true, addedDate: "2025-01-15", details: { brand: "Apple", sku: "MBP14-2024" } },
@@ -41,6 +93,7 @@ function App() {
 	const [products, setProducts] = useState<Product[]>(initialProducts);
 	const [filterMode, setFilterMode] = useState<FilterMode>("floating");
 	const [theme, setTheme] = useState<Theme>("light");
+	const [demoMode, setDemoMode] = useState<DemoMode>("products");
 
 	const getNextId = () => Math.max(...products.map(p => p.id), 0) + 1;
 
@@ -287,7 +340,7 @@ function App() {
 	return (
 		<div className={`App ${theme === "dark" ? "App-dark" : ""}`} data-theme={theme}>
 			<div className="App-header">
-				<h1>📦 Inventario de Productos</h1>
+				<h1>{demoMode === "products" ? "📦 Inventario de Productos" : "⚡ Virtualization Demo"}</h1>
 				<button
 					className="theme-toggle"
 					onClick={() => setTheme(t => t === "light" ? "dark" : "light")}
@@ -297,45 +350,92 @@ function App() {
 					{theme === "light" ? "🌙" : "☀️"}
 				</button>
 			</div>
-			<p style={{ color: theme === "dark" ? "#9ca3af" : "#666", marginBottom: 12 }}>
-				{products.length} productos • {products.filter(p => p.isAvailable).length} disponibles
-			</p>
+
 			<div className="demo-controls">
-				<label style={{ fontWeight: 500, fontSize: 14 }}>Filter mode:</label>
-				{(["floating", "panel", "both"] as FilterMode[]).map((mode) => (
-					<button
-						key={mode}
-						onClick={() => setFilterMode(mode)}
-						className={`demo-control-btn ${filterMode === mode ? "active" : ""}`}
-					>
-						{mode}
-					</button>
-				))}
+				<label style={{ fontWeight: 500, fontSize: 14 }}>Demo:</label>
+				<button
+					onClick={() => setDemoMode("products")}
+					className={`demo-control-btn ${demoMode === "products" ? "active" : ""}`}
+				>
+					Products (paginated)
+				</button>
+				<button
+					onClick={() => setDemoMode("virtualization")}
+					className={`demo-control-btn ${demoMode === "virtualization" ? "active" : ""}`}
+				>
+					Virtualization (2k rows)
+				</button>
 			</div>
-			<BetterTable<Product>
-				data={products}
-				columns={columns}
-				rowKey="id"
-				locale="es"
-				filterMode={filterMode}
-				rowActions={rowActions}
-				globalActions={globalActions}
-				pagination={{
-					pageSize: 5,
-					showSizeChanger: true,
-					pageSizeOptions: [5, 10, 20],
-				}}
-				searchable
-				searchColumns={["name", "details.brand", "category"]}
-				selectionMode="multiple"
-				multiSort
-				columnVisibility
-				striped
-				hoverable
-				bordered
-				size="medium"
-				ariaLabel="Tabla de inventario de productos"
-			/>
+
+			{demoMode === "products" ? (
+				<>
+					<p style={{ color: theme === "dark" ? "#9ca3af" : "#666", marginBottom: 12 }}>
+						{products.length} productos • {products.filter(p => p.isAvailable).length} disponibles
+					</p>
+					<div className="demo-controls">
+						<label style={{ fontWeight: 500, fontSize: 14 }}>Filter mode:</label>
+						{(["floating", "panel", "both"] as FilterMode[]).map((mode) => (
+							<button
+								key={mode}
+								onClick={() => setFilterMode(mode)}
+								className={`demo-control-btn ${filterMode === mode ? "active" : ""}`}
+							>
+								{mode}
+							</button>
+						))}
+					</div>
+					<BetterTable<Product>
+						data={products}
+						columns={columns}
+						rowKey="id"
+						locale="es"
+						filterMode={filterMode}
+						rowActions={rowActions}
+						globalActions={globalActions}
+						pagination={{
+							pageSize: 5,
+							showSizeChanger: true,
+							pageSizeOptions: [5, 10, 20],
+						}}
+						searchable
+						searchColumns={["name", "details.brand", "category"]}
+						selectionMode="multiple"
+						multiSort
+						columnVisibility
+						striped
+						hoverable
+						bordered
+						resizable
+						size="medium"
+						ariaLabel="Tabla de inventario de productos"
+					/>
+				</>
+			) : (
+				<>
+					<p style={{ color: theme === "dark" ? "#9ca3af" : "#666", marginBottom: 12 }}>
+						{largeDataset.length.toLocaleString()} employees • No pagination — virtualized rendering
+					</p>
+					<BetterTable<VirtualItem>
+						data={largeDataset}
+						columns={virtualColumns}
+						rowKey="id"
+						locale="en"
+						pagination={false}
+						searchable
+						searchColumns={["name", "email", "department"]}
+						filterMode="floating"
+						selectionMode="multiple"
+						multiSort
+						columnVisibility
+						striped
+						hoverable
+						bordered
+						resizable
+						size="medium"
+						ariaLabel="Virtualized employee table with 2000 rows"
+					/>
+				</>
+			)}
 		</div>
 	);
 }

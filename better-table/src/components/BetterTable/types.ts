@@ -28,6 +28,12 @@ export interface Column<T extends TableData = TableData> {
 	filterable?: boolean;
 	/** Ancho de columna */
 	width?: string | number;
+	/** Ancho mínimo de columna en px (default: 50) */
+	minWidth?: number;
+	/** Ancho máximo de columna en px */
+	maxWidth?: number;
+	/** Whether this column can be resized (default: inherits from table-level resizable) */
+	resizable?: boolean;
 	/** Alineación del contenido */
 	align?: "left" | "center" | "right";
 	/** Columna oculta */
@@ -417,6 +423,14 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	hoverable?: boolean;
 	/** Tamaño de la tabla */
 	size?: "small" | "medium" | "large";
+	/** Enable column resizing via drag (default: false) */
+	resizable?: boolean;
+	/** Callback when a column is resized */
+	onColumnResize?: (columnId: string, width: number) => void;
+	/** Minimum column width in px when resizing (default: 50) */
+	minColumnWidth?: number;
+	/** Maximum column width in px when resizing */
+	maxColumnWidth?: number;
 
 	// === Callbacks ===
 	/** Callback al hacer click en una fila */

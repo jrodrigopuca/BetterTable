@@ -1199,6 +1199,49 @@
 }
 
 /* ========================================
+   COLUMN RESIZING
+   ======================================== */
+
+.bt-table-resizable {
+  table-layout: fixed;
+}
+
+.bt-th-resizable {
+  position: relative;
+}
+
+.bt-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 1;
+  user-select: none;
+  touch-action: none;
+}
+
+.bt-resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  right: 2px;
+  width: 1px;
+  height: 50%;
+  background-color: var(--bt-color-border-hover);
+  transition: background-color var(--bt-transition-fast), width var(--bt-transition-fast);
+}
+
+.bt-resize-handle:hover::after,
+.bt-resize-handle:active::after {
+  width: 3px;
+  right: 1px;
+  background-color: var(--bt-color-primary);
+  border-radius: 1px;
+}
+
+/* ========================================
    Visually Hidden (Screen Reader Only)
    ======================================== */
 .bt-sr-only {

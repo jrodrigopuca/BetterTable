@@ -39,7 +39,19 @@ function TableHeaderCellInner<T extends TableData>({
   column,
 }: TableHeaderCellProps<T>) {
   const { sortState, handleSort, multiSortState, isMultiSort } = useTableSortContext();
-  const { locale } = useTableUI<T>();
+  const { locale, resizable, startResize, getColumnWidth } = useTableUI<T>();
+
+  // Determine if THIS column is resizable
+  const isResizable = column.resizable !== undefined ? column.resizable : resizable;
+
+  const handleResizeMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startResize(column.id, e.clientX);
+    },
+    [column.id, startResize]
+  );
 
   const isSorted = sortState.columnId === column.id;
 
@@ -108,20 +120,32 @@ function TableHeaderCellInner<T extends TableData>({
 
   // Custom header cell render
   if (column.headerCell) {
+    const resizedWidth = getColumnWidth(column.id);
     return (
       <th
-        className={clsx('bt-th', column.align && `bt-align-${column.align}`)}
-        style={{ width: column.width }}
+        className={clsx('bt-th', column.align && `bt-align-${column.align}`, isResizable && 'bt-th-resizable')}
+        style={{ width: resizedWidth ?? column.width }}
+        data-column-id={column.id}
       >
         {column.headerCell(column)}
+        {isResizable && (
+          <div
+            className="bt-resize-handle"
+            onMouseDown={handleResizeMouseDown}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label={`Resize ${column.header}`}
+          />
+        )}
       </th>
     );
   }
 
   return (
     <th
-      className={clsx('bt-th', column.align && `bt-align-${column.align}`, effectivelySorted && 'bt-sorted')}
-      style={{ width: column.width }}
+      className={clsx('bt-th', column.align && `bt-align-${column.align}`, effectivelySorted && 'bt-sorted', isResizable && 'bt-th-resizable')}
+      style={{ width: getColumnWidth(column.id) ?? column.width }}
+      data-column-id={column.id}
       role="columnheader"
       aria-sort={
         effectivelySorted
@@ -139,6 +163,15 @@ function TableHeaderCellInner<T extends TableData>({
           {renderSortIcon()}
         </div>
       </div>
+      {isResizable && (
+        <div
+          className="bt-resize-handle"
+          onMouseDown={handleResizeMouseDown}
+          role="separator"
+          aria-orientation="vertical"
+          aria-label={`Resize ${column.header}`}
+        />
+      )}
     </th>
   );
 }

@@ -26,6 +26,12 @@ export interface TableUIContextValue<T extends TableData = TableData> {
   showAllColumns: () => void;
   isColumnVisible: (columnId: string) => boolean;
   columns: Column<T>[];
+  // Column Resizing
+  resizable: boolean;
+  columnWidths: Record<string, number>;
+  isResizing: boolean;
+  startResize: (columnId: string, startX: number) => void;
+  getColumnWidth: (columnId: string) => number | undefined;
 }
 
 const TableUIContext = createContext<TableUIContextValue | null>(null);

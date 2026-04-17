@@ -21,6 +21,7 @@ import { useTablePagination } from '../hooks/useTablePagination';
 import { useTableSelection } from '../hooks/useTableSelection';
 import { useTableSearch } from '../hooks/useTableSearch';
 import { useColumnVisibility } from '../hooks/useColumnVisibility';
+import { useColumnResize } from '../hooks/useColumnResize';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { useVirtualization } from '../hooks/useVirtualization';
 import {
@@ -110,6 +111,12 @@ function BetterTableInner<T extends TableData>(
     // Callbacks
     onRowClick,
     onRowDoubleClick,
+
+    // Column Resizing
+    resizable = false,
+    onColumnResize,
+    minColumnWidth,
+    maxColumnWidth,
 
     // Accessibility
     ariaLabel,
@@ -285,6 +292,22 @@ function BetterTableInner<T extends TableData>(
   }, [virtualizeProp, isPaginationDisabled, sortedData.length]);
 
   const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  // Column resize hook
+  const {
+    columnWidths,
+    isResizing,
+    startResize,
+    getColumnWidth,
+  } = useColumnResize({
+    columns: visibleColumns,
+    enabled: resizable,
+    minWidth: minColumnWidth,
+    maxWidth: maxColumnWidth,
+    onColumnResize,
+    tableRef,
+  });
 
   // Data to render: when pagination is off, use sortedData directly
   const displayData = isPaginationDisabled ? sortedData : paginatedData;
@@ -408,8 +431,13 @@ function BetterTableInner<T extends TableData>(
       showAllColumns,
       isColumnVisible,
       columns,
+      resizable,
+      columnWidths,
+      isResizing,
+      startResize,
+      getColumnWidth,
     }),
-    [locale, classNames, size, bordered, striped, hoverable, stickyHeader, loading, loadingComponent, emptyComponent, onRowClick, onRowDoubleClick, openModal, closeModal, modalContent, isModalOpen, columnVisibility, hiddenColumnIds, toggleColumn, showAllColumns, isColumnVisible, columns]
+    [locale, classNames, size, bordered, striped, hoverable, stickyHeader, loading, loadingComponent, emptyComponent, onRowClick, onRowDoubleClick, openModal, closeModal, modalContent, isModalOpen, columnVisibility, hiddenColumnIds, toggleColumn, showAllColumns, isColumnVisible, columns, resizable, columnWidths, isResizing, startResize, getColumnWidth]
   );
 
   const hasData = displayData.length > 0;
@@ -472,7 +500,8 @@ function BetterTableInner<T extends TableData>(
           ) : (
             /* Tabla tradicional (desktop/tablet) */
             <table
-              className={clsx('bt-table', classNames.table)}
+              ref={tableRef}
+              className={clsx('bt-table', resizable && 'bt-table-resizable', classNames.table)}
               style={styles.table}
               role="grid"
               aria-label={ariaLabel}
@@ -480,6 +509,16 @@ function BetterTableInner<T extends TableData>(
               aria-busy={loading}
               aria-rowcount={shouldVirtualize ? displayData.length : undefined}
             >
+              {resizable && (
+                <colgroup>
+                  {selectable && <col style={{ width: 40 }} />}
+                  {visibleColumns.map((col) => {
+                    const w = getColumnWidth(col.id);
+                    return <col key={col.id} style={w !== undefined ? { width: w } : col.width !== undefined ? { width: col.width } : undefined} />;
+                  })}
+                  {rowActions && rowActions.length > 0 && <col />}
+                </colgroup>
+              )}
               <TableHeader />
               {hasData ? (
                 shouldVirtualize ? (
