@@ -8,3 +8,4 @@ export { useColumnResize } from "./useColumnResize";
 export { useMediaQuery } from "./useMediaQuery";
 export { useFocusTrap } from "./useFocusTrap";
 export { useVirtualization } from "./useVirtualization";
+export { useExpandableRows } from "./useExpandableRows";

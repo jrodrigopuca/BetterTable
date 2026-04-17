@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { TableData, Column, RowAction, GlobalAction } from '../types';
 
 export interface TableDataContextValue<T extends TableData = TableData> {
@@ -10,6 +10,11 @@ export interface TableDataContextValue<T extends TableData = TableData> {
   rowActions?: RowAction<T>[];
   globalActions?: GlobalAction<T>[];
   maxVisibleActions: number;
+  // Expandable rows
+  expandableRender?: (row: T, rowIndex: number) => ReactNode;
+  isExpanded: (rowKey: string) => boolean;
+  toggleExpand: (rowKey: string) => void;
+  expandableEnabled: boolean;
 }
 
 const TableDataContext = createContext<TableDataContextValue | null>(null);

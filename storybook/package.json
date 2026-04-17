@@ -1,0 +1,26 @@
+{
+  "name": "better-table-storybook",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "better-table": "file:../better-table"
+  },
+  "devDependencies": {
+    "@storybook/addon-links": "^10.3.5",
+    "@storybook/react": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.0.2",
+    "storybook": "^10.3.5",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "@vitejs/plugin-react": "^5.1.4"
+  }
+}

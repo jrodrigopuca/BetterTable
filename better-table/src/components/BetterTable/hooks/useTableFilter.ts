@@ -8,6 +8,8 @@ interface UseTableFilterOptions<T extends TableData> {
 	initialFilters?: FilterState;
 	controlledFilters?: FilterState;
 	onFilterChange?: (filters: FilterState) => void;
+	/** When true, skip client-side filtering — data is returned as-is */
+	manual?: boolean;
 }
 
 interface UseTableFilterReturn<T extends TableData> {
@@ -27,6 +29,7 @@ export function useTableFilter<T extends TableData>({
 	initialFilters,
 	controlledFilters,
 	onFilterChange,
+	manual = false,
 }: UseTableFilterOptions<T>): UseTableFilterReturn<T> {
 	const [internalFilters, setInternalFilters] = useState<FilterState>(
 		initialFilters ?? {},
@@ -85,8 +88,9 @@ export function useTableFilter<T extends TableData>({
 	}, [controlledFilters, onFilterChange]);
 
 	const filteredData = useMemo(() => {
+		if (manual) return data;
 		return filterData(data, filters, columns);
-	}, [data, filters, columns]);
+	}, [data, filters, columns, manual]);
 
 	return { filteredData, filters, setFilter, clearFilters, clearFilter };
 }

@@ -16,4 +16,5 @@ export { TableEmpty } from "./TableEmpty";
 export { TableLoading, TableLoadingOverlay } from "./TableLoading";
 export { TableModal } from "./TableModal";
 export { TableVirtualBody } from "./TableVirtualBody";
+export { TableExpandedRow } from "./TableExpandedRow";
 export { BetterTable, default } from "./Table";

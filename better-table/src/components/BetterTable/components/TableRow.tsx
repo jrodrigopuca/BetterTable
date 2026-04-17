@@ -8,16 +8,18 @@ import clsx from 'clsx';
 interface TableRowProps<T extends TableData> {
   row: T;
   rowIndex: number;
+  rowKey: string;
 }
 
-function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>) {
-  const { visibleColumns, rowActions } = useTableData<T>();
+function TableRowInner<T extends TableData>({ row, rowIndex, rowKey }: TableRowProps<T>) {
+  const { visibleColumns, rowActions, expandableEnabled, isExpanded, toggleExpand } = useTableData<T>();
   const { selectable, isSelected, toggleRow } = useTableSelectionContext<T>();
-  const { striped, hoverable, onRowClick, onRowDoubleClick } = useTableUI<T>();
+  const { striped, hoverable, onRowClick, onRowDoubleClick, locale } = useTableUI<T>();
 
   const hasActions = rowActions && rowActions.length > 0;
   const selected = selectable && isSelected(row, rowIndex);
   const isClickable = Boolean(onRowClick);
+  const expanded = expandableEnabled && isExpanded(rowKey);
 
   const handleRowClick = useCallback(() => {
     onRowClick?.(row, rowIndex);
@@ -30,6 +32,10 @@ function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>)
   const handleCheckboxChange = useCallback(() => {
     toggleRow(row, rowIndex);
   }, [row, rowIndex, toggleRow]);
+
+  const handleToggleExpand = useCallback(() => {
+    toggleExpand(rowKey);
+  }, [rowKey, toggleExpand]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -47,7 +53,8 @@ function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>)
         striped && 'bt-striped',
         hoverable && 'bt-hoverable',
         selected && 'bt-selected',
-        isClickable && 'bt-clickable'
+        isClickable && 'bt-clickable',
+        expanded && 'bt-expanded'
       )}
       onClick={isClickable ? handleRowClick : undefined}
       onDoubleClick={onRowDoubleClick ? handleRowDoubleClick : undefined}
@@ -55,7 +62,39 @@ function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>)
       tabIndex={isClickable ? 0 : undefined}
       role={isClickable ? 'button' : undefined}
       aria-selected={selectable ? selected : undefined}
+      aria-expanded={expandableEnabled ? expanded : undefined}
     >
+      {expandableEnabled && (
+        <td className="bt-td bt-expand-cell">
+          <button
+            type="button"
+            className={clsx('bt-expand-button', expanded && 'bt-expand-button-expanded')}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggleExpand();
+            }}
+            aria-label={expanded ? locale.collapseRow : locale.expandRow}
+            aria-expanded={expanded}
+          >
+            <svg
+              className="bt-expand-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 4l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </td>
+      )}
       {selectable && (
         <td className="bt-td bt-checkbox-cell">
           <input

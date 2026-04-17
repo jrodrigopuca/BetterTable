@@ -6,7 +6,7 @@ import { TableFloatingFilter } from './TableFloatingFilter';
 import clsx from 'clsx';
 
 function TableHeaderInner<T extends TableData>() {
-  const { visibleColumns, rowActions } = useTableData<T>();
+  const { visibleColumns, rowActions, expandableEnabled } = useTableData<T>();
   const { selectable, selectionMode, isAllSelected, isPartiallySelected, selectAll, deselectAll } = useTableSelectionContext<T>();
   const { locale, stickyHeader } = useTableUI<T>();
   const { filterMode } = useTableFilterContext();
@@ -26,6 +26,9 @@ function TableHeaderInner<T extends TableData>() {
   return (
     <thead className={clsx('bt-thead', stickyHeader && 'bt-sticky')}>
       <tr className="bt-tr">
+        {expandableEnabled && (
+          <th className="bt-th bt-expand-cell" aria-label="Expand" />
+        )}
         {selectable && (
           <th className="bt-th bt-checkbox-cell">
             {selectionMode === 'multiple' && (

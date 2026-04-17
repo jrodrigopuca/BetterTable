@@ -29,7 +29,7 @@ const FilterIcon = () => (
  * Reads and writes to the same filterValues state as the FilterPanel.
  */
 function TableFloatingFilterInner<T extends TableData>() {
-  const { visibleColumns, rowActions } = useTableData<T>();
+  const { visibleColumns, rowActions, expandableEnabled } = useTableData<T>();
   const { filters, setFilter } = useTableFilterContext();
   const { selectable, selectionMode } = useTableSelectionContext<T>();
   const { locale, stickyHeader } = useTableUI<T>();
@@ -44,6 +44,10 @@ function TableFloatingFilterInner<T extends TableData>() {
 
   return (
     <tr className={clsx('bt-tr', 'bt-floating-filter-row', stickyHeader && 'bt-sticky-filter')}>
+      {/* Expand column spacer */}
+      {expandableEnabled && (
+        <th className="bt-th bt-floating-filter-cell bt-expand-cell" />
+      )}
       {/* Checkbox column spacer */}
       {selectable && selectionMode === 'multiple' && (
         <th className="bt-th bt-floating-filter-cell bt-checkbox-cell" />

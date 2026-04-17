@@ -397,6 +397,16 @@ function App() {
 							showSizeChanger: true,
 							pageSizeOptions: [5, 10, 20],
 						}}
+						expandable={{
+							render: (row) => (
+								<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "8px 0" }}>
+									<div><strong>SKU:</strong> {row.details?.sku ?? "N/A"}</div>
+									<div><strong>Marca:</strong> {row.details?.brand ?? "N/A"}</div>
+									<div><strong>Stock:</strong> {row.stock} unidades</div>
+									<div><strong>Agregado:</strong> {row.addedDate}</div>
+								</div>
+							),
+						}}
 						searchable
 						searchColumns={["name", "details.brand", "category"]}
 						selectionMode="multiple"

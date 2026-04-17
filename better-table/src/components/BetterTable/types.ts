@@ -103,6 +103,16 @@ export interface PaginationConfig {
 }
 
 /**
+ * Configuration for expandable rows
+ */
+export interface ExpandableConfig<T extends TableData = TableData> {
+	/** Render function for the expanded row content */
+	render: (row: T, rowIndex: number) => ReactNode;
+	/** Whether only one row can be expanded at a time (default: false) */
+	accordion?: boolean;
+}
+
+/**
  * Estado de ordenamiento
  */
 export interface SortState {
@@ -190,6 +200,9 @@ export interface TableLocale {
 	resultsFound?: string;
 	noResultsFound?: string;
 	rowsSelected?: string;
+	/** Expandable rows */
+	expandRow?: string;
+	collapseRow?: string;
 }
 
 /**
@@ -229,6 +242,8 @@ export const defaultLocale: Required<TableLocale> = {
 	resultsFound: "{count} results found",
 	noResultsFound: "No results found",
 	rowsSelected: "{count} rows selected",
+	expandRow: "Expand row",
+	collapseRow: "Collapse row",
 };
 
 /**
@@ -270,6 +285,8 @@ export const locales = {
 		resultsFound: "{count} resultados encontrados",
 		noResultsFound: "No se encontraron resultados",
 		rowsSelected: "{count} filas seleccionadas",
+		expandRow: "Expandir fila",
+		collapseRow: "Colapsar fila",
 	} satisfies Required<TableLocale>,
 	pt: {
 		search: "Pesquisar",
@@ -305,6 +322,8 @@ export const locales = {
 		resultsFound: "{count} resultados encontrados",
 		noResultsFound: "Nenhum resultado encontrado",
 		rowsSelected: "{count} linhas selecionadas",
+		expandRow: "Expandir linha",
+		collapseRow: "Recolher linha",
 	} satisfies Required<TableLocale>,
 } as const;
 
@@ -368,6 +387,14 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	searchColumns?: string[];
 	/** Milisegundos de debounce en la búsqueda (default: 300) */
 	searchDebounceMs?: number;
+
+	// === Server-Side / Manual Mode ===
+	/** Skip client-side sorting — data is assumed pre-sorted by the server (default: false) */
+	manualSorting?: boolean;
+	/** Skip client-side filtering and search — data is assumed pre-filtered by the server (default: false) */
+	manualFiltering?: boolean;
+	/** Skip client-side pagination — data represents the current page from the server (default: false) */
+	manualPagination?: boolean;
 
 	// === Selección ===
 	/** Habilitar selección de filas */
@@ -443,6 +470,14 @@ export interface BetterTableProps<T extends TableData = TableData> {
 	ariaLabel?: string;
 	/** ID del elemento que describe la tabla */
 	ariaDescribedBy?: string;
+
+	// === Expandable Rows ===
+	/** Configuration for expandable rows (render function for expanded content) */
+	expandable?: ExpandableConfig<T>;
+	/** Array of expanded row keys (controlled mode) */
+	expandedRows?: string[];
+	/** Callback when expanded rows change */
+	onExpandChange?: (expandedRows: string[]) => void;
 
 	// === Virtualización ===
 	/** Force-enable virtualization (auto-enabled when pagination is off and dataset > VIRTUALIZATION_THRESHOLD) */

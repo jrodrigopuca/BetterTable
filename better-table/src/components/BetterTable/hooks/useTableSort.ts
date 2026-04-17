@@ -13,6 +13,8 @@ interface UseTableSortOptions<T extends TableData> {
 	controlledMultiSort?: MultiSortState;
 	/** Callback when multi-sort changes */
 	onMultiSortChange?: (sorts: MultiSortState) => void;
+	/** When true, skip client-side sorting — data is returned as-is */
+	manual?: boolean;
 }
 
 interface UseTableSortReturn<T extends TableData> {
@@ -34,6 +36,7 @@ export function useTableSort<T extends TableData>({
 	multiSort = false,
 	controlledMultiSort,
 	onMultiSortChange,
+	manual = false,
 }: UseTableSortOptions<T>): UseTableSortReturn<T> {
 	const [internalSort, setInternalSort] = useState<SortState>(
 		initialSort ?? { columnId: null, direction: "asc" },
@@ -140,6 +143,7 @@ export function useTableSort<T extends TableData>({
 	]);
 
 	const sortedData = useMemo(() => {
+		if (manual) return data;
 		// Use multi-sort if there are multiple sort states
 		if (multiSort && multiSortState.length > 0) {
 			return multiSortData(data, multiSortState);
@@ -147,7 +151,7 @@ export function useTableSort<T extends TableData>({
 		// Fallback to single sort
 		if (!sortState.columnId) return data;
 		return sortData(data, sortState.columnId, sortState.direction);
-	}, [data, sortState, multiSortState, multiSort]);
+	}, [data, sortState, multiSortState, multiSort, manual]);
 
 	return {
 		sortedData,

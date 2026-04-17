@@ -197,6 +197,8 @@
   letter-spacing: 0.05em;
   border-bottom: 2px solid var(--bt-color-border);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   vertical-align: top;
   transition: color var(--bt-transition-fast);
 }
@@ -218,6 +220,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--bt-spacing-sm);
+  min-width: 0;
 }
 
 .bt-th-header {
@@ -225,10 +228,15 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--bt-spacing-sm);
+  min-width: 0;
 }
 
 .bt-th-title {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Sort button */
@@ -697,6 +705,9 @@
   border-bottom: var(--bt-border-width) solid var(--bt-color-border);
   color: var(--bt-color-text);
   vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bt-td.bt-align-center {
@@ -723,6 +734,8 @@
 .bt-checkbox-cell {
   width: 40px;
   text-align: center;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .bt-checkbox {
@@ -765,6 +778,8 @@
 /* Actions cell */
 .bt-actions-cell {
   white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .bt-actions-wrapper {
@@ -1254,4 +1269,65 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ========================================
+   Expandable Rows
+   ======================================== */
+
+.bt-expand-cell {
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  text-align: center;
+  padding: 0 !important;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.bt-expand-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: var(--bt-radius);
+  background: transparent;
+  color: var(--bt-color-text-secondary);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.bt-expand-button:hover {
+  background-color: var(--bt-color-hover);
+  color: var(--bt-color-text);
+}
+
+.bt-expand-button:focus-visible {
+  outline: 2px solid var(--bt-color-primary);
+  outline-offset: 1px;
+}
+
+.bt-expand-button-expanded .bt-expand-icon {
+  transform: rotate(90deg);
+}
+
+.bt-expand-icon {
+  transition: transform 0.2s ease;
+}
+
+.bt-expanded-row .bt-expanded-content {
+  padding: var(--bt-spacing-md) var(--bt-spacing-lg);
+  background-color: var(--bt-color-bg-subtle, var(--bt-color-bg-secondary));
+  border-bottom: 1px solid var(--bt-color-border);
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+}
+
+.bt-tr.bt-expanded {
+  border-bottom-color: transparent;
 }

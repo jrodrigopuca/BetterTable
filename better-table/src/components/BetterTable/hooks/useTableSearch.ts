@@ -10,6 +10,8 @@ interface UseTableSearchOptions<T extends TableData> {
 	controlledValue?: string;
 	onSearchChange?: (value: string) => void;
 	debounceMs?: number;
+	/** When true, skip client-side search — data is returned as-is */
+	manual?: boolean;
 }
 
 interface UseTableSearchReturn<T extends TableData> {
@@ -27,6 +29,7 @@ export function useTableSearch<T extends TableData>({
 	controlledValue,
 	onSearchChange,
 	debounceMs = 0,
+	manual = false,
 }: UseTableSearchOptions<T>): UseTableSearchReturn<T> {
 	const [internalValue, setInternalValue] = useState(initialValue ?? "");
 	const [debouncedValue, setDebouncedValue] = useState(initialValue ?? "");
@@ -76,8 +79,9 @@ export function useTableSearch<T extends TableData>({
 	}, [controlledValue, onSearchChange]);
 
 	const searchedData = useMemo(() => {
+		if (manual) return data;
 		return searchData(data, debouncedValue, columns, searchColumns);
-	}, [data, debouncedValue, columns, searchColumns]);
+	}, [data, debouncedValue, columns, searchColumns, manual]);
 
 	return { searchedData, searchValue, handleSearch, clearSearch };
 }

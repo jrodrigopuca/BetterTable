@@ -17,6 +17,7 @@ export type {
 	Column,
 	RowAction,
 	GlobalAction,
+	ExpandableConfig,
 	PaginationConfig,
 	SortState,
 	MultiSortState,

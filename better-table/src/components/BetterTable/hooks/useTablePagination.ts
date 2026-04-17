@@ -5,6 +5,8 @@ interface UseTablePaginationOptions<T extends TableData> {
 	data: T[];
 	config?: PaginationConfig | false;
 	onPageChange?: (page: number, pageSize: number) => void;
+	/** When true, skip client-side pagination — data represents the current page from the server */
+	manual?: boolean;
 }
 
 interface UseTablePaginationReturn<T extends TableData> {
@@ -27,6 +29,7 @@ export function useTablePagination<T extends TableData>({
 	data,
 	config,
 	onPageChange,
+	manual = false,
 }: UseTablePaginationOptions<T>): UseTablePaginationReturn<T> {
 	const enabled = config !== false;
 
@@ -74,13 +77,13 @@ export function useTablePagination<T extends TableData>({
 	);
 
 	const paginatedData = useMemo(() => {
-		if (!enabled || serverTotalItems !== undefined) {
-			// Si hay paginación del servidor, devolver datos tal cual
+		if (!enabled || manual || serverTotalItems !== undefined) {
+			// Manual mode or server-provided total: data is already the current page
 			return data;
 		}
 		const start = (page - 1) * pageSize;
 		return data.slice(start, start + pageSize);
-	}, [data, page, pageSize, enabled, serverTotalItems]);
+	}, [data, page, pageSize, enabled, manual, serverTotalItems]);
 
 	const startIndex = (page - 1) * pageSize + 1;
 	const endIndex = Math.min(page * pageSize, totalItems);

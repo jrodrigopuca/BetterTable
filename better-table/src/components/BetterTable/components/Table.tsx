@@ -24,6 +24,7 @@ import { useColumnVisibility } from '../hooks/useColumnVisibility';
 import { useColumnResize } from '../hooks/useColumnResize';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { useVirtualization } from '../hooks/useVirtualization';
+import { useExpandableRows } from '../hooks/useExpandableRows';
 import {
   TableHeader,
   TableBody,
@@ -81,6 +82,11 @@ function BetterTableInner<T extends TableData>(
     searchColumns,
     searchDebounceMs = 300,
 
+    // Server-Side / Manual Mode
+    manualSorting = false,
+    manualFiltering = false,
+    manualPagination = false,
+
     // Selection - now auto-inferred if not explicitly set
     selectable: selectableProp,
     selectedRows: controlledSelectedRows,
@@ -117,6 +123,11 @@ function BetterTableInner<T extends TableData>(
     onColumnResize,
     minColumnWidth,
     maxColumnWidth,
+
+    // Expandable Rows
+    expandable,
+    expandedRows: controlledExpandedRows,
+    onExpandChange,
 
     // Accessibility
     ariaLabel,
@@ -204,6 +215,7 @@ function BetterTableInner<T extends TableData>(
     controlledValue: controlledSearchValue,
     onSearchChange,
     debounceMs: searchDebounceMs,
+    manual: manualFiltering,
   });
 
   // Filter hook
@@ -218,6 +230,7 @@ function BetterTableInner<T extends TableData>(
     columns,
     controlledFilters,
     onFilterChange,
+    manual: manualFiltering,
   });
 
   // Sort hook
@@ -228,6 +241,7 @@ function BetterTableInner<T extends TableData>(
     multiSort,
     controlledMultiSort,
     onMultiSortChange,
+    manual: manualSorting,
   });
 
   // Column visibility hook
@@ -280,6 +294,7 @@ function BetterTableInner<T extends TableData>(
     data: sortedData,
     config: paginationConfig,
     onPageChange,
+    manual: manualPagination,
   });
 
   // Virtualization: auto-enable when no pagination and dataset exceeds threshold
@@ -309,6 +324,16 @@ function BetterTableInner<T extends TableData>(
     tableRef,
   });
 
+  // Expandable rows hook
+  const {
+    isExpanded,
+    toggleExpand,
+  } = useExpandableRows({
+    controlledExpandedRows,
+    onExpandChange,
+    accordion: expandable?.accordion,
+  });
+
   // Data to render: when pagination is off, use sortedData directly
   const displayData = isPaginationDisabled ? sortedData : paginatedData;
 
@@ -331,8 +356,12 @@ function BetterTableInner<T extends TableData>(
       rowActions,
       globalActions,
       maxVisibleActions,
+      expandableRender: expandable?.render,
+      isExpanded,
+      toggleExpand,
+      expandableEnabled: expandable !== undefined,
     }),
-    [data, displayData, columns, visibleColumns, rowKey, rowActions, globalActions, maxVisibleActions]
+    [data, displayData, columns, visibleColumns, rowKey, rowActions, globalActions, maxVisibleActions, expandable, isExpanded, toggleExpand]
   );
 
   const sortCtx: TableSortContextValue = useMemo(
@@ -511,6 +540,7 @@ function BetterTableInner<T extends TableData>(
             >
               {resizable && (
                 <colgroup>
+                  {expandable && <col style={{ width: 40 }} />}
                   {selectable && <col style={{ width: 40 }} />}
                   {visibleColumns.map((col) => {
                     const w = getColumnWidth(col.id);

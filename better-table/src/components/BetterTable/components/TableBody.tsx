@@ -1,9 +1,11 @@
+import React from 'react';
 import { useTableData } from '../context';
 import { TableData } from '../types';
 import { TableRow } from './TableRow';
+import { TableExpandedRow } from './TableExpandedRow';
 
 function TableBodyInner<T extends TableData>() {
-  const { processedData, rowKey } = useTableData<T>();
+  const { processedData, rowKey, expandableEnabled, isExpanded } = useTableData<T>();
 
   const getRowKey = (row: T, index: number): string => {
     if (typeof rowKey === 'function') {
@@ -15,9 +17,18 @@ function TableBodyInner<T extends TableData>() {
 
   return (
     <tbody className="bt-tbody">
-      {processedData.map((row, index) => (
-        <TableRow key={getRowKey(row, index)} row={row} rowIndex={index} />
-      ))}
+      {processedData.map((row, index) => {
+        const key = getRowKey(row, index);
+        const expanded = expandableEnabled && isExpanded(key);
+        return (
+          <React.Fragment key={key}>
+            <TableRow row={row} rowIndex={index} rowKey={key} />
+            {expanded && (
+              <TableExpandedRow row={row} rowIndex={index} />
+            )}
+          </React.Fragment>
+        );
+      })}
     </tbody>
   );
 }
