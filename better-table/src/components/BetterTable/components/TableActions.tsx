@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useTableContext } from '../context';
+import { useTableData, useTableUI } from '../context';
 import { TableData, RowAction } from '../types';
 import { TableActionOverflow } from './TableActionOverflow';
 import clsx from 'clsx';
@@ -16,7 +16,8 @@ function TableActionsInner<T extends TableData>({
   row,
   rowIndex,
 }: TableActionsProps<T>) {
-  const { rowActions, openModal, closeModal, maxVisibleActions } = useTableContext<T>();
+  const { rowActions, maxVisibleActions } = useTableData<T>();
+  const { openModal, closeModal } = useTableUI<T>();
 
   const handleActionClick = useCallback(
     (action: RowAction<T>) => {

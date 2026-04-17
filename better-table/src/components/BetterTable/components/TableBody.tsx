@@ -1,9 +1,9 @@
-import { useTableContext } from '../context';
+import { useTableData } from '../context';
 import { TableData } from '../types';
 import { TableRow } from './TableRow';
 
 function TableBodyInner<T extends TableData>() {
-  const { processedData, rowKey } = useTableContext<T>();
+  const { processedData, rowKey } = useTableData<T>();
 
   const getRowKey = (row: T, index: number): string => {
     if (typeof rowKey === 'function') {

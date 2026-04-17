@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { TableData, RowAction } from '../types';
-import { useTableContext } from '../context';
+import { useTableUI } from '../context';
 import clsx from 'clsx';
 
 /** Default icon for actions that don't define one */
@@ -33,7 +33,7 @@ function TableActionOverflowInner<T extends TableData>({
   onActionClick,
   direction = 'down',
 }: TableActionOverflowProps<T>) {
-  const { locale } = useTableContext<T>();
+  const { locale } = useTableUI<T>();
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<MenuPosition>({ top: 0, left: 0, openUp: false });
   const triggerRef = useRef<HTMLButtonElement>(null);

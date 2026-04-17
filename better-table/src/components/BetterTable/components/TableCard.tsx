@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, KeyboardEvent, ReactNode } from 'react';
-import { useTableContext } from '../context';
+import { useTableData, useTableSelectionContext, useTableUI } from '../context';
 import { TableData, RowAction } from '../types';
 import { getValueFromPath } from '../utils';
 import { TableActionOverflow } from './TableActionOverflow';
@@ -14,18 +14,9 @@ interface TableCardProps<T extends TableData> {
 }
 
 function TableCardInner<T extends TableData>({ row, rowIndex }: TableCardProps<T>) {
-  const {
-    visibleColumns,
-    selectable,
-    rowActions,
-    maxVisibleActions,
-    isSelected,
-    toggleRow,
-    hoverable,
-    onRowClick,
-    openModal,
-    closeModal,
-  } = useTableContext<T>();
+  const { visibleColumns, rowActions, maxVisibleActions } = useTableData<T>();
+  const { selectable, isSelected, toggleRow } = useTableSelectionContext<T>();
+  const { hoverable, onRowClick, openModal, closeModal } = useTableUI<T>();
 
   const hasActions = rowActions && rowActions.length > 0;
   const selected = selectable && isSelected(row, rowIndex);

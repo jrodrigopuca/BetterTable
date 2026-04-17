@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react';
-import { useTableContext } from '../context';
+import { useTableUI } from '../context';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
 /* Inline SVG close icon */
@@ -12,7 +12,7 @@ function CloseIcon() {
 }
 
 export function TableModal() {
-  const { isModalOpen, modalContent, closeModal, locale } = useTableContext();
+  const { isModalOpen, modalContent, closeModal, locale } = useTableUI();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useFocusTrap(modalRef, isModalOpen);

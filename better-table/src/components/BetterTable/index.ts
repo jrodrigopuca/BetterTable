@@ -29,8 +29,24 @@ export { useTableSearch } from "./hooks/useTableSearch";
 export { useColumnVisibility } from "./hooks/useColumnVisibility";
 
 // Context (for custom sub-components)
-export { useTableContext, TableProvider } from "./context";
-export type { TableContextValue } from "./context";
+export {
+  TableProvider,
+  useTableData,
+  useTableSortContext,
+  useTableFilterContext,
+  useTableSelectionContext,
+  useTablePaginationContext,
+  useTableUI,
+} from "./context";
+export type {
+  TableProviderProps,
+  TableDataContextValue,
+  TableSortContextValue,
+  TableFilterContextValue,
+  TableSelectionContextValue,
+  TablePaginationContextValue,
+  TableUIContextValue,
+} from "./context";
 
 // Utilities
 export { getValueFromPath } from "./utils/getValueFromPath";

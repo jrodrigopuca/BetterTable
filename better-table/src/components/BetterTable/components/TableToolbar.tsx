@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { useTableContext } from '../context';
+import { useTableFilterContext, useTableSelectionContext, useTableData, useTableUI } from '../context';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { TableColumnVisibility } from './TableColumnVisibility';
 import { TableData } from '../types';
@@ -45,21 +45,15 @@ function TableToolbarInner<T extends TableData>() {
     searchValue,
     handleSearch,
     clearSearch,
-    globalActions,
-    selectedRows,
-    selectedCount,
-    deselectAll,
-    data,
-    locale,
-    classNames,
-    selectable,
     filters,
     filterPanelOpen,
     toggleFilterPanel,
     hasFilterableColumns,
     filterMode,
-    columnVisibilityEnabled,
-  } = useTableContext<T>();
+  } = useTableFilterContext();
+  const { selectable, selectedRows, selectedCount, deselectAll } = useTableSelectionContext<T>();
+  const { data, globalActions } = useTableData<T>();
+  const { locale, classNames, columnVisibilityEnabled } = useTableUI<T>();
 
   const isMobile = useMediaQuery('(max-width: 640px)');
   const [searchExpanded, setSearchExpanded] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useCallback, KeyboardEvent } from 'react';
-import { useTableContext } from '../context';
+import { useTableSortContext, useTableUI } from '../context';
 import { TableData, Column } from '../types';
 import clsx from 'clsx';
 
@@ -38,13 +38,8 @@ interface TableHeaderCellProps<T extends TableData> {
 function TableHeaderCellInner<T extends TableData>({
   column,
 }: TableHeaderCellProps<T>) {
-  const {
-    sortState,
-    handleSort,
-    locale,
-    multiSortState,
-    isMultiSort,
-  } = useTableContext<T>();
+  const { sortState, handleSort, multiSortState, isMultiSort } = useTableSortContext();
+  const { locale } = useTableUI<T>();
 
   const isSorted = sortState.columnId === column.id;
 

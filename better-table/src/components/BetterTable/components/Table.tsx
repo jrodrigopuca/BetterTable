@@ -6,7 +6,15 @@ import {
   locales,
   PaginationConfig,
 } from '../types';
-import { TableProvider, TableContextValue } from '../context';
+import {
+  TableProvider,
+  TableDataContextValue,
+  TableSortContextValue,
+  TableFilterContextValue,
+  TableSelectionContextValue,
+  TablePaginationContextValue,
+  TableUIContextValue,
+} from '../context';
 import { useTableSort } from '../hooks/useTableSort';
 import { useTableFilter } from '../hooks/useTableFilter';
 import { useTablePagination } from '../hooks/useTablePagination';
@@ -255,48 +263,52 @@ function BetterTableInner<T extends TableData>(
     onPageChange,
   });
 
-  // Build context value
-  const contextValue: TableContextValue<T> = useMemo(
+  // Build split context values
+  const dataCtx: TableDataContextValue<T> = useMemo(
     () => ({
-      // Data
       data,
       processedData: paginatedData,
       columns,
       visibleColumns,
       rowKey,
-
-      // Actions
       rowActions,
       globalActions,
       maxVisibleActions,
+    }),
+    [data, paginatedData, columns, visibleColumns, rowKey, rowActions, globalActions, maxVisibleActions]
+  );
 
-      // Sort
+  const sortCtx: TableSortContextValue = useMemo(
+    () => ({
       sortState,
       handleSort,
       multiSortState,
       isMultiSort,
       clearSort,
+    }),
+    [sortState, handleSort, multiSortState, isMultiSort, clearSort]
+  );
 
-      // Column Visibility
-      columnVisibilityEnabled: columnVisibility,
-      hiddenColumnIds,
-      toggleColumn,
-      showAllColumns,
-      isColumnVisible,
-
-      // Filter
+  const filterCtx: TableFilterContextValue = useMemo(
+    () => ({
       filters,
       setFilter,
       clearFilter,
       clearFilters,
-
-      // Search
       searchValue,
       handleSearch,
       clearSearch,
       searchable,
+      filterPanelOpen,
+      toggleFilterPanel,
+      hasFilterableColumns,
+      filterMode,
+    }),
+    [filters, setFilter, clearFilter, clearFilters, searchValue, handleSearch, clearSearch, searchable, filterPanelOpen, toggleFilterPanel, hasFilterableColumns, filterMode]
+  );
 
-      // Selection
+  const selectionCtx: TableSelectionContextValue<T> = useMemo(
+    () => ({
       selectedRows,
       isSelected,
       toggleRow,
@@ -304,11 +316,15 @@ function BetterTableInner<T extends TableData>(
       deselectAll,
       isAllSelected,
       isPartiallySelected,
+      selectedCount,
       selectable,
       selectionMode,
-      selectedCount,
+    }),
+    [selectedRows, isSelected, toggleRow, selectAll, deselectAll, isAllSelected, isPartiallySelected, selectedCount, selectable, selectionMode]
+  );
 
-      // Pagination
+  const paginationCtx: TablePaginationContextValue = useMemo(
+    () => ({
       page,
       pageSize,
       totalPages,
@@ -330,13 +346,12 @@ function BetterTableInner<T extends TableData>(
         paginationConfig && typeof paginationConfig === 'object'
           ? paginationConfig.showSizeChanger ?? false
           : false,
+    }),
+    [page, pageSize, totalPages, totalItems, goToPage, nextPage, prevPage, changePageSize, hasNextPage, hasPrevPage, startIndex, endIndex, pagination, paginationConfig]
+  );
 
-      // UI State
-      loading,
-      loadingComponent,
-      emptyComponent,
-
-      // Styling
+  const uiCtx: TableUIContextValue<T> = useMemo(
+    () => ({
       locale,
       classNames,
       size,
@@ -344,95 +359,23 @@ function BetterTableInner<T extends TableData>(
       striped,
       hoverable,
       stickyHeader,
-
-      // Callbacks
+      loading,
+      loadingComponent,
+      emptyComponent,
       onRowClick,
       onRowDoubleClick,
-
-      // Modal
       openModal,
       closeModal,
       modalContent,
       isModalOpen,
-
-      // Filter panel
-      filterPanelOpen,
-      toggleFilterPanel,
-      hasFilterableColumns,
-      filterMode,
-    }),
-    [
-      data,
-      paginatedData,
-      columns,
-      visibleColumns,
-      rowKey,
-      rowActions,
-      globalActions,
-      maxVisibleActions,
-      sortState,
-      handleSort,
-      multiSortState,
-      isMultiSort,
-      clearSort,
-      columnVisibility,
+      columnVisibilityEnabled: columnVisibility,
       hiddenColumnIds,
       toggleColumn,
       showAllColumns,
       isColumnVisible,
-      filters,
-      setFilter,
-      clearFilter,
-      clearFilters,
-      searchValue,
-      handleSearch,
-      clearSearch,
-      searchable,
-      selectedRows,
-      isSelected,
-      toggleRow,
-      selectAll,
-      deselectAll,
-      isAllSelected,
-      isPartiallySelected,
-      selectable,
-      selectionMode,
-      selectedCount,
-      page,
-      pageSize,
-      totalPages,
-      totalItems,
-      goToPage,
-      nextPage,
-      prevPage,
-      changePageSize,
-      hasNextPage,
-      hasPrevPage,
-      startIndex,
-      endIndex,
-      pagination,
-      paginationConfig,
-      loading,
-      loadingComponent,
-      emptyComponent,
-      locale,
-      classNames,
-      size,
-      bordered,
-      striped,
-      hoverable,
-      stickyHeader,
-      onRowClick,
-      onRowDoubleClick,
-      openModal,
-      closeModal,
-      modalContent,
-      isModalOpen,
-      filterPanelOpen,
-      toggleFilterPanel,
-      hasFilterableColumns,
-      filterMode,
-    ]
+      columns,
+    }),
+    [locale, classNames, size, bordered, striped, hoverable, stickyHeader, loading, loadingComponent, emptyComponent, onRowClick, onRowDoubleClick, openModal, closeModal, modalContent, isModalOpen, columnVisibility, hiddenColumnIds, toggleColumn, showAllColumns, isColumnVisible, columns]
   );
 
   const hasData = paginatedData.length > 0;
@@ -463,7 +406,7 @@ function BetterTableInner<T extends TableData>(
   }, [sortedData.length, searchValue, filters, selectable, selectedCount, locale]);
 
   return (
-    <TableProvider value={contextValue}>
+    <TableProvider data={dataCtx} sort={sortCtx} filter={filterCtx} selection={selectionCtx} pagination={paginationCtx} ui={uiCtx}>
       <div
         className={clsx(
           'bt-container',

@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { useTableContext } from '../context';
+import { useTablePaginationContext, useTableUI } from '../context';
 
 /* Inline SVG chevron icons for pagination */
 function ChevronLeftIcon() {
@@ -35,9 +35,8 @@ export function TablePagination() {
     paginationEnabled,
     pageSizeOptions,
     showSizeChanger,
-    locale,
-    classNames,
-  } = useTableContext();
+  } = useTablePaginationContext();
+  const { locale, classNames } = useTableUI();
 
   const handlePageSizeChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {

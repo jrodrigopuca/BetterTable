@@ -1,4 +1,4 @@
-import { useTableContext } from '../context';
+import { useTableUI, useTableData, useTableSelectionContext } from '../context';
 
 /* Inline SVG empty-box illustration */
 function EmptyIcon() {
@@ -14,8 +14,9 @@ function EmptyIcon() {
 }
 
 export function TableEmpty() {
-  const { locale, emptyComponent, visibleColumns, selectable, rowActions } =
-    useTableContext();
+  const { locale, emptyComponent } = useTableUI();
+  const { visibleColumns, rowActions } = useTableData();
+  const { selectable } = useTableSelectionContext();
 
   const hasActions = rowActions && rowActions.length > 0;
   const colSpan = visibleColumns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0);

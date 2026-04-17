@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { TableData, Column, DateFilterRange } from '../types';
-import { useTableContext } from '../context';
+import { useTableUI, useTableFilterContext } from '../context';
 import clsx from 'clsx';
 
 /* Inline SVG funnel icon — matches floating filter pattern */
@@ -19,8 +19,8 @@ interface TableFilterPanelProps {
 function TableFilterPanelInner<T extends TableData>({
   open,
 }: TableFilterPanelProps) {
-  const { columns, filters, setFilter, clearFilter, clearFilters, locale } =
-    useTableContext<T>();
+  const { columns, locale } = useTableUI<T>();
+  const { filters, setFilter, clearFilter, clearFilters } = useTableFilterContext();
 
   const filterableColumns = columns.filter(
     (col) => col.filterable !== false && col.type !== 'custom' && !col.hidden
@@ -74,7 +74,7 @@ interface FilterFieldProps<T extends TableData> {
     value: string | number | boolean | DateFilterRange | null
   ) => void;
   clearFilter: (columnId: string) => void;
-  locale: ReturnType<typeof useTableContext>['locale'];
+  locale: ReturnType<typeof useTableUI>['locale'];
 }
 
 function FilterFieldInner<T extends TableData>({

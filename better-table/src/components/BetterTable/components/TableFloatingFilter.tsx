@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { TableData, Column, DateFilterRange } from '../types';
-import { useTableContext } from '../context';
+import { useTableData, useTableFilterContext, useTableSelectionContext, useTableUI } from '../context';
 import clsx from 'clsx';
 
 /**
@@ -29,16 +29,10 @@ const FilterIcon = () => (
  * Reads and writes to the same filterValues state as the FilterPanel.
  */
 function TableFloatingFilterInner<T extends TableData>() {
-  const {
-    visibleColumns,
-    filters,
-    setFilter,
-    selectable,
-    selectionMode,
-    rowActions,
-    locale,
-    stickyHeader,
-  } = useTableContext<T>();
+  const { visibleColumns, rowActions } = useTableData<T>();
+  const { filters, setFilter } = useTableFilterContext();
+  const { selectable, selectionMode } = useTableSelectionContext<T>();
+  const { locale, stickyHeader } = useTableUI<T>();
 
   const hasActions = rowActions && rowActions.length > 0;
 
@@ -99,7 +93,7 @@ interface FloatingInputProps<T extends TableData> {
     columnId: string,
     value: string | number | boolean | DateFilterRange | null
   ) => void;
-  locale: ReturnType<typeof useTableContext>['locale'];
+  locale: ReturnType<typeof useTableUI>['locale'];
 }
 
 function FloatingInputInner<T extends TableData>({

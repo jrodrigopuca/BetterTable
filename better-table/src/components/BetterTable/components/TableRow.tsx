@@ -1,5 +1,5 @@
 import React, { useCallback, KeyboardEvent } from 'react';
-import { useTableContext } from '../context';
+import { useTableData, useTableSelectionContext, useTableUI } from '../context';
 import { TableData } from '../types';
 import { TableCell } from './TableCell';
 import { TableActions } from './TableActions';
@@ -11,17 +11,9 @@ interface TableRowProps<T extends TableData> {
 }
 
 function TableRowInner<T extends TableData>({ row, rowIndex }: TableRowProps<T>) {
-  const {
-    visibleColumns,
-    selectable,
-    rowActions,
-    isSelected,
-    toggleRow,
-    striped,
-    hoverable,
-    onRowClick,
-    onRowDoubleClick,
-  } = useTableContext<T>();
+  const { visibleColumns, rowActions } = useTableData<T>();
+  const { selectable, isSelected, toggleRow } = useTableSelectionContext<T>();
+  const { striped, hoverable, onRowClick, onRowDoubleClick } = useTableUI<T>();
 
   const hasActions = rowActions && rowActions.length > 0;
   const selected = selectable && isSelected(row, rowIndex);

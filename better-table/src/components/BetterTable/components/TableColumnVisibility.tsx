@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useTableContext } from '../context';
+import { useTableUI } from '../context';
 import { TableData } from '../types';
 import clsx from 'clsx';
 
@@ -30,7 +30,7 @@ function TableColumnVisibilityInner<T extends TableData>() {
     isColumnVisible,
     locale,
     columnVisibilityEnabled,
-  } = useTableContext<T>();
+  } = useTableUI<T>();
 
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);

@@ -1,24 +1,15 @@
 
-import { useTableContext } from '../context';
+import { useTableData, useTableSelectionContext, useTableUI, useTableFilterContext } from '../context';
 import { TableData } from '../types';
 import { TableHeaderCell } from './TableHeaderCell';
 import { TableFloatingFilter } from './TableFloatingFilter';
 import clsx from 'clsx';
 
 function TableHeaderInner<T extends TableData>() {
-  const {
-    visibleColumns,
-    selectable,
-    selectionMode,
-    rowActions,
-    isAllSelected,
-    isPartiallySelected,
-    selectAll,
-    deselectAll,
-    locale,
-    stickyHeader,
-    filterMode,
-  } = useTableContext<T>();
+  const { visibleColumns, rowActions } = useTableData<T>();
+  const { selectable, selectionMode, isAllSelected, isPartiallySelected, selectAll, deselectAll } = useTableSelectionContext<T>();
+  const { locale, stickyHeader } = useTableUI<T>();
+  const { filterMode } = useTableFilterContext();
 
   const hasActions = rowActions && rowActions.length > 0;
 

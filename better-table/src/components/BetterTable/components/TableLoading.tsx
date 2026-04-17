@@ -1,7 +1,7 @@
-import { useTableContext } from '../context';
+import { useTableUI } from '../context';
 
 export function TableLoading() {
-  const { locale, loadingComponent } = useTableContext();
+  const { locale, loadingComponent } = useTableUI();
 
   if (loadingComponent) {
     return <>{loadingComponent}</>;
@@ -20,7 +20,7 @@ interface TableLoadingOverlayProps {
 }
 
 export function TableLoadingOverlay({ show }: TableLoadingOverlayProps) {
-  const { loadingComponent, locale } = useTableContext();
+  const { loadingComponent, locale } = useTableUI();
 
   if (!show) return null;
 

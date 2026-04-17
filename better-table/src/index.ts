@@ -38,10 +38,23 @@ export { useColumnVisibility } from "./components/BetterTable/hooks/useColumnVis
 
 // Context (for custom sub-components)
 export {
-	useTableContext,
 	TableProvider,
+	useTableData,
+	useTableSortContext,
+	useTableFilterContext,
+	useTableSelectionContext,
+	useTablePaginationContext,
+	useTableUI,
 } from "./components/BetterTable/context";
-export type { TableContextValue } from "./components/BetterTable/context";
+export type {
+	TableProviderProps,
+	TableDataContextValue,
+	TableSortContextValue,
+	TableFilterContextValue,
+	TableSelectionContextValue,
+	TablePaginationContextValue,
+	TableUIContextValue,
+} from "./components/BetterTable/context";
 
 // Utilities
 export { getValueFromPath } from "./components/BetterTable/utils/getValueFromPath";
